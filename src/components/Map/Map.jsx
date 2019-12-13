@@ -1,9 +1,10 @@
 import React from 'react';
 import DeckGL from 'deck.gl';
 import {LineLayer} from '@deck.gl/layers';
+// Load component from package
 import {StaticMap} from 'react-map-gl';
 
-
+// @see https://deck.gl/#/documentation/getting-started/using-with-react?section=the-deckgl-react-component
 
 const viewState = {
     longitude:7.5922197 ,
