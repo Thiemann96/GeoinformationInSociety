@@ -1,33 +1,43 @@
-import React from 'react';
-import DeckGL from 'deck.gl';
-import {LineLayer} from '@deck.gl/layers';
-// Load component from package
+import React,{Component,Fragment} from 'react';
 import {StaticMap} from 'react-map-gl';
+import DeckGL from '@deck.gl/react';
+import Overlay from '../Overlays/Overlay'
 
-// @see https://deck.gl/#/documentation/getting-started/using-with-react?section=the-deckgl-react-component
+class Map extends Component {
 
-const viewState = {
-    longitude:7.5922197 ,
-    latitude: 51.9688129,
-    zoom: 13,
-    pitch: 0,
-    bearing: 0
-  };
+  constructor(props){
+    super(props)
+    this.state = {
+      viewState:{
+        longitude: 7.5922197,
+        latitude: 51.9688129,
+        zoom: 13,
+        pitch: 0,
+        bearing: 0
+      },
+      interactionState:{},
+      data: [{sourcePosition: [-122.41669, 37.7853], targetPosition: [-122.41669, 37.781]}],
+      mapBoxToken:'pk.eyJ1IjoiZXRoaWUxMCIsImEiOiJjazQyeXlxNGcwMjk3M2VvYmw2NHU4MDRvIn0.nYOmVGARhLOULQ550LyUYA'
+    }
+  }
   
-  // Data to be used by the LineLayer
-  const data = [{sourcePosition: [51.9688129,7.5922197], targetPosition: [51.9688129,7.5922197]}];
-
-  
-const layers = [
-    new LineLayer({id: 'line-layer', data})
-  ];
-function Map() {
-
+  render() {
+    console.log(this.state.settings)
     return (
-            <DeckGL controller={true} viewState={viewState} layers={layers}>
-                <StaticMap mapboxApiAccessToken={'pk.eyJ1IjoiZXRoaWUxMCIsImEiOiJjazQyeXlxNGcwMjk3M2VvYmw2NHU4MDRvIn0.nYOmVGARhLOULQ550LyUYA'} />
-            </DeckGL>    
-    )
-}
+      <Fragment>
+      <DeckGL
+        initialViewState={this.state.viewState}
+        controller={true}
+      >
+        <StaticMap   
+                onInter 
+                mapStyle="mapbox://styles/mapbox/dark-v9"
+                mapboxApiAccessToken={this.state.mapBoxToken}/>
+        </DeckGL>
+                <Overlay/>
 
-export default Map;
+        </Fragment>
+      );
+  }
+}
+export default Map

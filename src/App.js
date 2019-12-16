@@ -1,10 +1,9 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
+import React,{Component} from 'react';
 import './App.css';
 //packages installed via npm
-import {Container,Row,Col} from 'react-bootstrap'
 // functional component which loads the map class
 import Map from './components/Map/Map'
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 // Main app class which holds all components later on
 
@@ -14,13 +13,7 @@ class App extends Component {
   {
 
     return (
-      <Container fluid>
-        <Row>
-          <Col md={6}>
-            <Map/>
-          </Col>
-        </Row>
-      </Container>
+      <Map/>
     );
   }
 }
