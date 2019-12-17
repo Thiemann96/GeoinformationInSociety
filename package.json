@@ -6,6 +6,7 @@
     "d3": "^5.14.2",
     "deck.gl": "^7.3.8",
     "react": "^16.12.0",
+    "react-bootstrap": "^1.0.0-beta.16",
     "react-dom": "^16.12.0",
     "react-map-gl": "^5.1.3",
     "react-scripts": "0.9.5"
