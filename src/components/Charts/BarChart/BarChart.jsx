@@ -17,7 +17,6 @@ export default class BarChart extends Component {
 			.append("svg")
 			.attr("width", this.props.width)
 			.attr("height", this.props.height)
-			.style("margin-left", 100);
 
 		svg
 			.selectAll("rect")

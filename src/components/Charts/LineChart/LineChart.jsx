@@ -26,7 +26,6 @@ class LineChart extends Component {
         .append("svg")
         .attr("width", this.props.width)
         .attr("height", this.props.height)
-        .style("margin-left", 100);
 
         var x = d3.scaleTime()
         .domain(d3.extent(this.state.data, function(d) { return d.date; }))
