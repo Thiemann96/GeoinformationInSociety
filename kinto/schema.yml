@@ -1,0 +1,698 @@
+buckets:
+  accidents:
+    collections:
+      accident_type:
+        data:
+          attachment:
+            enabled: false
+            required: false
+          cache_expires: 0
+          displayFields:
+          - key
+          - title
+          id: accident_type
+          schema:
+            properties:
+              igvp_subject:
+                description: Some internal heading of the police
+                title: IGVP Subject
+                type: string
+              key:
+                title: Key
+                type: integer
+              measures:
+                description: A list of appropriate measures when this category occurs
+                title: Measured
+                type: string
+              meta_category:
+                description: Higher level category
+                title: Meta Category
+                type: string
+              most_serious_consequence:
+                description: Usually describes criteria that need to be fulfilled
+                  for qualify as this category.
+                title: Most serious consequence
+                type: string
+              title:
+                description: A brief description of the category.
+                title: Title
+                type: string
+              title_brief:
+                description: A label which makes sense to display later in the editor
+                title: Brief title
+                type: string
+            type: object
+          sort: key
+          uiSchema:
+            content:
+              ui:widget: textarea
+            ui:order:
+            - key
+            - title
+            - most_serious_consequence
+            - igvp_subject
+            - measures
+            - meta_category
+            - title_brief
+        permissions:
+          read:
+          - account:admin
+          - system.Authenticated
+          - system.Everyone
+          record:create:
+          - account:admin
+          write:
+          - account:admin
+      accident_cause:
+        data:
+          attachment:
+            enabled: false
+            required: false
+          cache_expires: 0
+          displayFields:
+          - key
+          - description
+          id: accident_cause
+          schema:
+            properties:
+              category:
+                title: Category
+                type: string
+              description:
+                title: Description
+                type: string
+              key:
+                title: Key
+                type: integer
+              subcategory:
+                title: Subcategory
+                type: string
+            type: object
+          sort: -last_modified
+          uiSchema:
+            content:
+              ui:widget: textarea
+            ui:order:
+            - key
+            - subcategory
+            - category
+            - description
+        permissions:
+          write:
+          - account:admin
+      accident_kind:
+        data:
+          attachment:
+            enabled: false
+            required: false
+          cache_expires: 0
+          displayFields:
+          - title
+          id: accident_kind
+          schema:
+            properties:
+              description:
+                title: Description
+                type: string
+              key:
+                title: Key
+                type: integer
+              title:
+                title: Title
+                type: string
+            type: object
+          sort: -last_modified
+          uiSchema:
+            content:
+              ui:widget: textarea
+            ui:order:
+            - title
+            - key
+            - description
+        permissions:
+          write:
+          - account:admin
+      accident_category:
+        data:
+          attachment:
+            enabled: false
+            required: false
+          cache_expires: 0
+          displayFields:
+          - title
+          id: accident_category
+          schema:
+            properties:
+              code:
+                title: Code
+                type: string
+              color:
+                title: Color
+                type: string
+              description:
+                title: Description
+                type: string
+              key:
+                title: Key
+                type: integer
+              title:
+                title: Title
+                type: string
+            type: object
+          sort: -last_modified
+          uiSchema:
+            content:
+              ui:widget: textarea
+            ui:order:
+            - title
+            - key
+            - description
+            - color
+            - code
+        permissions:
+          write:
+          - account:admin
+      accidents_raw:
+        data:
+          attachment:
+            enabled: false
+            required: false
+          cache_expires: 0
+          displayFields:
+          - source_file
+          - source_row_number
+          - place
+          - place_near
+          id: accidents_raw
+          schema:
+            properties:
+              accident_category:
+                type:
+                - integer
+                - 'null'
+              accident_type:
+                type:
+                - integer
+                - 'null'
+              alcoholized:
+                type:
+                - string
+                - 'null'
+              bicycle:
+                type:
+                - integer
+                - 'null'
+              car:
+                type:
+                - integer
+                - 'null'
+              cause_02:
+                type:
+                - string
+                - 'null'
+              cause_1_4:
+                type:
+                - integer
+                - 'null'
+              cause_2:
+                type:
+                - integer
+                - 'null'
+              cause_3:
+                type:
+                - integer
+                - 'null'
+              cause_other:
+                type:
+                - integer
+                - 'null'
+              date:
+                format: date
+                pattern: ^([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))$
+                type:
+                - string
+                - 'null'
+              day_of_week:
+                type:
+                - string
+                - 'null'
+              deaths:
+                type:
+                - integer
+                - 'null'
+              extra_urban:
+                type:
+                - string
+                - 'null'
+              helmet:
+                type:
+                - string
+                - 'null'
+              hit_and_run:
+                type:
+                - string
+                - 'null'
+              import_timestamp:
+                type: string
+              light_conditions:
+                type:
+                - string
+                - 'null'
+              lorry:
+                type:
+                - integer
+                - 'null'
+              moped:
+                type:
+                - integer
+                - 'null'
+              motorcycle:
+                type:
+                - integer
+                - 'null'
+              number_of_participants:
+                type:
+                - integer
+                - 'null'
+              omnibus:
+                type:
+                - integer
+                - 'null'
+              other_road_user:
+                type:
+                - integer
+                - 'null'
+              participants_01:
+                type:
+                - integer
+                - 'null'
+              participants_01_registration:
+                type:
+                - string
+                - 'null'
+              participants_02:
+                type:
+                - integer
+                - 'null'
+              participants_02_registration:
+                type:
+                - string
+                - 'null'
+              participants_18_24:
+                type:
+                - integer
+                - 'null'
+              participants_age_01:
+                type:
+                - integer
+                - 'null'
+              participants_age_02:
+                type:
+                - integer
+                - 'null'
+              participants_child:
+                type:
+                - string
+                - 'null'
+              participants_senior:
+                type:
+                - integer
+                - 'null'
+              pedestrian:
+                type:
+                - integer
+                - 'null'
+              place:
+                type:
+                - string
+                - 'null'
+              place_near:
+                type:
+                - string
+                - 'null'
+              road_condition:
+                type:
+                - string
+                - 'null'
+              seriously_injured:
+                type:
+                - integer
+                - 'null'
+              slightly_injured:
+                type:
+                - integer
+                - 'null'
+              small_moped:
+                type:
+                - integer
+                - 'null'
+              source_file:
+                type: string
+              source_file_hash:
+                type: string
+              source_row_number:
+                minimum: 1
+                type: integer
+              time_of_day:
+                format: time
+                pattern: ^(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)|^(?![\s\S])$
+                type:
+                - string
+                - 'null'
+              urban:
+                type:
+                - string
+                - 'null'
+            required:
+            - source_file
+            - import_timestamp
+            - source_file_hash
+            - source_row_number
+            type: object
+          sort: source_file
+          uiSchema:
+            accident_category:
+              ui:readonly: true
+            accident_type:
+              ui:readonly: true
+            alcoholized:
+              ui:readonly: true
+            bicycle:
+              ui:readonly: true
+            car:
+              ui:readonly: true
+            cause_02:
+              ui:readonly: true
+            cause_1_4:
+              ui:readonly: true
+            cause_2:
+              ui:readonly: true
+            cause_3:
+              ui:readonly: true
+            cause_other:
+              ui:readonly: true
+            date:
+              ui:readonly: true
+              ui:widget: text
+            day_of_week:
+              ui:readonly: true
+            deaths:
+              ui:readonly: true
+            extra_urban:
+              ui:readonly: true
+            helmet:
+              ui:readonly: true
+            hit_and_run:
+              ui:readonly: true
+            import_timestamp:
+              ui:readonly: true
+            light_conditions:
+              ui:readonly: true
+            lorry:
+              ui:readonly: true
+            moped:
+              ui:readonly: true
+            motorcycle:
+              ui:readonly: true
+            number_of_participants:
+              ui:readonly: true
+            omnibus:
+              ui:readonly: true
+            other_road_user:
+              ui:readonly: true
+            participants_01:
+              ui:readonly: true
+            participants_01_registration:
+              ui:readonly: true
+            participants_02:
+              ui:readonly: true
+            participants_02_registration:
+              ui:readonly: true
+            participants_18_24:
+              ui:readonly: true
+            participants_age_01:
+              ui:readonly: true
+            participants_age_02:
+              ui:readonly: true
+            participants_child:
+              ui:readonly: true
+            participants_senior:
+              ui:readonly: true
+            pedestrian:
+              ui:readonly: true
+            place:
+              ui:readonly: true
+            place_near:
+              ui:readonly: true
+            road_condition:
+              ui:readonly: true
+            seriously_injured:
+              ui:readonly: true
+            slightly_injured:
+              ui:readonly: true
+            small_moped:
+              ui:readonly: true
+            source_file:
+              ui:readonly: true
+            source_file_hash:
+              ui:readonly: true
+            source_row_number:
+              ui:readonly: true
+            time_of_day:
+              ui:readonly: true
+              ui:widget: text
+            ui:order:
+            - source_file
+            - source_row_number
+            - place
+            - place_near
+            - day_of_week
+            - date
+            - time_of_day
+            - accident_category
+            - hit_and_run
+            - urban
+            - extra_urban
+            - deaths
+            - seriously_injured
+            - slightly_injured
+            - number_of_participants
+            - pedestrian
+            - bicycle
+            - helmet
+            - small_moped
+            - moped
+            - motorcycle
+            - car
+            - lorry
+            - omnibus
+            - other_road_user
+            - participants_01
+            - participants_01_registration
+            - participants_02
+            - participants_02_registration
+            - alcoholized
+            - accident_type
+            - cause_1_4
+            - cause_2
+            - cause_3
+            - cause_other
+            - cause_02
+            - light_conditions
+            - road_condition
+            - participants_child
+            - participants_18_24
+            - participants_senior
+            - participants_age_01
+            - participants_age_02
+            - source_file_hash
+            - import_timestamp
+            urban:
+              ui:readonly: true
+        permissions:
+          read:
+          - account:admin
+          - system.Authenticated
+          - system.Everyone
+          record:create:
+          - account:admin
+          write:
+          - account:admin
+      geometries:
+        data:
+          attachment:
+            enabled: false
+            required: false
+          cache_expires: 0
+          displayFields:
+          - accident_id
+          - used_geocoder
+          - comment
+          - lat
+          - lon
+          id: geometries
+          schema:
+            properties:
+              accident_id:
+                type: string
+              comment:
+                type: string
+              geocoded_timestamp:
+                type: string
+              lat:
+                maximum: 52.5
+                minimum: 51.5
+                type: number
+              lon:
+                maximum: 7.9
+                minimum: 7.2
+                type: number
+              used_geocoder:
+                type: string
+              used_query:
+                type: string
+            required:
+            - lat
+            - lon
+            - geocoded_timestamp
+            - accident_id
+            type: object
+          sort: -accident_id
+          uiSchema:
+            content:
+              ui:widget: textarea
+            ui:order:
+            - accident_id
+            - used_geocoder
+            - comment
+            - lat
+            - lon
+            - geocoded_timestamp
+            - used_query
+        permissions:
+          read:
+          - account:admin
+          - system.Authenticated
+          - system.Everyone
+          record:create:
+          - account:admin
+          write:
+          - account:admin
+      geometries_corrections:
+        data:
+          attachment:
+            enabled: false
+            required: false
+          cache_expires: 0
+          displayFields:
+          - bogus
+          - timestamp
+          - accident_id
+          - geometry_id
+          id: geometries_corrections
+          schema:
+            properties:
+              accident_id:
+                type: string
+              bogus:
+                type: boolean
+              comment:
+                type: string
+              geometry_id:
+                type: string
+              lat:
+                maximum: 52.5
+                minimum: 51.5
+                type:
+                - number
+                - 'null'
+              lon:
+                maximum: 7.9
+                minimum: 7.2
+                type:
+                - number
+                - 'null'
+              timestamp:
+                type: string
+            type: object
+          sort: -last_modified
+          uiSchema:
+            content:
+              ui:widget: textarea
+            ui:order:
+            - accident_id
+            - geometry_id
+            - lat
+            - lon
+            - comment
+            - bogus
+            - timestamp
+        permissions:
+          read:
+          - account:Anonym
+          - account:admin
+          - system.Authenticated
+          - system.Everyone
+          record:create:
+          - account:Anonym
+          - account:admin
+          - system.Authenticated
+          write:
+          - account:admin
+      traffic_involvement:
+        data:
+          attachment:
+            enabled: false
+            required: false
+          cache_expires: 0
+          displayFields:
+          - key
+          - title
+          id: traffic_involvement
+          schema:
+            properties:
+              category:
+                description: A category this road user belongs to. Does not correspond
+                  to accident categories.
+                title: Category
+                type: string
+              description:
+                description: A description of the road user.
+                title: Description
+                type: string
+              key:
+                title: Key
+                type: integer
+              title:
+                description: Short title
+                title: Title
+                type: string
+            type: object
+          sort: key
+          uiSchema:
+            content:
+              ui:widget: textarea
+            ui:order:
+            - key
+            - title
+            - description
+            - category
+        permissions:
+          read:
+          - account:admin
+          - system.Authenticated
+          - system.Everyone
+          record:create:
+          - account:admin
+          write:
+          - account:admin
+    data:
+      id: accidents
+    groups: {}
+    permissions:
+      read:
+      - account:admin
+      - system.Authenticated
+      - system.Everyone
+      write:
+      - account:admin
