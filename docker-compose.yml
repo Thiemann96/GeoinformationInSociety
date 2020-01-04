@@ -1,44 +1,6 @@
 version: "2.4"
 
 services:
-  importer: &python
-    build: ./processing
-    volumes:
-      - ./data:/data
-      - ./processing:/processing
-      - ./kinto:/kinto
-    command: python processing/importer.py
-    environment:
-      KINTO_URL: http://kinto:8888/v1
-      KINTO_ADMIN: admin
-      KINTO_ADMIN_PASSWORD: banane
-    depends_on:
-      kinto:
-        condition: service_healthy
-
-  initializer:
-    <<: *python
-    restart: "no"
-    command: bash /kinto/init.sh
-
-  kinto:
-    image: kinto/kinto-server:13.6.2
-    ports:
-      - 8888:8888
-    volumes:
-      - ./kinto/config:/etc/kinto
-    healthcheck:
-      test:
-        - CMD-SHELL
-        - >-
-          python -c "import requests; requests.get('http://localhost:8888/')"
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    depends_on:
-      postgres:
-        condition: service_healthy
-
   postgres:
     image: postgres:12-alpine
     environment:
