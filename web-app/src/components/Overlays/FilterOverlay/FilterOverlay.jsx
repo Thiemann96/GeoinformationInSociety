@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Container,Row,Col,InputGroup} from 'react-bootstrap';
+import {Container,Row,Col,InputGroup,Button} from 'react-bootstrap';
 import './FilterOverlay.css'
 
 
@@ -27,6 +27,10 @@ export default class FilterOverlay extends Component{
                         <label>Accident Layer</label><InputGroup.Checkbox onChange={this.props._toggleAccidents}></InputGroup.Checkbox>
                         <label>Heatmap</label><InputGroup.Checkbox onChange={this.props._toggleHeatMap}></InputGroup.Checkbox>
                     </InputGroup>
+                </Row>
+                <hr/>
+                <Row>
+                    <Button>Confirm Filter</Button>
                 </Row>
 
 

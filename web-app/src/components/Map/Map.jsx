@@ -25,13 +25,21 @@ class Map extends Component {
       },
       interactionState:{},
       data: [{sourcePosition: [-122.41669, 37.7853], targetPosition: [-122.41669, 37.781]}],
-      mapBoxToken:'pk.eyJ1IjoiZXRoaWUxMCIsImEiOiJjazQyeXlxNGcwMjk3M2VvYmw2NHU4MDRvIn0.nYOmVGARhLOULQ550LyUYA'
+      mapBoxToken:'pk.eyJ1IjoiZXRoaWUxMCIsImEiOiJjazQyeXlxNGcwMjk3M2VvYmw2NHU4MDRvIn0.nYOmVGARhLOULQ550LyUYA',
+      accidents:[]
     }
     this._toggleAccidents = this._toggleAccidents.bind(this);
     this._toggleHeatMap = this._toggleHeatMap.bind(this);
     this._toggleBuildings = this._toggleBuildings.bind(this);
   }
-  
+  // fetches all accidents from the server running locally
+  componentDidMount(){
+    let url ='http://0.0.0.0:9000/hooks/bikes';
+    fetch(url)
+    .then(response=>response.json())
+    .then(accidents=>this.setState({accidents}))
+  }
+
   _toggleHeatMap(e){
     this.setState({
       showHeatmapLayer:e.target.checked
@@ -70,7 +78,7 @@ class Map extends Component {
       }):null,
       this.state.showAccidentsLayer ? 
       new ScatterplotLayer({
-        data:accidents,
+        data:this.state.accidents,
         id:'accidentsLayer',
         getPosition:d=>[d.lon,d.lat],
         getRadius:5,
@@ -103,7 +111,9 @@ class Map extends Component {
                 mapStyle="mapbox://styles/mapbox/dark-v9"
                 mapboxApiAccessToken={this.state.mapBoxToken}/>
         </DeckGL>
-        <Overlay _toggleBuildings={this._toggleBuildings} _toggleHeatMap={this._toggleHeatMap} _toggleAccidents={this._toggleAccidents}/>
+        <Overlay _toggleBuildings={this._toggleBuildings} _toggleHeatMap={this._toggleHeatMap} _toggleAccidents={this._toggleAccidents}
+                datalength = {this.state.accidents.length}
+        />
         </Fragment>
       );
   }

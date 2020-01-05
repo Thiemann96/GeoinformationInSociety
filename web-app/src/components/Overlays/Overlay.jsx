@@ -17,7 +17,7 @@ export default class Overlay extends Component{
         return(
             <Container className="control-panel">
                 <FilterOverlay _toggleHeatMap = {this.props._toggleHeatMap} _toggleAccidents = {this.props._toggleAccidents} _toggleBuildings = {this.props._toggleBuildings}/>
-                <ChartOverlay/>
+                <ChartOverlay   datalength = {this.props.datalength}/>
             </Container>
         )
     }
