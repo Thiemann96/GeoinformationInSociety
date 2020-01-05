@@ -2,10 +2,10 @@ version: "2.4"
 
 services:
   postgres:
-    image: postgres:12-alpine
+    image: quay.io/bkari/giis_bike_accidents
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_DB: accidents
+      POSTGRES_DB: postgres
       POSTGRES_PASSWORD: PASSWORD
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
@@ -21,7 +21,7 @@ services:
     ports:
       - "9000:9000"
     environment:
-      POSTGRES_URL: postgresql://postgres:PASSWORD@postgres/accidents
+      POSTGRES_URL: postgresql://postgres:PASSWORD@postgres/postgres
     depends_on:
       postgres:
         condition: service_healthy
