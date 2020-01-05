@@ -25,6 +25,11 @@
     "include-command-output-in-response": true
   },
   {
+    "id": "bikes",
+    "execute-command": "/webhook/bikes.sh",
+    "include-command-output-in-response": true
+  },
+  {
     "id": "individual-request",
     "execute-command": "/webhook/individual-request.sh",
     "include-command-output-in-response": true
