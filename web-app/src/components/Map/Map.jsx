@@ -43,7 +43,6 @@ class Map extends Component {
     })
   }
   _toggleBuildings(e){
-    console.log("des")
     this.setState({
       showBuildings:e.target.checked
     })
