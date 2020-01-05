@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Container,Row,Col,Form} from 'react-bootstrap';
+import {Container,Row,Col,InputGroup} from 'react-bootstrap';
 import './FilterOverlay.css'
 
 
@@ -12,6 +12,7 @@ export default class FilterOverlay extends Component{
     }
 
 
+
     render(){
         return(
             <Container className="filter-panel">
@@ -20,15 +21,15 @@ export default class FilterOverlay extends Component{
                 <p>Filter the visualised dataset</p>
                 </Row>
                 <hr/>
-                <label>Alleinunfall</label><input type="checkbox"></input>
-                <label>Verletzte</label><input type="checkbox"></input><br></br>
-                <label>Unfalltyp </label><select>
-                <option value="rechts">Rechtsabbieger</option>
-                <option value="links">Linksabbieger</option>
-                <option value="dumm">Autofahrer war zu doof</option>
-                <option value="handy">Unachtsamkeit</option>
-                </select> <br></br>
-               <label>Unfallart(nach Code)</label> <input  type="text"></input>
+                <Row>
+                    <InputGroup>
+                        <label>3D Layer</label><InputGroup.Checkbox onChange={this.props._toggleBuildings}></InputGroup.Checkbox>
+                        <label>Accident Layer</label><InputGroup.Checkbox onChange={this.props._toggleAccidents}></InputGroup.Checkbox>
+                        <label>Heatmap</label><InputGroup.Checkbox onChange={this.props._toggleHeatMap}></InputGroup.Checkbox>
+                    </InputGroup>
+                </Row>
+
+
             </Container>
         )
     }

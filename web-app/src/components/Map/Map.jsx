@@ -21,12 +21,32 @@ class Map extends Component {
         latitude: 51.96970534849527,
         zoom: 15,
         pitch: 0,
-        bearing: 0
+        bearing: 0,
       },
       interactionState:{},
       data: [{sourcePosition: [-122.41669, 37.7853], targetPosition: [-122.41669, 37.781]}],
       mapBoxToken:'pk.eyJ1IjoiZXRoaWUxMCIsImEiOiJjazQyeXlxNGcwMjk3M2VvYmw2NHU4MDRvIn0.nYOmVGARhLOULQ550LyUYA'
     }
+    this._toggleAccidents = this._toggleAccidents.bind(this);
+    this._toggleHeatMap = this._toggleHeatMap.bind(this);
+    this._toggleBuildings = this._toggleBuildings.bind(this);
+  }
+  
+  _toggleHeatMap(e){
+    this.setState({
+      showHeatmapLayer:e.target.checked
+    })
+  }
+  _toggleAccidents(e){
+    this.setState({
+      showAccidentsLayer:e.target.checked
+    })
+  }
+  _toggleBuildings(e){
+    console.log("des")
+    this.setState({
+      showBuildings:e.target.checked
+    })
   }
 
   _renderLayers() {
@@ -38,6 +58,7 @@ class Map extends Component {
     return [
       // This is only needed when using shadow effects
       // returns the 3dbuildings layer
+      this.state.showBuildings ? 
       new PolygonLayer({
         id: 'buildings',
         data: buildings,
@@ -47,14 +68,17 @@ class Map extends Component {
         getPolygon: f => f.polygon,
         getElevation: f => f.height,
         getFillColor: [255, 255, 0]
-      }),
+      }):null,
+      this.state.showAccidentsLayer ? 
       new ScatterplotLayer({
         data:accidents,
+        id:'accidentsLayer',
         getPosition:d=>[d.lon,d.lat],
         getRadius:5,
         getFillColor:[255,0,0],
         opacity:1
-      }),
+      }):null,
+      this.state.showHeatmapLayer?
       new HeatmapLayer({
         data:accidents,
         id:'heatmapLayer',
@@ -64,7 +88,7 @@ class Map extends Component {
         radiusPixels:30,
         intensity : 1,
         threshold : 0.03
-      })
+      }):null
     ];
   }
   
@@ -80,7 +104,7 @@ class Map extends Component {
                 mapStyle="mapbox://styles/mapbox/dark-v9"
                 mapboxApiAccessToken={this.state.mapBoxToken}/>
         </DeckGL>
-        <Overlay/>
+        <Overlay _toggleBuildings={this._toggleBuildings} _toggleHeatMap={this._toggleHeatMap} _toggleAccidents={this._toggleAccidents}/>
         </Fragment>
       );
   }

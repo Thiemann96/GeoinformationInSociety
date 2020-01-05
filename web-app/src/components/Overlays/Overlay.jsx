@@ -7,14 +7,16 @@ export default class Overlay extends Component{
     constructor(props){
         super(props)
         this.state = {
-            
         }
+    }
+
+    componentDidMount(){
     }
 
     render(){
         return(
             <Container className="control-panel">
-                <FilterOverlay/>
+                <FilterOverlay _toggleHeatMap = {this.props._toggleHeatMap} _toggleAccidents = {this.props._toggleAccidents} _toggleBuildings = {this.props._toggleBuildings}/>
                 <ChartOverlay/>
             </Container>
         )
