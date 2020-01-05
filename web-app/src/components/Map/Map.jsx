@@ -3,6 +3,7 @@ import {StaticMap} from 'react-map-gl';
 import DeckGL from '@deck.gl/react';
 import {ScatterplotLayer,PolygonLayer} from '@deck.gl/layers';
 import Overlay from '../Overlays/Overlay'
+import {HeatmapLayer} from '@deck.gl/aggregation-layers'
 
 
 const DATA_URL = {
@@ -53,6 +54,16 @@ class Map extends Component {
         getRadius:5,
         getFillColor:[255,0,0],
         opacity:1
+      }),
+      new HeatmapLayer({
+        data:accidents,
+        id:'heatmapLayer',
+        pickable:false,
+        getPosition:d=>[d.lon,d.lat],
+        getWeight:1,
+        radiusPixels:30,
+        intensity : 1,
+        threshold : 0.03
       })
     ];
   }
