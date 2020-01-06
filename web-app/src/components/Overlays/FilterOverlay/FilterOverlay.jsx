@@ -12,14 +12,6 @@ export default class FilterOverlay extends Component{
             weatherconditions:["rainy","sunny","foggy","snow"]
         }
     }
-
-    // Time
-    // Type of accident
-    // Type of vehicle (pedestrian, bike, car, …)
-    // Source of accident
-    // Injuries
-    // Weather condition
-    // Light condition
     
 
     render(){
@@ -42,15 +34,18 @@ export default class FilterOverlay extends Component{
                     <Form>
                         <Row>
                             <Col>
+                            <Form.Label>From</Form.Label>
                                 <Form.Control type="date"></Form.Control>
                             </Col>
                             <Col>
+                            <Form.Label>To</Form.Label>
                                 <Form.Control type="date"></Form.Control>
                             </Col>
                         </Row>
                         <Row>
                             <Col>
-                                <Form.Control placeholder="Type of accident"></Form.Control>
+                                <Form.Label>Type of accident</Form.Label>
+                                <Form.Control></Form.Control>
                             </Col>
                         </Row>
                         <Row>
@@ -83,10 +78,7 @@ export default class FilterOverlay extends Component{
                     <Button onClick={this.props._confirmFilter}>Confirm Filter</Button>
                     <Button onClick={this.props._resetFilter}>Reset Filter</Button>
                 </Row>
-
-
             </Container>
         )
     }
-
 }
