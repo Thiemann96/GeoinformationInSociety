@@ -31,6 +31,8 @@ class Map extends Component {
     this._toggleAccidents = this._toggleAccidents.bind(this);
     this._toggleHeatMap = this._toggleHeatMap.bind(this);
     this._toggleBuildings = this._toggleBuildings.bind(this);
+    this._confirmFilter = this._confirmFilter.bind(this);
+    this._resetFilter = this._resetFilter.bind(this);
   }
   // fetches all accidents from the server running locally
   componentDidMount(){
@@ -55,7 +57,22 @@ class Map extends Component {
       showBuildings:e.target.checked
     })
   }
+  
+  // Uses new filter options and sends new request
+  _confirmFilter(){
+    // url needs to be changed to the hook that we provide
+    let url = 'http://0.0.0.0:9000/hooks/random-accident'
+    fetch(url)
+    .then(response=>response.json())
+    .then(accidents=>this.setState({accidents}))
 
+  }
+  _resetFilter(){
+    let url ='http://0.0.0.0:9000/hooks/bikes';
+    fetch(url)
+    .then(response=>response.json())
+    .then(accidents=>this.setState({accidents}))
+  }
   _renderLayers() {
     const {
       accidents = DATA_URL.ACCIDENTS,
@@ -113,6 +130,8 @@ class Map extends Component {
         </DeckGL>
         <Overlay _toggleBuildings={this._toggleBuildings} _toggleHeatMap={this._toggleHeatMap} _toggleAccidents={this._toggleAccidents}
                 datalength = {this.state.accidents.length}
+                _confirmFilter = {this._confirmFilter}
+                _resetFilter  = {this._resetFilter}
         />
         </Fragment>
       );
