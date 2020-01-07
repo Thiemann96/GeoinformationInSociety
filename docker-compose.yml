@@ -1,27 +1,40 @@
 version: "2.4"
 
 services:
-  postgres:
-    image: quay.io/bkari/giis_bike_accidents
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_DB: postgres
-      POSTGRES_PASSWORD: PASSWORD
-    volumes:
-      - ./postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    postgres:
+        image: quay.io/bkari/giis_bike_accidents
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_DB: postgres
+            POSTGRES_PASSWORD: PASSWORD
+        volumes:
+            - ./postgres_data:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
 
-  editor-data-helpers:
-    build:
-      context: editor-data-helpers
-    ports:
-      - "9000:9000"
-    environment:
-      POSTGRES_URL: postgresql://postgres:PASSWORD@postgres/postgres
-    depends_on:
-      postgres:
-        condition: service_healthy
+    editor-data-helpers:
+        build:
+            context: editor-data-helpers
+        ports:
+            - "9000:9000"
+        environment:
+            POSTGRES_URL: postgresql://postgres:PASSWORD@postgres/postgres
+        depends_on:
+            postgres:
+                condition: service_healthy
+
+    app:
+        container_name: app
+        build:
+            context: web-app
+            dockerfile: Dockerfile
+        volumes:
+            - '.:/app/web-app'
+            - '/app/web-app/node_modules'
+        ports:
+            - '3000:3000'
+        environment:
+            - NODE_ENV=development
