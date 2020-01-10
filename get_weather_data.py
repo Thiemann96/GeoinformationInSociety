@@ -18,8 +18,13 @@ if response != None:
     data = json.loads(response.text)
     weather_data_json = open("weather_data.json","w+")
     weather_data_json.write("[")
+    comma = False
     for accident in data:
         if accident['lon'] != None and accident['lat'] != None:
+            if comma:
+                weather_data_json.write(",")
+            else:
+                comma = True
             weather_station = dw.nearest_station(lon = accident['lon'], lat = accident['lat'])
             accident_time = datetime.strptime(accident['time_of_day'], '%H:%M:%S')
             accident_date = datetime.strptime(accident['date'], '%Y-%m-%d')
@@ -32,5 +37,5 @@ if response != None:
             accident['weather'] = result
             weather_data_json.write(json.dumps(accident))
             weather_data_json.write(',')
-            
+
     weather_data_json.write("];")
