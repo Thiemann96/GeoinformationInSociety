@@ -30,6 +30,11 @@
     "include-command-output-in-response": true
   },
   {
+    "id": "testing",
+    "execute-command": "/webhook/testing.sh",
+    "include-command-output-in-response": true
+  },
+  {
     "id": "individual-request",
     "execute-command": "/webhook/individual-request.sh",
     "include-command-output-in-response": true
@@ -44,5 +49,37 @@
         "name": "id"
       }
     ]
+  },
+  {
+    "id": "accidents-by-time",
+    "execute-command": "/webhook/accidents-by-time-place.sh",
+    "include-command-output-in-response": true,
+    "pass-arguments-to-command": [
+      {
+        "source": "url",
+        "name": "date-to"
+      },
+      {
+        "source": "url",
+        "name": "date-from"
+      },
+      {
+        "source": "url",
+        "name": "min-lon"
+      },
+      {
+        "source": "url",
+        "name": "max-lon"
+      },
+      {
+        "source": "url",
+        "name": "min-lat"
+      },
+      {
+        "source": "url",
+        "name": "max-lat"
+      }
+    ]
   }
 ]
+
