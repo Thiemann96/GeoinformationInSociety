@@ -20,6 +20,11 @@
     "include-command-output-in-response": true
   },
   {
+    "id": "weather-testing",
+    "execute-command": "/webhook/weather-testing.sh",
+    "include-command-output-in-response": true
+  },
+  {
     "id": "metadata",
     "execute-command": "/webhook/metadata.sh",
     "include-command-output-in-response": true
