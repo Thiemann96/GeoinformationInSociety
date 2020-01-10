@@ -32,5 +32,5 @@ if response != None:
             accident['weather'] = result
             weather_data_json.write(json.dumps(accident))
             weather_data_json.write(',')
-            break
+            
     weather_data_json.write("];")
