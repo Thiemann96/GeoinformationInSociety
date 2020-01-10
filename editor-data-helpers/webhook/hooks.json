@@ -1,0 +1,80 @@
+[
+  {
+    "id": "random-accident",
+    "execute-command": "/webhook/random-accident.sh",
+    "include-command-output-in-response": true
+  },
+  {
+    "id": "bike-only",
+    "execute-command": "/webhook/bike-only.sh",
+    "include-command-output-in-response": true
+  },
+  {
+    "id": "toplist",
+    "execute-command": "/webhook/toplist.sh",
+    "include-command-output-in-response": true
+  },
+  {
+    "id": "stats",
+    "execute-command": "/webhook/stats.sh",
+    "include-command-output-in-response": true
+  },
+  {
+    "id": "metadata",
+    "execute-command": "/webhook/metadata.sh",
+    "include-command-output-in-response": true
+  },
+  {
+    "id": "bikes",
+    "execute-command": "/webhook/bikes.sh",
+    "include-command-output-in-response": true
+  },
+  {
+    "id": "individual-request",
+    "execute-command": "/webhook/individual-request.sh",
+    "include-command-output-in-response": true
+  },
+  {
+    "id": "accident-by-id",
+    "execute-command": "/webhook/accident-by-id.sh",
+    "include-command-output-in-response": true,
+    "pass-arguments-to-command": [
+      {
+        "source": "url",
+        "name": "id"
+      }
+    ]
+  },
+  {
+    "id": "accidents-by-time",
+    "execute-command": "/webhook/accidents-by-time-place.sh",
+    "include-command-output-in-response": true,
+    "pass-arguments-to-command": [
+      {
+        "source": "url",
+        "name": "date-to"
+      },
+      {
+        "source": "url",
+        "name": "date-from"
+      },
+      {
+        "source": "url",
+        "name": "min-lon"
+      },
+      {
+        "source": "url",
+        "name": "max-lon"
+      },
+      {
+        "source": "url",
+        "name": "min-lat"
+      },
+      {
+        "source": "url",
+        "name": "max-lat"
+      }
+    ]
+  }
+]
+
