@@ -4,7 +4,17 @@ import * as d3 from "d3";
 export default class BarChart extends Component {
 	componentDidMount() {
 		this.drawChart();
+		this._getData();
 	}
+	
+	_getData(){
+		let url ='http://0.0.0.0:9000/hooks/bikes';
+		fetch(url)
+		.then(response=>response.json())
+		.then(accidents=>this.setState({accidents}))
+		.then(()=>console.log(this.state.accidents))
+	}
+
 	drawChart() {
 		const data = [12, 5, 6, 6, 9, 10];
 

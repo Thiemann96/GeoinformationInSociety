@@ -26,15 +26,3 @@ services:
             postgres:
                 condition: service_healthy
 
-    app:
-        container_name: app
-        build:
-            context: web-app
-            dockerfile: Dockerfile
-        volumes:
-            - '.:/app/web-app'
-            - '/app/web-app/node_modules'
-        ports:
-            - '3000:3000'
-        environment:
-            - NODE_ENV=development

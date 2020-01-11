@@ -126,66 +126,7 @@ export default class FilterOverlay extends Component {
                 </Row>
                 <Row>Select time (slider missing here)</Row>
 
-                {/* 
-                <Row>
-                    <Form>
-                        <Row>
-                            <Col>
-                                <Form.Label>From</Form.Label>
-                                <Form.Control type="date"></Form.Control>
-                            </Col>
-                            <Col>
-                                <Form.Label>To</Form.Label>
-                                <Form.Control type="date"></Form.Control>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col>
-                                <Form.Label>Type of accident</Form.Label>
-                                <Form.Control></Form.Control>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Form.Label>Type of vehicle</Form.Label>
-                            <Form.Control as="select">
-                                {this.state.vehicles.map(vehicle => {
-                                    return (
-                                        <option key={vehicle}>{vehicle}</option>
-                                    );
-                                })}
-                            </Form.Control>
-                        </Row>
-                        <Row>
-                            <Col>
-                                <Form.Check
-                                    type="checkbox"
-                                    id="checkbox_deaths"
-                                    label="Deaths"
-                                ></Form.Check>
-                            </Col>
-                            <Col>
-                                <Form.Check
-                                    type="checkbox"
-                                    id="checkbox_seriouslyinjured"
-                                    label="Seriously Injured"
-                                ></Form.Check>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Form.Label>Weather conditions</Form.Label>
-                            <Form.Control as="select">
-                                {this.state.weatherconditions.map(condition => {
-                                    return (
-                                        <option key={condition}>
-                                            {condition}
-                                        </option>
-                                    );
-                                })}
-                            </Form.Control>
-                        </Row>
-                    </Form>
-                </Row>
-                */}
+               
                 <Row>
                     <Button onClick={this.props._confirmFilter}>
                         Confirm Filter
