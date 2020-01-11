@@ -22,6 +22,36 @@ export default class FilterOverlay extends Component {
     }
 
     render() {
+        function Selector(props) {
+            return (
+                <div id={`select${props.name}`} className="switchContainer">
+                    Select {props.name} <br />
+                    {props.options.map((opt, i, arr) => {
+                        return (
+                            <span>
+                                <input
+                                    type="checkbox"
+                                    id={`${props.name}${i}`}
+                                    value={`${opt}`}
+                                />
+                                <label
+                                    htmlFor={`${props.name}${i}`}
+                                    className={
+                                        i === 0
+                                            ? "left"
+                                            : i === arr.length - 1
+                                            ? "right"
+                                            : ""
+                                    }
+                                >
+                                    {opt}
+                                </label>
+                            </span>
+                        );
+                    })}
+                </div>
+            );
+        }
         return (
             <Container className="filter-panel">
                 <Row>
@@ -56,37 +86,46 @@ export default class FilterOverlay extends Component {
                 </Row>
                 <hr />
                 <Row>
-                    <div id="selectMonths" className="switchContainer">
-                        <input type="checkbox" id="monthJan" value="Jan" />
-                        <label htmlFor="monthJan" className="left">
-                            Jan
-                        </label>
-                        <input type="checkbox" id="monthFeb" value="Feb" />
-                        <label htmlFor="monthFeb">Feb</label>
-                        <input type="checkbox" id="monthMar" value="Mar" />
-                        <label htmlFor="monthMar">Mar</label>
-                        <input type="checkbox" id="monthApr" value="Apr" />
-                        <label htmlFor="monthApr">Apr</label>
-                        <input type="checkbox" id="monthMay" value="May" />
-                        <label htmlFor="monthMay">May</label>
-                        <input type="checkbox" id="monthJun" value="Jun" />
-                        <label htmlFor="monthJun">Jun</label>
-                        <input type="checkbox" id="monthJul" value="Jul" />
-                        <label htmlFor="monthJul">Jul</label>
-                        <input type="checkbox" id="monthAug" value="Aug" />
-                        <label htmlFor="monthAug">Aug</label>
-                        <input type="checkbox" id="monthSep" value="Sep" />
-                        <label htmlFor="monthSep">Sep</label>
-                        <input type="checkbox" id="monthOct" value="Oct" />
-                        <label htmlFor="monthOct">Oct</label>
-                        <input type="checkbox" id="monthNov" value="Nov" />
-                        <label htmlFor="monthNov">Nov</label>
-                        <input type="checkbox" id="monthDec" value="Dec" />
-                        <label htmlFor="monthDec" className="right">
-                            Dec
-                        </label>
-                    </div>
+                    <Selector
+                        name="Years"
+                        options={[2015, 2016, 2017, 2018]}
+                    ></Selector>
                 </Row>
+                <Row>
+                    <Selector
+                        name="Months"
+                        options={[
+                            "Jan",
+                            "Feb",
+                            "Mar",
+                            "Apr",
+                            "May",
+                            "Jun",
+                            "Jul",
+                            "Aug",
+                            "Sep",
+                            "Oct",
+                            "Nov",
+                            "Dec"
+                        ]}
+                    ></Selector>
+                </Row>
+                <Row>
+                    <Selector
+                        name="Days"
+                        options={[
+                            "Mon",
+                            "Tue",
+                            "Wed",
+                            "Thu",
+                            "Fri",
+                            "Sat",
+                            "Sun"
+                        ]}
+                    ></Selector>
+                </Row>
+                <Row>Select time (slider missing here)</Row>
+
                 {/* 
                 <Row>
                     <Form>
