@@ -11,7 +11,7 @@ import GL from '@luma.gl/constants';
 import throttle from 'lodash.throttle';
 import bikeonly from '../../data/bike-only.json'
 
-const librariesAnimation = { enterProgress: 0 ,duration:5000};
+const librariesAnimation = { enterProgress: 0 ,duration:10000};
 
 const updateLayers = throttle(function updateLayersRaw(that,bike) {
   const layers = [];
@@ -54,7 +54,7 @@ const DATA_URL = {
   ACCIDENTS:
     "https://raw.githubusercontent.com/Thiemann96/GeoinformationInSociety/dump_database/web-app/src/data/bike-only.json?token=AELUZUW7LX5SDNQESOHRBX26DNIFM",
   BUILDINGS:
-    "https://raw.githubusercontent.com/Thiemann96/GeoinformationInSociety/master/src/muenster_buildings.json?token=AELUZUUORODVEKNMRTORCT26DNCEE"
+    "https://raw.githubusercontent.com/Thiemann96/GeoinformationInSociety/master/web-app/src/muenster_buildings.json?token=AELUZUVPEFLIZT3SXLSPGB26ETSOO"
 };
 
 const longitudeDelayScale = scaleLinear().domain(extent(bikeonly,d=>d.lon)).range([1,0]);
