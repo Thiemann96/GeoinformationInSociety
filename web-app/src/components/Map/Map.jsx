@@ -11,7 +11,7 @@ import GL from '@luma.gl/constants';
 import throttle from 'lodash.throttle';
 import bikeonly from '../../data/bike-only.json'
 
-const librariesAnimation = { enterProgress: 0 ,duration:10000};
+const librariesAnimation = { enterProgress: 0 ,duration:2000};
 
 const updateLayers = throttle(function updateLayersRaw(that,bike) {
   const layers = [];
@@ -21,7 +21,7 @@ const updateLayers = throttle(function updateLayersRaw(that,bike) {
     getPosition: d => [d.lon,d.lat],
     getFillColor: [250, 100, 200],
     getRadius: 50,
-    radiusMinPixels: 3,
+    radiusMinPixels: 1,
 
     // specify how far we are through the animation (value between 0 and 1)
     animationProgress: librariesAnimation.enterProgress,
@@ -47,6 +47,7 @@ const updateLayers = throttle(function updateLayersRaw(that,bike) {
     // TODO: may be a bug, but this is required to prevent transitions from restarting
     // viewState: deck.viewState,
   });
+
 }, 8);
 
 
@@ -71,8 +72,8 @@ class Map extends Component {
         pitch: 0,
         bearing: 0,
       },
+      animate:false,
       interactionState:{},
-      data: [{sourcePosition: [-122.41669, 37.7853], targetPosition: [-122.41669, 37.781]}],
       mapBoxToken:'pk.eyJ1IjoiZXRoaWUxMCIsImEiOiJjazQyeXlxNGcwMjk3M2VvYmw2NHU4MDRvIn0.nYOmVGARhLOULQ550LyUYA',
       accidents:[]
     }
@@ -81,7 +82,9 @@ class Map extends Component {
     this._toggleBuildings = this._toggleBuildings.bind(this);
     this._confirmFilter = this._confirmFilter.bind(this);
     this._resetFilter = this._resetFilter.bind(this);
+    this._playAnimation = this._playAnimation.bind(this);
     this._animate = this._animate.bind(this);
+    this._renderLayers = this._renderLayers.bind(this);
   }
 
   _animate(){
@@ -91,6 +94,13 @@ class Map extends Component {
       targets: librariesAnimation,
       enterProgress: 1,
       easing: 'linear',
+      begin:function(anim){
+        console.log("begin");
+      },
+      complete:function(anim){
+        console.log("end");
+        that.setState({animate:false,layers:[]})
+      },
       update() {
         // each tick, update the DeckGL layers with new values
         updateLayers(that,that.state.accidents);
@@ -122,7 +132,14 @@ class Map extends Component {
       showBuildings:e.target.checked
     })
   }
-  
+  _playAnimation(){
+    this.setState({layers:[]})
+    this.setState(()=>{
+      return{
+        animate:true }
+    })
+    this._animate();
+  }
   // Uses new filter options and sends new request
   _confirmFilter(filterObject){
     console.log(filterObject);
@@ -145,67 +162,68 @@ class Map extends Component {
     .then(response=>response.json())
     .then(accidents=>this.setState({accidents}))
   }
+
   _renderLayers() {
     const {
       accidents = DATA_URL.ACCIDENTS,
       buildings = DATA_URL.BUILDINGS,
     } = this.props;
 
-    return [
-      // This is only needed when using shadow effects
-      // returns the 3dbuildings layer
-      this.state.showBuildings ? 
-      new PolygonLayer({
-        id: 'buildings',
-        data: buildings,
-        extruded: true,
-        wireframe: false,
-        opacity: 1,
-        getPolygon: f => f.polygon,
-        getElevation: f => f.height,
-        getFillColor: [255, 255, 0]
-      }):null,
-      this.state.showAccidentsLayer ? 
-      new ScatterplotLayer({
-        data:this.state.accidents,
-        id:'accidentsLayer',
-        getPosition:d=>[d.lon,d.lat],
-        getRadius:5,
-        getFillColor:[255,0,0],
-        opacity:1
-      }):null,
-      this.state.showHeatmapLayer?
-      new HeatmapLayer({
-        data:accidents,
-        id:'heatmapLayer',
-        pickable:false,
-        getPosition:d=>[d.lon,d.lat],
-        getWeight:1,
-        radiusPixels:30,
-        intensity : 1,
-        threshold : 0.03
-      }):null
-    ];
-  }
+    return[
+        // This is only needed when using shadow effects
+        // returns the 3dbuildings layer
+        this.state.showBuildings ? 
+        new PolygonLayer({
+          id: 'buildings',
+          data: buildings,
+          extruded: true,
+          wireframe: false,
+          opacity: 1,
+          getPolygon: f => f.polygon,
+          getElevation: f => f.height,
+          getFillColor: [255, 255, 0]
+        }):null,
+        this.state.showAccidentsLayer ? 
+        new ScatterplotLayer({
+          data:this.state.accidents,
+          id:'accidentsLayer',
+          getPosition:d=>[d.lon,d.lat],
+          getRadius:5,
+          getFillColor:[255,0,0],
+          opacity:1
+        }):null,
+        this.state.showHeatmapLayer?
+        new HeatmapLayer({
+          data:this.state.accidents,
+          id:'heatmapLayer',
+          pickable:false,
+          getPosition:d=>[d.lon,d.lat],
+          getWeight:1,
+          radiusPixels:30,
+          intensity : 1,
+          threshold : 0.03
+        }):null
+      ]
+  };
   
   render() {
-    let librariesLayer = this.state.layers
-
-
-    return (
+     return (
       <Fragment>
       <DeckGL
         ref = {React.createRef()}
         initialViewState={this.state.viewState}
         controller={true}
-        layers={this.state.layers}
+        layers={  
+          this.state.animate?  
+          this.state.layers
+        : this._renderLayers()}
       >
         <StaticMap   
                 mapStyle="mapbox://styles/mapbox/dark-v9"
                 mapboxApiAccessToken={this.state.mapBoxToken}/>
         </DeckGL>
         <Overlay 
-                _animate={this._animate}
+                _animate={this._playAnimation}
                 _toggleBuildings={this._toggleBuildings} _toggleHeatMap={this._toggleHeatMap} _toggleAccidents={this._toggleAccidents}
                 datalength = {this.state.accidents.length}
                 _confirmFilter = {this._confirmFilter}
