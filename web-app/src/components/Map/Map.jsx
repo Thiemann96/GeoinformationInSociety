@@ -4,7 +4,6 @@ import DeckGL from '@deck.gl/react';
 import {ScatterplotLayer,PolygonLayer} from '@deck.gl/layers';
 import Overlay from '../Overlays/Overlay'
 import {HeatmapLayer} from '@deck.gl/aggregation-layers'
-import librariesData from './libraries.json'
 import { extent, scaleLinear } from 'd3';
 import DelayedPointLayer from './DelayedPointLayer';
 import anime from 'animejs'
@@ -14,11 +13,11 @@ import bikeonly from '../../data/bike-only.json'
 
 const librariesAnimation = { enterProgress: 0 ,duration:10000};
 
-const updateLayers = throttle(function updateLayersRaw(that) {
+const updateLayers = throttle(function updateLayersRaw(that,bike) {
   const layers = [];
   const librariesLayer = new DelayedPointLayer({
     id: 'points-layer',
-    data: bikeonly,
+    data: bike,
     getPosition: d => [d.lon,d.lat],
     getFillColor: [250, 100, 200],
     getRadius: 50,
@@ -29,17 +28,17 @@ const updateLayers = throttle(function updateLayersRaw(that) {
 
     // specify the delay factor for each point (value between 0 and 1)
     getDelayFactor: d => {
-      return longitudeDelayScale(d.lon)},
-    parameters: {
-      // prevent flicker from z-fighting
-      [GL.DEPTH_TEST]: false,
+      return longitudeDelayScale(d.lon)}
+    // parameters: {
+    //   // prevent flicker from z-fighting
+    //   [GL.DEPTH_TEST]: false,
 
-      // turn on additive blending to make them look more glowy
-      [GL.BLEND]: true,
-      [GL.BLEND_SRC_RGB]: GL.ONE,
-      [GL.BLEND_DST_RGB]: GL.ONE,
-      [GL.BLEND_EQUATION]: GL.FUNC_ADD,
-    },
+    //   // turn on additive blending to make them look more glowy
+    //   [GL.BLEND]: true,
+    //   [GL.BLEND_SRC_RGB]: GL.ONE,
+    //   [GL.BLEND_DST_RGB]: GL.ONE,
+    //   [GL.BLEND_EQUATION]: GL.FUNC_ADD,
+    // },
   });
   layers.push(librariesLayer);
 
@@ -94,10 +93,10 @@ class Map extends Component {
       easing: 'linear',
       update() {
         // each tick, update the DeckGL layers with new values
-        updateLayers(that);
+        updateLayers(that,that.state.accidents);
       },
     });
-    updateLayers(that);
+    updateLayers(that,that.state.accidents);
     
   }
   componentDidMount(){
