@@ -60,12 +60,16 @@ class Map extends Component {
   }
   
   // Uses new filter options and sends new request
-  _confirmFilter(){
+  _confirmFilter(filterObject){
+    console.log(filterObject);
+    // localhost:9000/hooks/accidents-by-time/date-from=2016-12-19%2017:50:00&date-to=2017-12-19%2017:52:00&min-lon=7.6305772757&            max-lon=10.7305772757&min-lat=51.9468186&max-lat=54.9468186
     // url needs to be changed to the hook that we provide
-    let url = 'http://0.0.0.0:9000/hooks/random-accident'
-    fetch(url)
-    .then(response=>response.json())
-    .then(accidents=>this.setState({accidents}))
+
+    // let url = 'http://0.0.0.0:9000/hooks/accidents-by-time?date-from='+filterObject.datefrom+'&date-to='+filterObject.dateTo+'&min-lon='+filterObject.minLon+'&max-lon='+filterObject.maxLon+'&min-lat='+filterObject.minLat+'&max-lat='+filterObject.maxLat;
+
+    // fetch(url)
+    // .then(response=>response.json())
+    // .then(accidents=>this.setState({accidents}))
 
   }
   _resetFilter(){
