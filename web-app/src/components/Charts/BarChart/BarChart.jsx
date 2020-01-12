@@ -19,19 +19,59 @@ export default class BarChart extends Component {
 	}
 
 	drawChart() {
+		console.log(this.state.accidents);
+
+		// this should be set dynamically:
+		const aggregateBy = "day_of_week"; // options are: "year", "day_of_week", "hour_of_day"
+
 		// prepare data
-		const data = this.state.accidents
-			.map(d => d.time_of_day)
-			.filter(d => d !== null)
-			.map(d => d.slice(0, 2));
-		// nest by hour
-		var nested = d3
-			.nest()
-			.key(d => d)
-			.entries(data)
-			.map(d => ({ hour: +d.key, count: d.values.length }))
-			.sort((a, b) => a.hour > b.hour);
-		console.log(data, nested);
+		switch (aggregateBy) {
+			case "year":
+				var data = this.state.accidents
+					.map(d => d.date)
+					.filter(d => d !== null)
+					.map(d => d.slice(0, 4));
+				// nest by year
+				var nested = d3
+					.nest()
+					.key(d => d)
+					.entries(data)
+					.map(d => ({ bin: +d.key, count: d.values.length }))
+					.sort((a, b) => a.bin > b.bin);
+				console.log(data, nested);
+				break;
+			case "day_of_week":
+				var data = this.state.accidents
+					.map(d => d.date)
+					.filter(d => d !== null)
+					.map(getDay);
+				// nest by day
+				var nested = d3
+					.nest()
+					.key(d => d)
+					.entries(data)
+					.map(d => ({ bin: d.key, count: d.values.length }))
+					.sort((a, b) => sortByWeekday(a.bin, b.bin));
+				console.log(data, nested);
+				break;
+			case "hour_of_day":
+				var data = this.state.accidents
+					.map(d => d.time_of_day)
+					.filter(d => d !== null)
+					.map(d => d.slice(0, 2));
+				// nest by hour
+				var nested = d3
+					.nest()
+					.key(d => d)
+					.entries(data)
+					.map(d => ({ bin: +d.key, count: d.values.length }))
+					.sort((a, b) => a.bin > b.bin);
+				console.log(data, nested);
+				break;
+			default:
+				console.log("invalid option");
+			// code block
+		}
 
 		// set chart margins + dimensions
 		const margin = { left: 40, right: 0, top: 0, bottom: 15 };
@@ -77,14 +117,21 @@ export default class BarChart extends Component {
 			.attr("height", (d, i) => y(0) - y(d.count))
 			.attr("fill", "steelblue");
 
-		// svg.selectAll("text")
-		// 	.data(data)
-		// 	.enter()
-		// 	.append("text")
-		// 	.text(d => d)
-		// 	.attr("x", (d, i) => i * (barWidth + barDist) + barWidth / 2)
-		// 	.attr("y", (d, i) => this.props.height - 10 * d - 3)
-		// 	.attr("text-anchor", "middle");
+		function getDay(str) {
+			// takes string of format "2017-12-19" and returns day of the week
+			var parser = d3.timeParse("%Y-%m-%d");
+			var formatter = d3.timeFormat("%a"); // abbreviated day of week
+			return formatter(parser(str));
+		}
+
+		function sortByWeekday(a, b) {
+			var ordering = {}, // map for efficient lookup of sortIndex
+				sortOrder = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+			for (var i = 0; i < sortOrder.length; i++)
+				ordering[sortOrder[i]] = i;
+
+			return ordering[a] - ordering[b];
+		}
 	}
 
 	render() {
