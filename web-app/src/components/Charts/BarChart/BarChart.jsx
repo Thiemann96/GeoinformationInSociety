@@ -2,9 +2,14 @@ import React, { Component } from "react";
 import * as d3 from "d3";
 
 export default class BarChart extends Component {
+	constructor(props){
+        super(props)
+        this.state = {
+        }
+    }
 	componentDidMount() {
-		this.drawChart();
 		this._getData();
+
 	}
 	
 	_getData(){
@@ -12,12 +17,11 @@ export default class BarChart extends Component {
 		fetch(url)
 		.then(response=>response.json())
 		.then(accidents=>this.setState({accidents}))
-		.then(()=>console.log(this.state.accidents))
+		.then(()=>this.drawChart())
 	}
 
 	drawChart() {
-		const data = [12, 5, 6, 6, 9, 10];
-
+		const data = this.state.accidents;
 		const barDist = 10;
 		const barWidth =
 			(this.props.width - (data.length - 1) * barDist) / data.length;
