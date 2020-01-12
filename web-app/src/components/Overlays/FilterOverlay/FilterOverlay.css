@@ -3,7 +3,7 @@
     top: 0;
     left: 0;
     background: #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     padding: 12px 24px;
     margin: 20px;
     font-size: 13px;
@@ -11,5 +11,41 @@
     color: #6b6b76;
     text-transform: uppercase;
     outline: none;
-  }
-  
+}
+
+/*styles for switch buttons*/
+
+.switchContainer {
+    display: inline-block;
+}
+
+.switchContainer input[type="radio"],
+.switchContainer input[type="checkbox"] {
+    display: none;
+}
+
+.switchContainer input[type="radio"] + label,
+.switchContainer input[type="checkbox"] + label {
+    padding: 5px 2px;
+    margin: 1px;
+    background-color: #ddd;
+}
+
+.switchContainer input[type="radio"] + label:hover,
+.switchContainer input[type="checkbox"] + label:hover {
+    /*border-bottom: solid 2px black;*/
+}
+
+.switchContainer input[type="radio"]:checked + label,
+.switchContainer input[type="checkbox"]:checked + label {
+    background-color: #347bb6;
+    color: #fff;
+}
+
+.switchContainer .left {
+    border-radius: 5px 0 0 5px;
+}
+
+.switchContainer .right {
+    border-radius: 0 5px 5px 0;
+}

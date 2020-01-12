@@ -1,84 +1,220 @@
-import React, {Component} from 'react';
-import {Container,Row,Col,InputGroup,Button,Form} from 'react-bootstrap';
-import './FilterOverlay.css'
+import React, { Component } from "react";
+import { Container, Row, Col, InputGroup, Button, Form } from "react-bootstrap";
+import "./FilterOverlay.css";
 
+var filterObject = {
+    days: [],
+    months: [],
+    years: []
+};
 
-export default class FilterOverlay extends Component{
-
-    constructor(props){
-        super(props)
+export default class FilterOverlay extends Component {
+    constructor(props) {
+        super(props);
         this.state = {
-            vehicles:["pedestrian","bicycle","small-moped","moped","motorcycle","car","lorry","omnibus","other"],
-            weatherconditions:["rainy","sunny","foggy","snow"]
-        }
+            vehicles: [
+                "pedestrian",
+                "bicycle",
+                "small-moped",
+                "moped",
+                "motorcycle",
+                "car",
+                "lorry",
+                "omnibus",
+                "other"
+            ],
+            weatherconditions: ["rainy", "sunny", "foggy", "snow"]
+        };
+        this._handleDays = this._handleDays.bind(this);
+        this._handleMonths = this._handleMonths.bind(this);
+        this._handleYears = this._handleYears.bind(this);
+        this._handleAggregation = this._handleAggregation.bind(this);
     }
-    
 
-    render(){
-        return(
+    _handleMonths(e) {
+        // check if clicked months is already in the array
+        let bool = filterObject.months.includes(e.target.value);
+        bool // contains item
+            ? (filterObject.months = filterObject.months.filter(
+                  month => month !== e.target.value
+              ))
+            : // doesnt contain
+              filterObject.months.push(e.target.value);
+    }
+    _handleDays(e) {
+        // check if clicked months is already in the array
+        let bool = filterObject.days.includes(e.target.value);
+        bool // contains item
+            ? (filterObject.days = filterObject.days.filter(
+                  day => day !== e.target.value
+              ))
+            : // doesnt contain
+              filterObject.days.push(e.target.value);
+    }
+    _handleYears(e) {
+        // check if clicked months is already in the array
+        let bool = filterObject.years.includes(e.target.value);
+        bool // contains item
+            ? (filterObject.years = filterObject.years.filter(
+                  year => year !== e.target.value
+              ))
+            : // doesnt contain
+              filterObject.years.push(e.target.value);
+    }
+    _handleAggregation(e) {
+        // TO DO
+    }
+    render() {
+        function Selector(props) {
+            return (
+                <div id={`select${props.name}`} className="switchContainer">
+                    Select {props.name} <br />
+                    {props.options.map((opt, i, arr) => {
+                        return (
+                            <span>
+                                <input
+                                    type={props.inputtype}
+                                    id={`${props.name}${i}`}
+                                    name={props.name}
+                                    value={`${opt}`}
+                                    onChange={props.onChange}
+                                />
+                                <label
+                                    htmlFor={`${props.name}${i}`}
+                                    className={
+                                        i === 0
+                                            ? "left"
+                                            : i === arr.length - 1
+                                            ? "right"
+                                            : ""
+                                    }
+                                >
+                                    {opt}
+                                </label>
+                            </span>
+                        );
+                    })}
+                </div>
+            );
+        }
+        return (
             <Container className="filter-panel">
                 <Row>
-                <h2>Filter options</h2>
-                <p>Filter the visualised dataset</p>
+                    <h2>Filter options</h2>
+                    <p>Filter the visualised dataset</p>
                 </Row>
-                <hr/>
+                <hr />
                 <Row>
                     <InputGroup>
-                        <label>3D Layer</label><InputGroup.Checkbox onChange={this.props._toggleBuildings}></InputGroup.Checkbox>
-                        <label>Accident Layer</label><InputGroup.Checkbox onChange={this.props._toggleAccidents}></InputGroup.Checkbox>
-                        <label>Heatmap</label><InputGroup.Checkbox onChange={this.props._toggleHeatMap}></InputGroup.Checkbox>
+                        <label>
+                            <InputGroup.Checkbox
+                                onChange={this.props._toggleBuildings}
+                            ></InputGroup.Checkbox>
+                            3D Layer
+                        </label>
+
+                        <label>
+                            <InputGroup.Checkbox
+                                onChange={this.props._toggleAccidents}
+                            ></InputGroup.Checkbox>
+                            Accident Layer
+                        </label>
+
+                        <label>
+                            {" "}
+                            <InputGroup.Checkbox
+                                onChange={this.props._toggleHeatMap}
+                            ></InputGroup.Checkbox>
+                            Heatmap
+                        </label>
                     </InputGroup>
                 </Row>
-                <hr/>
+                <hr />
                 <Row>
-                    <Form>
-                        <Row>
-                            <Col>
-                            <Form.Label>From</Form.Label>
-                                <Form.Control type="date"></Form.Control>
-                            </Col>
-                            <Col>
-                            <Form.Label>To</Form.Label>
-                                <Form.Control type="date"></Form.Control>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col>
-                                <Form.Label>Type of accident</Form.Label>
-                                <Form.Control></Form.Control>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Form.Label>Type of vehicle</Form.Label>
-                            <Form.Control as="select">
-                                {this.state.vehicles.map((vehicle)=>{
-                                    return <option key={vehicle}>{vehicle}</option>
-                                })}
-                            </Form.Control>
-                        </Row>
-                        <Row>
-                            <Col>
-                                <Form.Check type="checkbox" id="checkbox_deaths" label="Deaths"></Form.Check>
-                            </Col>
-                            <Col>
-                                <Form.Check type="checkbox" id="checkbox_seriouslyinjured" label="Seriously Injured"></Form.Check>
-                            </Col>
-                        </Row>
-                        <Row>
-                        <Form.Label>Weather conditions</Form.Label>
-                            <Form.Control as="select">
-                                {this.state.weatherconditions.map((condition)=>{
-                                    return <option key={condition}>{condition}</option>
-                                })}
-                            </Form.Control>
-                        </Row>
-                    </Form>
+                    <Selector
+                        name="Years"
+                        inputtype="checkbox"
+                        options={[
+                            2007,
+                            2008,
+                            2009,
+                            2010,
+                            2011,
+                            2012,
+                            2013,
+                            2014,
+                            2015,
+                            2016,
+                            2017,
+                            2018
+                        ]}
+                        onChange={this._handleYears}
+                    ></Selector>
                 </Row>
                 <Row>
-                    <Button onClick={this.props._confirmFilter}>Confirm Filter</Button>
-                    <Button onClick={this.props._resetFilter}>Reset Filter</Button>
+                    <Selector
+                        name="Months"
+                        inputtype="checkbox"
+                        options={[
+                            "Jan",
+                            "Feb",
+                            "Mar",
+                            "Apr",
+                            "May",
+                            "Jun",
+                            "Jul",
+                            "Aug",
+                            "Sep",
+                            "Oct",
+                            "Nov",
+                            "Dec"
+                        ]}
+                        onChange={this._handleMonths}
+                    ></Selector>
+                </Row>
+                <Row>
+                    <Selector
+                        name="Days"
+                        inputtype="checkbox"
+                        options={[
+                            "Mon",
+                            "Tue",
+                            "Wed",
+                            "Thu",
+                            "Fri",
+                            "Sat",
+                            "Sun"
+                        ]}
+                        onChange={this._handleDays}
+                    ></Selector>
+                </Row>
+                <Row>Select time (slider missing here)</Row>
+
+                <Row>
+                    <Button
+                        onClick={() => this.props._confirmFilter(filterObject)}
+                    >
+                        Confirm Filter
+                    </Button>
+                    <Button onClick={this.props._resetFilter}>
+                        Reset Filter
+                    </Button>
+                </Row>
+                <hr />
+                <Row>
+                    <Selector
+                        name="Aggregation"
+                        inputtype="radio"
+                        options={[
+                            "Year",
+                            "Month",
+                            "Day of week",
+                            "Hour of day"
+                        ]}
+                        onChange={this._handleAggregation}
+                    ></Selector>
                 </Row>
             </Container>
-        )
+        );
     }
 }
