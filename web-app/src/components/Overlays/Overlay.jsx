@@ -1,25 +1,28 @@
-import React, {Component} from 'react';
-import {Container,Row,Col} from 'react-bootstrap';
-import FilterOverlay from './FilterOverlay/FilterOverlay'
-import ChartOverlay from './ChartOverlay/ChartOverlay'
+import React, { Component } from "react";
+import { Container, Row, Col } from "react-bootstrap";
+import FilterOverlay from "./FilterOverlay/FilterOverlay";
+import ChartOverlay from "./ChartOverlay/ChartOverlay";
 
-export default class Overlay extends Component{
-    constructor(props){
-        super(props)
-        this.state = {
-        }
+export default class Overlay extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {};
     }
 
-    componentDidMount(){
-    }
+    componentDidMount() {}
 
-    render(){
-        return(
+    render() {
+        return (
             <Container className="control-panel">
-                <FilterOverlay _resetFilter={this.props._resetFilter} _confirmFilter={this.props._confirmFilter} _toggleHeatMap = {this.props._toggleHeatMap} _toggleAccidents = {this.props._toggleAccidents} _toggleBuildings = {this.props._toggleBuildings}/>
-                <ChartOverlay   datalength = {this.props.datalength} />
+                <FilterOverlay
+                    _resetFilter={this.props._resetFilter}
+                    _confirmFilter={this.props._confirmFilter}
+                    _toggleHeatMap={this.props._toggleHeatMap}
+                    _toggleAccidents={this.props._toggleAccidents}
+                    _toggleBuildings={this.props._toggleBuildings}
+                />
+                <ChartOverlay datalength={this.props.datalength} />
             </Container>
-        )
+        );
     }
-
 }
