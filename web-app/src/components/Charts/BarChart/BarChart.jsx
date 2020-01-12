@@ -22,7 +22,9 @@ export default class BarChart extends Component {
 		console.log(this.state.accidents);
 
 		// this should be set dynamically:
-		const aggregateBy = "day_of_week"; // options are: "year", "day_of_week", "hour_of_day"
+		const aggregateBy = "day_of_week";
+		// const aggregateBy = "hour_of_day";
+		// const aggregateBy = "year";
 
 		// prepare data
 		switch (aggregateBy) {
@@ -74,7 +76,7 @@ export default class BarChart extends Component {
 		}
 
 		// set chart margins + dimensions
-		const margin = { left: 40, right: 0, top: 0, bottom: 15 };
+		const margin = { left: 40, right: 0, top: 0, bottom: 20 };
 		const dim = {
 			height: this.props.height - margin.top - margin.bottom,
 			width: this.props.width - margin.left - margin.right
@@ -99,13 +101,26 @@ export default class BarChart extends Component {
 		const barDist = 2;
 		const barWidth =
 			(dim.width - (nested.length - 1) * barDist) / nested.length;
+		var x = d3
+			.scaleBand()
+			.domain(d3.range(nested.length))
+			.range([0, dim.width])
+			.padding(0.1);
 		var y = d3
 			.scaleLinear()
 			.domain([0, d3.max(nested, d => d.count)])
 			.range([dim.height, 0]);
 
-		// vertical axis
+		// axes
 		g.append("g").call(d3.axisLeft(y));
+		g.append("g")
+			.attr("transform", "translate(0," + dim.height + ")")
+			.call(
+				d3
+					.axisBottom(x)
+					.tickFormat(i => nested[i].bin)
+					.tickSizeOuter(0)
+			);
 
 		g.selectAll("rect")
 			.data(nested)
