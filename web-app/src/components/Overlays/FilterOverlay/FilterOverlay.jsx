@@ -28,6 +28,7 @@ export default class FilterOverlay extends Component {
         this._handleDays = this._handleDays.bind(this);
         this._handleMonths = this._handleMonths.bind(this);
         this._handleYears = this._handleYears.bind(this);
+        this._handleAggregation = this._handleAggregation.bind(this);
     }
 
     _handleMonths(e) {
@@ -60,6 +61,9 @@ export default class FilterOverlay extends Component {
             : // doesnt contain
               filterObject.years.push(e.target.value);
     }
+    _handleAggregation(e) {
+        // TO DO
+    }
     render() {
         function Selector(props) {
             return (
@@ -67,10 +71,11 @@ export default class FilterOverlay extends Component {
                     Select {props.name} <br />
                     {props.options.map((opt, i, arr) => {
                         return (
-                            <span style={{ backgroundColor: "red" }}>
+                            <span>
                                 <input
-                                    type="checkbox"
+                                    type={props.inputtype}
                                     id={`${props.name}${i}`}
+                                    name={props.name}
                                     value={`${opt}`}
                                     onChange={props.onChange}
                                 />
@@ -128,13 +133,28 @@ export default class FilterOverlay extends Component {
                 <Row>
                     <Selector
                         name="Years"
-                        options={[2015, 2016, 2017, 2018]}
+                        inputtype="checkbox"
+                        options={[
+                            2007,
+                            2008,
+                            2009,
+                            2010,
+                            2011,
+                            2012,
+                            2013,
+                            2014,
+                            2015,
+                            2016,
+                            2017,
+                            2018
+                        ]}
                         onChange={this._handleYears}
                     ></Selector>
                 </Row>
                 <Row>
                     <Selector
                         name="Months"
+                        inputtype="checkbox"
                         options={[
                             "Jan",
                             "Feb",
@@ -155,6 +175,7 @@ export default class FilterOverlay extends Component {
                 <Row>
                     <Selector
                         name="Days"
+                        inputtype="checkbox"
                         options={[
                             "Mon",
                             "Tue",
@@ -178,6 +199,20 @@ export default class FilterOverlay extends Component {
                     <Button onClick={this.props._resetFilter}>
                         Reset Filter
                     </Button>
+                </Row>
+                <hr />
+                <Row>
+                    <Selector
+                        name="Aggregation"
+                        inputtype="radio"
+                        options={[
+                            "Year",
+                            "Month",
+                            "Day of week",
+                            "Hour of day"
+                        ]}
+                        onChange={this._handleAggregation}
+                    ></Selector>
                 </Row>
             </Container>
         );
