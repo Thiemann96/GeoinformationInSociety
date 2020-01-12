@@ -127,6 +127,7 @@ export default class FilterOverlay extends Component {
                             ></InputGroup.Checkbox>
                             Heatmap
                         </label>
+                        <Button onClick={this.props._animate}>Play animation</Button>
                     </InputGroup>
                 </Row>
                 <hr />
