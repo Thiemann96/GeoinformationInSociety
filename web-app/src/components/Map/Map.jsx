@@ -11,11 +11,11 @@ import GL from '@luma.gl/constants';
 import throttle from 'lodash.throttle';
 import bikeonly from '../../data/bike-only.json'
 
-const librariesAnimation = { enterProgress: 0 ,duration:2000};
+const librariesAnimation = { enterProgress: 0 ,duration:5000};
 
 const updateLayers = throttle(function updateLayersRaw(that,bike) {
   const layers = [];
-  const librariesLayer = new DelayedPointLayer({
+  const accidentLayer = new DelayedPointLayer({
     id: 'points-layer',
     data: bike,
     getPosition: d => [d.lon,d.lat],
@@ -40,12 +40,12 @@ const updateLayers = throttle(function updateLayersRaw(that,bike) {
     //   [GL.BLEND_EQUATION]: GL.FUNC_ADD,
     // },
   });
-  layers.push(librariesLayer);
+  layers.push(accidentLayer);
 
   that.setState({
     layers,
     // TODO: may be a bug, but this is required to prevent transitions from restarting
-    // viewState: deck.viewState,
+     viewState: that.state.viewState,
   });
 
 }, 8);
@@ -133,7 +133,6 @@ class Map extends Component {
     })
   }
   _playAnimation(){
-    this.setState({layers:[]})
     this.setState(()=>{
       return{
         animate:true }
@@ -210,7 +209,6 @@ class Map extends Component {
      return (
       <Fragment>
       <DeckGL
-        ref = {React.createRef()}
         initialViewState={this.state.viewState}
         controller={true}
         layers={  
