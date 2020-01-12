@@ -26,7 +26,8 @@
 
 .switchContainer input[type="radio"] + label,
 .switchContainer input[type="checkbox"] + label {
-    padding: 5px 3px;
+    padding: 5px 2px;
+    margin: 1px;
     background-color: #ddd;
 }
 

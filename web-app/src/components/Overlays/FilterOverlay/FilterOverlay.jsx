@@ -2,12 +2,11 @@ import React, { Component } from "react";
 import { Container, Row, Col, InputGroup, Button, Form } from "react-bootstrap";
 import "./FilterOverlay.css";
 
-var filterObject = 
-    {
-        days:[],
-        months:[],
-        years:[]
-    }
+var filterObject = {
+    days: [],
+    months: [],
+    years: []
+};
 
 export default class FilterOverlay extends Component {
     constructor(props) {
@@ -24,37 +23,47 @@ export default class FilterOverlay extends Component {
                 "omnibus",
                 "other"
             ],
-            weatherconditions: ["rainy", "sunny", "foggy", "snow"],
-
+            weatherconditions: ["rainy", "sunny", "foggy", "snow"]
         };
         this._handleDays = this._handleDays.bind(this);
         this._handleMonths = this._handleMonths.bind(this);
         this._handleYears = this._handleYears.bind(this);
+        this._handleAggregation = this._handleAggregation.bind(this);
     }
 
-    _handleMonths(e){
+    _handleMonths(e) {
         // check if clicked months is already in the array
-        let bool = filterObject.months.includes(e.target.value)
-        bool ? // contains item
-                filterObject.months = filterObject.months.filter(month=> month !== e.target.value)
-             :  // doesnt contain
-                filterObject.months.push(e.target.value);
+        let bool = filterObject.months.includes(e.target.value);
+        bool // contains item
+            ? (filterObject.months = filterObject.months.filter(
+                  month => month !== e.target.value
+              ))
+            : // doesnt contain
+              filterObject.months.push(e.target.value);
     }
-    _handleDays(e){
+    _handleDays(e) {
         // check if clicked months is already in the array
-        let bool = filterObject.days.includes(e.target.value)
-        bool ? // contains item
-                filterObject.days = filterObject.days.filter(day=> day !== e.target.value)
-             :  // doesnt contain
-                filterObject.days.push(e.target.value);
-            }
-    _handleYears(e){
+        let bool = filterObject.days.includes(e.target.value);
+        bool // contains item
+            ? (filterObject.days = filterObject.days.filter(
+                  day => day !== e.target.value
+              ))
+            : // doesnt contain
+              filterObject.days.push(e.target.value);
+    }
+    _handleYears(e) {
         // check if clicked months is already in the array
-        let bool = filterObject.years.includes(e.target.value)
-        bool ? // contains item
-                filterObject.years = filterObject.years.filter(year=> year !== e.target.value)
-             :  // doesnt contain
-                filterObject.years.push(e.target.value);    }
+        let bool = filterObject.years.includes(e.target.value);
+        bool // contains item
+            ? (filterObject.years = filterObject.years.filter(
+                  year => year !== e.target.value
+              ))
+            : // doesnt contain
+              filterObject.years.push(e.target.value);
+    }
+    _handleAggregation(e) {
+        // TO DO
+    }
     render() {
         function Selector(props) {
             return (
@@ -62,12 +71,13 @@ export default class FilterOverlay extends Component {
                     Select {props.name} <br />
                     {props.options.map((opt, i, arr) => {
                         return (
-                            <span style={{backgroundColor:'red'}}>
+                            <span>
                                 <input
-                                    type="checkbox"
+                                    type={props.inputtype}
                                     id={`${props.name}${i}`}
+                                    name={props.name}
                                     value={`${opt}`}
-                                    onChange = {props.onChange}
+                                    onChange={props.onChange}
                                 />
                                 <label
                                     htmlFor={`${props.name}${i}`}
@@ -124,13 +134,28 @@ export default class FilterOverlay extends Component {
                 <Row>
                     <Selector
                         name="Years"
-                        options={[2015, 2016, 2017, 2018]}
-                        onChange = {this._handleYears}
+                        inputtype="checkbox"
+                        options={[
+                            2007,
+                            2008,
+                            2009,
+                            2010,
+                            2011,
+                            2012,
+                            2013,
+                            2014,
+                            2015,
+                            2016,
+                            2017,
+                            2018
+                        ]}
+                        onChange={this._handleYears}
                     ></Selector>
                 </Row>
                 <Row>
                     <Selector
                         name="Months"
+                        inputtype="checkbox"
                         options={[
                             "Jan",
                             "Feb",
@@ -145,12 +170,13 @@ export default class FilterOverlay extends Component {
                             "Nov",
                             "Dec"
                         ]}
-                        onChange = {this._handleMonths}
+                        onChange={this._handleMonths}
                     ></Selector>
                 </Row>
                 <Row>
                     <Selector
                         name="Days"
+                        inputtype="checkbox"
                         options={[
                             "Mon",
                             "Tue",
@@ -160,19 +186,34 @@ export default class FilterOverlay extends Component {
                             "Sat",
                             "Sun"
                         ]}
-                        onChange = {this._handleDays}
+                        onChange={this._handleDays}
                     ></Selector>
                 </Row>
                 <Row>Select time (slider missing here)</Row>
 
-               
                 <Row>
-                    <Button onClick={()=>this.props._confirmFilter(filterObject)}>
+                    <Button
+                        onClick={() => this.props._confirmFilter(filterObject)}
+                    >
                         Confirm Filter
                     </Button>
                     <Button onClick={this.props._resetFilter}>
                         Reset Filter
                     </Button>
+                </Row>
+                <hr />
+                <Row>
+                    <Selector
+                        name="Aggregation"
+                        inputtype="radio"
+                        options={[
+                            "Year",
+                            "Month",
+                            "Day of week",
+                            "Hour of day"
+                        ]}
+                        onChange={this._handleAggregation}
+                    ></Selector>
                 </Row>
             </Container>
         );

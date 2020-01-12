@@ -50,33 +50,34 @@ const updateLayers = throttle(function updateLayersRaw(that,bike) {
 
 }, 8);
 
-
 const DATA_URL = {
-  ACCIDENTS:'https://raw.githubusercontent.com/Thiemann96/GeoinformationInSociety/dump_database/web-app/src/data/bike-only.json?token=AELUZUW7LX5SDNQESOHRBX26DNIFM',
+  ACCIDENTS:
+    "https://raw.githubusercontent.com/Thiemann96/GeoinformationInSociety/dump_database/web-app/src/data/bike-only.json?token=AELUZUW7LX5SDNQESOHRBX26DNIFM",
   BUILDINGS:
-'https://raw.githubusercontent.com/Thiemann96/GeoinformationInSociety/master/src/muenster_buildings.json?token=AELUZUUORODVEKNMRTORCT26DNCEE'
+    "https://raw.githubusercontent.com/Thiemann96/GeoinformationInSociety/master/src/muenster_buildings.json?token=AELUZUUORODVEKNMRTORCT26DNCEE"
 };
 
 const longitudeDelayScale = scaleLinear().domain(extent(bikeonly,d=>d.lon)).range([1,0]);
 
 class Map extends Component {
-  constructor(props){
-    super(props)
+  constructor(props) {
+    super(props);
     this.state = {
-      viewState:{
+      viewState: {
         longitude: 7.615322135118181,
         latitude: 51.96970534849527,
         // longitude:-78.8006344148876,
         // latitude:39.09086893888812,
         zoom: 12,
         pitch: 0,
-        bearing: 0,
+        bearing: 0
       },
       animate:false,
       interactionState:{},
       mapBoxToken:'pk.eyJ1IjoiZXRoaWUxMCIsImEiOiJjazQyeXlxNGcwMjk3M2VvYmw2NHU4MDRvIn0.nYOmVGARhLOULQ550LyUYA',
       accidents:[]
     }
+
     this._toggleAccidents = this._toggleAccidents.bind(this);
     this._toggleHeatMap = this._toggleHeatMap.bind(this);
     this._toggleBuildings = this._toggleBuildings.bind(this);
@@ -109,28 +110,29 @@ class Map extends Component {
     updateLayers(that,that.state.accidents);
     
   }
-  componentDidMount(){
-    let url ='http://0.0.0.0:9000/hooks/bikes';
+
+  // fetches all accidents from the server running locally
+  componentDidMount() {
+    let url = "http://0.0.0.0:9000/hooks/bikes";
     fetch(url)
-    .then(response=>response.json())
-    .then(accidents=>this.setState({accidents}))
-
+      .then(response => response.json())
+      .then(accidents => this.setState({ accidents }));
   }
 
-  _toggleHeatMap(e){
+  _toggleHeatMap(e) {
     this.setState({
-      showHeatmapLayer:e.target.checked
-    })
+      showHeatmapLayer: e.target.checked
+    });
   }
-  _toggleAccidents(e){
+  _toggleAccidents(e) {
     this.setState({
-      showAccidentsLayer:e.target.checked
-    })
+      showAccidentsLayer: e.target.checked
+    });
   }
-  _toggleBuildings(e){
+  _toggleBuildings(e) {
     this.setState({
-      showBuildings:e.target.checked
-    })
+      showBuildings: e.target.checked
+    });
   }
   _playAnimation(){
     this.setState(()=>{
@@ -139,8 +141,9 @@ class Map extends Component {
     })
     this._animate();
   }
+
   // Uses new filter options and sends new request
-  _confirmFilter(filterObject){
+  _confirmFilter(filterObject) {
     console.log(filterObject);
     // localhost:9000/hooks/accidents-by-time/date-from=2016-12-19%2017:50:00&date-to=2017-12-19%2017:52:00&min-lon=7.6305772757&            max-lon=10.7305772757&min-lat=51.9468186&max-lat=54.9468186
     // url needs to be changed to the hook that we provide
@@ -150,22 +153,22 @@ class Map extends Component {
     // fetch(url)
     // .then(response=>response.json())
     // .then(accidents=>this.setState({accidents}))
-
   }
 
   
 
   _resetFilter(){
     let url ='http://0.0.0.0:9000/hooks/bikes';
+
     fetch(url)
-    .then(response=>response.json())
-    .then(accidents=>this.setState({accidents}))
+      .then(response => response.json())
+      .then(accidents => this.setState({ accidents }));
   }
 
   _renderLayers() {
     const {
       accidents = DATA_URL.ACCIDENTS,
-      buildings = DATA_URL.BUILDINGS,
+      buildings = DATA_URL.BUILDINGS
     } = this.props;
 
     return[
@@ -226,9 +229,10 @@ class Map extends Component {
                 datalength = {this.state.accidents.length}
                 _confirmFilter = {this._confirmFilter}
                 _resetFilter  = {this._resetFilter}
+
         />
-        </Fragment>
-      );
+      </Fragment>
+    );
   }
 }
-export default Map
+export default Map;
