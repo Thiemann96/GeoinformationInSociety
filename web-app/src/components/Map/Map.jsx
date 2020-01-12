@@ -4,6 +4,51 @@ import DeckGL from '@deck.gl/react';
 import {ScatterplotLayer,PolygonLayer} from '@deck.gl/layers';
 import Overlay from '../Overlays/Overlay'
 import {HeatmapLayer} from '@deck.gl/aggregation-layers'
+import librariesData from './libraries.json'
+import { extent, scaleLinear } from 'd3';
+import DelayedPointLayer from './DelayedPointLayer';
+import anime from 'animejs'
+import GL from '@luma.gl/constants';
+import throttle from 'lodash.throttle';
+import bikeonly from '../../data/bike-only.json'
+
+const librariesAnimation = { enterProgress: 0 ,duration:10000};
+
+const updateLayers = throttle(function updateLayersRaw(that) {
+  const layers = [];
+  const librariesLayer = new DelayedPointLayer({
+    id: 'points-layer',
+    data: bikeonly,
+    getPosition: d => [d.lon,d.lat],
+    getFillColor: [250, 100, 200],
+    getRadius: 50,
+    radiusMinPixels: 3,
+
+    // specify how far we are through the animation (value between 0 and 1)
+    animationProgress: librariesAnimation.enterProgress,
+
+    // specify the delay factor for each point (value between 0 and 1)
+    getDelayFactor: d => {
+      return longitudeDelayScale(d.lon)},
+    parameters: {
+      // prevent flicker from z-fighting
+      [GL.DEPTH_TEST]: false,
+
+      // turn on additive blending to make them look more glowy
+      [GL.BLEND]: true,
+      [GL.BLEND_SRC_RGB]: GL.ONE,
+      [GL.BLEND_DST_RGB]: GL.ONE,
+      [GL.BLEND_EQUATION]: GL.FUNC_ADD,
+    },
+  });
+  layers.push(librariesLayer);
+
+  that.setState({
+    layers,
+    // TODO: may be a bug, but this is required to prevent transitions from restarting
+    // viewState: deck.viewState,
+  });
+}, 8);
 
 
 const DATA_URL = {
@@ -12,6 +57,8 @@ const DATA_URL = {
 'https://raw.githubusercontent.com/Thiemann96/GeoinformationInSociety/master/src/muenster_buildings.json?token=AELUZUUORODVEKNMRTORCT26DNCEE'
 };
 
+const longitudeDelayScale = scaleLinear().domain(extent(bikeonly,d=>d.lon)).range([1,0]);
+
 class Map extends Component {
   constructor(props){
     super(props)
@@ -19,7 +66,9 @@ class Map extends Component {
       viewState:{
         longitude: 7.615322135118181,
         latitude: 51.96970534849527,
-        zoom: 15,
+        // longitude:-78.8006344148876,
+        // latitude:39.09086893888812,
+        zoom: 12,
         pitch: 0,
         bearing: 0,
       },
@@ -33,8 +82,24 @@ class Map extends Component {
     this._toggleBuildings = this._toggleBuildings.bind(this);
     this._confirmFilter = this._confirmFilter.bind(this);
     this._resetFilter = this._resetFilter.bind(this);
+    this._animate = this._animate.bind(this);
   }
-  // fetches all accidents from the server running locally
+
+  _animate(){
+    let that = this;
+    const animation = anime({
+      duration: librariesAnimation.duration,
+      targets: librariesAnimation,
+      enterProgress: 1,
+      easing: 'linear',
+      update() {
+        // each tick, update the DeckGL layers with new values
+        updateLayers(that);
+      },
+    });
+    updateLayers(that);
+    
+  }
   componentDidMount(){
     let url ='http://0.0.0.0:9000/hooks/bikes';
     fetch(url)
@@ -72,6 +137,9 @@ class Map extends Component {
     // .then(accidents=>this.setState({accidents}))
 
   }
+
+  
+
   _resetFilter(){
     let url ='http://0.0.0.0:9000/hooks/bikes';
     fetch(url)
@@ -122,18 +190,24 @@ class Map extends Component {
   }
   
   render() {
+    let librariesLayer = this.state.layers
+
+
     return (
       <Fragment>
       <DeckGL
+        ref = {React.createRef()}
         initialViewState={this.state.viewState}
         controller={true}
-        layers={this._renderLayers()}
+        layers={this.state.layers}
       >
         <StaticMap   
                 mapStyle="mapbox://styles/mapbox/dark-v9"
                 mapboxApiAccessToken={this.state.mapBoxToken}/>
         </DeckGL>
-        <Overlay _toggleBuildings={this._toggleBuildings} _toggleHeatMap={this._toggleHeatMap} _toggleAccidents={this._toggleAccidents}
+        <Overlay 
+                _animate={this._animate}
+                _toggleBuildings={this._toggleBuildings} _toggleHeatMap={this._toggleHeatMap} _toggleAccidents={this._toggleAccidents}
                 datalength = {this.state.accidents.length}
                 _confirmFilter = {this._confirmFilter}
                 _resetFilter  = {this._resetFilter}
