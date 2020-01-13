@@ -1,21 +1,13 @@
 #!/bin/bash
 
 YEARS=${1:-}
-echo $YEARS
 MONTHS=${2:-}
-echo $MONTHS
 MIN_LON=${3:-}
-echo $MIN_LON
 MAX_LON=${4:-}
-echo $MAX_LON
 MIN_LAT=${5:-}
-echo $MIN_LAT
 MAX_LAT=${6:-}
-echo $MAX_LAT
 WEEKDAYS=${7:-}
-echo $WEEKDAYS
 TIME=${8:-}
-echo $TIME
 
 
 if [[ -z "$YEARS" ]]; then
@@ -43,16 +35,6 @@ if [[ -z "$MAX_LAT" ]]; then
     exit 0
 fi
 shift
-
-date="2009-12-03 15:35:11"
-saveIFS="$IFS"
-IFS="- :"
-date=($date)
-IFS="$saveIFS"
-for field in "${date[@]}"
-do
-    echo $field
-done
 
 RND=$(date +%s%N)
 
@@ -85,12 +67,15 @@ WITH
       time_of_day #>> '{}' AS dateTime
       FROM bikeAccidents
   )
-    SELECT row_to_json(result) FROM result 
-    WHERE
-        (EXTRACT (YEAR FROM dateDay::DATE))::int = ANY(\$1)
-        AND (EXTRACT(MONTH FROM dateDay::DATE))::int = ANY(\$2)
-        AND (EXTRACT(ISODOW FROM dateDay::DATE))::int = ANY(\$3)
-        AND (lon::numeric > \$4) AND (lon::numeric < \$5) AND (lat::numeric > \$6) AND (lat::numeric < \$7);
+  select array_to_json(array_agg(row_to_json(t)))
+    from (
+        SELECT * FROM result
+        WHERE
+            (EXTRACT (YEAR FROM dateDay::DATE))::int = ANY(\$1)
+            AND (EXTRACT(MONTH FROM dateDay::DATE))::int = ANY(\$2)
+            AND (EXTRACT(ISODOW FROM dateDay::DATE))::int = ANY(\$3)
+            AND (lon::numeric > \$4) AND (lon::numeric < \$5) AND (lat::numeric > \$6) AND (lat::numeric < \$7))
+             t;
   EXECUTE accidentsbytime$RND('$YEARS', '$MONTHS', '$WEEKDAYS', $MIN_LON,$MAX_LON,$MIN_LAT,$MAX_LAT);
 ")
 
