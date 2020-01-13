@@ -5,7 +5,11 @@ import "./FilterOverlay.css";
 var filterObject = {
     days: [],
     months: [],
-    years: []
+    years: [],
+    minLon: 0,
+    maxLon: 0,
+    minLat: 0,
+    maxLat: 0
 };
 
 export default class FilterOverlay extends Component {
@@ -29,6 +33,7 @@ export default class FilterOverlay extends Component {
         this._handleMonths = this._handleMonths.bind(this);
         this._handleYears = this._handleYears.bind(this);
         this._handleAggregation = this._handleAggregation.bind(this);
+        this._getCoordsAndExecute = this._getCoordsAndExecute.bind(this);
     }
 
     _handleMonths(e) {
@@ -61,6 +66,16 @@ export default class FilterOverlay extends Component {
             : // doesnt contain
             filterObject.years.push(e.target.value);
     }
+    _getCoordsAndExecute(e) {
+        // check if clicked months is already in the array
+        console.log("check")
+        filterObject.minLat = 50.1;
+        filterObject.maxLat = 55.90;
+        filterObject.minLon = 7.4;
+        filterObject.maxLon = 10.73;
+        this.props._confirmFilter(filterObject)
+    }
+
     _handleAggregation(e) {
         // TO DO
     }
@@ -193,7 +208,7 @@ export default class FilterOverlay extends Component {
 
                 <Row>
                     <Button
-                        onClick={() => this.props._confirmFilter(filterObject)}
+                        onClick={this._getCoordsAndExecute}
                     >
                         Confirm Filter
                     </Button>
