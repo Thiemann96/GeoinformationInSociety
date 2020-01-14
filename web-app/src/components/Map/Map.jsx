@@ -113,13 +113,20 @@ class Map extends Component {
 
     }
 
-    // fetches all accidents from the server running locally
-    componentDidMount() {
+    componentWillMount() {
         let url = "http://0.0.0.0:9000/hooks/bikes";
         fetch(url)
             .then(response => response.json())
             .then(accidents => this.setState({accidents}));
     }
+
+    // fetches all accidents from the server running locally
+    // componentDidMount() {
+    //    let url = "http://0.0.0.0:9000/hooks/bikes";
+    //    fetch(url)
+    //        .then(response => response.json())
+    //        .then(accidents => this.setState({accidents}));
+    // }
 
     _toggleHeatMap(e) {
         this.setState({
@@ -242,8 +249,7 @@ class Map extends Component {
                     _confirmFilter={this._confirmFilter}
                     _resetFilter={this._resetFilter}
                     filter={this.state.filter}
-
-
+                    accidents={this.state.accidents}
                 />
             </Fragment>
         );

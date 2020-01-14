@@ -7,20 +7,11 @@ export default class BarChart extends Component {
 		this.state = {};
 	}
 	componentDidMount() {
-		this._getData();
-	}
-
-	_getData() {
-		let url = "http://0.0.0.0:9000/hooks/bikes";
-		fetch(url)
-			.then(response => response.json())
-			.then(accidents => this.setState({ accidents }))
-			.then(() => this.drawChart());
+		this.drawChart();
 	}
 
 	drawChart() {
-		console.log(this.state.accidents);
-
+		console.log(this.props.accidents);
 		// this should be set dynamically:
 		const aggregateBy = "day_of_week";
 		// const aggregateBy = "hour_of_day";
@@ -29,7 +20,7 @@ export default class BarChart extends Component {
 		// prepare data
 		switch (aggregateBy) {
 			case "year":
-				var data = this.state.accidents
+				var data = this.props.accidents
 					.map(d => d.date)
 					.filter(d => d !== null)
 					.map(d => d.slice(0, 4));
@@ -43,7 +34,7 @@ export default class BarChart extends Component {
 				console.log(data, nested);
 				break;
 			case "day_of_week":
-				var data = this.state.accidents
+				var data = this.props.accidents
 					.map(d => d.date)
 					.filter(d => d !== null)
 					.map(getDay);
@@ -57,7 +48,7 @@ export default class BarChart extends Component {
 				console.log(data, nested);
 				break;
 			case "hour_of_day":
-				var data = this.state.accidents
+				var data = this.props.accidents
 					.map(d => d.time_of_day)
 					.filter(d => d !== null)
 					.map(d => d.slice(0, 2));

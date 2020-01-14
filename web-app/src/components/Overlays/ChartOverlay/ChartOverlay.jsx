@@ -14,12 +14,13 @@ export default class ChartOverlay extends Component {
     }
 
     render() {
+        console.log(this.props.accidents)
         return (
             <Container className="chart-panel">
                 <h2>Bike accidents</h2>
                 <div id="nAccidents" />
                 <BarChart
-                    data={this.state.data}
+                    accidents={this.props.accidents}
                     width={this.state.width}
                     height={this.state.height}
                 />
@@ -31,7 +32,7 @@ export default class ChartOverlay extends Component {
                 <h2>Additional graphs can be shown here</h2>
                 <div id="linechart" />
                 <LineChart
-                    data={this.state.data}
+                    data={this.props.data}
                     width={this.state.width}
                     height={this.state.height}
                 />
