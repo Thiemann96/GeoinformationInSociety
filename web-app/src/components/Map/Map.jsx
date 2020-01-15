@@ -10,7 +10,7 @@ import anime from 'animejs'
 // import GL from '@luma.gl/constants';
 import throttle from 'lodash.throttle';
 import bikeonly from '../../data/bike-only.json';
-import { EditableGeoJsonLayer, DrawPolygonMode } from 'nebula.gl';
+import { EditableGeoJsonLayer, DrawPolygonMode, ViewMode } from 'nebula.gl';
 
 
 
@@ -156,10 +156,9 @@ class Map extends Component {
   }
 
 
-  _toggleDrawPolygon(e) {
-    console.log(e.target.checked);
+  _toggleDrawPolygon() {
     this.setState({
-      showDrawLayer: e.target.checked
+      showDrawLayer: !(this.state.showDrawLayer)
     });
     this._renderLayers();
   }
@@ -235,7 +234,18 @@ class Map extends Component {
               myFeatureCollection: updatedData,
             });
           }
-        }) : null,
+        }) : new EditableGeoJsonLayer({
+          id: 'geojson-layer',
+          data: this.state.myFeatureCollection,
+          mode: ViewMode,
+          selectedFeatureIndexes,
+          onEdit: ({ updatedData }) => {
+            console.log(updatedData)
+            this.setState({
+              myFeatureCollection: updatedData,
+            });
+          }
+        }),
       this.state.showAccidentsLayer ?
         new ScatterplotLayer({
           data: this.state.accidents,

@@ -19,7 +19,7 @@ export default class BarChart extends Component {
 	}
 
 	drawChart() {
-		console.log(this.state.accidents);
+		// console.log(this.state.accidents);
 
 		// this should be set dynamically:
 		const aggregateBy = "day_of_week";
@@ -54,7 +54,7 @@ export default class BarChart extends Component {
 					.entries(data)
 					.map(d => ({ bin: d.key, count: d.values.length }))
 					.sort((a, b) => sortByWeekday(a.bin, b.bin));
-				console.log(data, nested);
+				// console.log(data, nested);
 				break;
 			case "hour_of_day":
 				var data = this.state.accidents

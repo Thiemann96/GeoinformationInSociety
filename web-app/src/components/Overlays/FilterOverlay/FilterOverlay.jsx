@@ -6,11 +6,7 @@ import "./FilterOverlay.css";
 var filterObject = {
     days: ["1", "2", "3", "4", "5", "6", "7"],
     months: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
-    years: [2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018],
-    minLon: 0,
-    maxLon: 0,
-    minLat: 0,
-    maxLat: 0
+    years: [2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018]
 };
 
 export default class FilterOverlay extends Component {
@@ -35,7 +31,6 @@ export default class FilterOverlay extends Component {
         this._handleMonths = this._handleMonths.bind(this);
         this._handleYears = this._handleYears.bind(this);
         this._handleAggregation = this._handleAggregation.bind(this);
-        this._getCoordsAndExecute = this._getCoordsAndExecute.bind(this);
     }
 
     _handleMonths(e) {
@@ -71,15 +66,6 @@ export default class FilterOverlay extends Component {
             filterObject.years.push(e.target.value);
     }
 
-    _getCoordsAndExecute(e) {
-        // PLACEHOLDER FOR BBOX FUNCTIONALITY
-        filterObject.minLat = 50.1;
-        filterObject.maxLat = 55.90;
-        filterObject.minLon = 7.4;
-        filterObject.maxLon = 10.73;
-        this.props._confirmFilter(filterObject)
-    }
-
     _handleAggregation(e) {
         // TO DO
     }
@@ -96,7 +82,7 @@ export default class FilterOverlay extends Component {
                             : checked = false;
                         return (
                             <span
-                            key={"key"+i}>
+                                key={"key" + i}>
                                 <input
                                     type={props.inputtype}
                                     id={`${props.name}${i}`}
@@ -140,12 +126,12 @@ export default class FilterOverlay extends Component {
                             3D Layer
                         </label>
 
-                        <label>
+                        {/* <label>
                             <InputGroup.Checkbox
                                 onChange={this.props._toggleDrawPolygon}
                             ></InputGroup.Checkbox>
                             Draw Pol
-                        </label>
+                        </label> */}
 
                         <label>
                             <InputGroup.Checkbox
@@ -161,6 +147,11 @@ export default class FilterOverlay extends Component {
                             ></InputGroup.Checkbox>
                             Heatmap
                         </label>
+                    </InputGroup>
+                </Row>
+                <Row>
+                    <InputGroup>
+                        <Button onClick={this.props._toggleDrawPolygon}>Set BBox</Button>
                         <Button onClick={this.props._animate}>Play animation</Button>
                     </InputGroup>
                 </Row>
@@ -227,7 +218,7 @@ export default class FilterOverlay extends Component {
 
                 <Row>
                     <Button
-                        onClick={this._getCoordsAndExecute}
+                        onClick={() => this.props._confirmFilter(filterObject)}
                     >
                         Confirm Filter
                     </Button>
