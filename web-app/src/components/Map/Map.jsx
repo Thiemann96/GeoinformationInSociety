@@ -7,7 +7,7 @@ import { HeatmapLayer } from '@deck.gl/aggregation-layers'
 import { extent, scaleLinear } from 'd3';
 import DelayedPointLayer from './DelayedPointLayer';
 import anime from 'animejs'
-import GL from '@luma.gl/constants';
+// import GL from '@luma.gl/constants';
 import throttle from 'lodash.throttle';
 import bikeonly from '../../data/bike-only.json';
 import { EditableGeoJsonLayer, DrawPolygonMode } from 'nebula.gl';
@@ -15,6 +15,7 @@ import { EditableGeoJsonLayer, DrawPolygonMode } from 'nebula.gl';
 
 
 const librariesAnimation = { enterProgress: 0, duration: 10000 };
+const longitudeDelayScale = scaleLinear().domain(extent(bikeonly, d => d.lon)).range([1, 0]);
 
 const updateLayers = throttle(function updateLayersRaw(that, bike) {
 
@@ -62,8 +63,6 @@ const DATA_URL = {
     "https://raw.githubusercontent.com/Thiemann96/GeoinformationInSociety/master/web-app/src/muenster_buildings.json?token=AELUZUVPEFLIZT3SXLSPGB26ETSOO"
 };
 
-const longitudeDelayScale = scaleLinear().domain(extent(bikeonly, d => d.lon)).range([1, 0]);
-
 class Map extends Component {
   constructor(props) {
     super(props);
@@ -104,7 +103,8 @@ class Map extends Component {
 
   _animate() {
     let that = this;
-    const animation = anime({
+    // const animation = anime({
+    anime({
       duration: librariesAnimation.duration,
       targets: librariesAnimation,
       enterProgress: 1,
@@ -119,7 +119,7 @@ class Map extends Component {
       update() {
         // each tick, update the DeckGL layers with new values
         updateLayers(that, that.state.accidents);
-      },
+      }
     });
     updateLayers(that, that.state.accidents);
 
@@ -204,7 +204,7 @@ class Map extends Component {
 
   _renderLayers() {
     const {
-      accidents = DATA_URL.ACCIDENTS,
+      // accidents = DATA_URL.ACCIDENTS,
       buildings = DATA_URL.BUILDINGS,
       selectedFeatureIndexes = []
     } = this.props;
@@ -265,7 +265,6 @@ class Map extends Component {
         <DeckGL
           initialViewState={this.state.viewState}
           controller={
-            true,
             this.state.showDrawLayer ?
               { doubleClickZoom: false }
               : { doubleClickZoom: true }
