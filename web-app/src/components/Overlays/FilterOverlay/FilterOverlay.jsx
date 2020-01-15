@@ -95,7 +95,8 @@ export default class FilterOverlay extends Component {
                             ? checked = true
                             : checked = false;
                         return (
-                            <span>
+                            <span
+                            key={"key"+i}>
                                 <input
                                     type={props.inputtype}
                                     id={`${props.name}${i}`}
