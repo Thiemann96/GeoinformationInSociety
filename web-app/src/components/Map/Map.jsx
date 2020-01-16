@@ -28,7 +28,9 @@ const updateLayers = throttle(function updateLayersRaw(that,bike) {
 
     // specify the delay factor for each point (value between 0 and 1)
     getDelayFactor: d => {
-      return longitudeDelayScale(d.lon)}
+      let date = new Date(d.date+"T"+d.time_of_day+".000Z");
+      // return longitudeDelayScale(d.lon)}
+      return timeDelayScale(date.getTime()/1000)}
     // parameters: {
     //   // prevent flicker from z-fighting
     //   [GL.DEPTH_TEST]: false,
@@ -57,7 +59,22 @@ const DATA_URL = {
     "https://raw.githubusercontent.com/Thiemann96/GeoinformationInSociety/master/src/muenster_buildings.json?token=AELUZUUORODVEKNMRTORCT26DNCEE"
 };
 
+
+      // 2015-01-04
+      // 20:45:00
+      // d.date +"T"+d.time_of_day+".000Z"
+      let date = new Date("2015-01-04T20:45:00.000Z")
+      let date2 = new Date("2016-01-04T20:45:00.000Z")
+      
+      console.log(date.getTime()/1000);
+      console.log(date2.getTime()/1000);
+
 const longitudeDelayScale = scaleLinear().domain(extent(bikeonly,d=>d.lon)).range([1,0]);
+const latitudeDelayScale = scaleLinear().domain(extent(bikeonly,d=>d.lat)).range([1,0]);
+const timeDelayScale = scaleLinear().domain(extent(bikeonly,d=>{
+  let date = new Date(d.date+"T"+d.time_of_day+".000Z");
+  return date.getTime()/1000;
+})).range([1,0]);
 
 class Map extends Component {
   constructor(props) {
@@ -117,6 +134,9 @@ class Map extends Component {
     fetch(url)
       .then(response => response.json())
       .then(accidents => this.setState({ accidents }));
+
+
+
   }
 
   _toggleHeatMap(e) {
