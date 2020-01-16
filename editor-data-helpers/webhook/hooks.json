@@ -52,11 +52,11 @@
     "pass-arguments-to-command": [
       {
         "source": "url",
-        "name": "date-to"
+        "name": "years"
       },
       {
         "source": "url",
-        "name": "date-from"
+        "name": "months"
       },
       {
         "source": "url",
@@ -73,6 +73,14 @@
       {
         "source": "url",
         "name": "max-lat"
+      },
+      {
+        "source": "url",
+        "name": "weekdays"
+      },
+      {
+        "source": "url",
+        "name": "time"
       }
     ]
   }

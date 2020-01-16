@@ -1,10 +1,10 @@
-import React,{Component,Fragment} from 'react';
+import React, {Component, Fragment} from 'react';
 import {StaticMap} from 'react-map-gl';
 import DeckGL from '@deck.gl/react';
-import {ScatterplotLayer,PolygonLayer} from '@deck.gl/layers';
+import {ScatterplotLayer, PolygonLayer} from '@deck.gl/layers';
 import Overlay from '../Overlays/Overlay'
 import {HeatmapLayer} from '@deck.gl/aggregation-layers'
-import { extent, scaleLinear } from 'd3';
+import {extent, scaleLinear} from 'd3';
 import DelayedPointLayer from './DelayedPointLayer';
 import anime from 'animejs'
 import GL from '@luma.gl/constants';
@@ -53,10 +53,10 @@ const updateLayers = throttle(function updateLayersRaw(that,bike) {
 }, 8);
 
 const DATA_URL = {
-  ACCIDENTS:
-    "https://raw.githubusercontent.com/Thiemann96/GeoinformationInSociety/dump_database/web-app/src/data/bike-only.json?token=AELUZUW7LX5SDNQESOHRBX26DNIFM",
-  BUILDINGS:
-    "https://raw.githubusercontent.com/Thiemann96/GeoinformationInSociety/master/src/muenster_buildings.json?token=AELUZUUORODVEKNMRTORCT26DNCEE"
+    ACCIDENTS:
+        "https://raw.githubusercontent.com/Thiemann96/GeoinformationInSociety/dump_database/web-app/src/data/bike-only.json?token=AELUZUW7LX5SDNQESOHRBX26DNIFM",
+    BUILDINGS:
+        "https://raw.githubusercontent.com/Thiemann96/GeoinformationInSociety/master/web-app/src/muenster_buildings.json?token=AELUZUVPEFLIZT3SXLSPGB26ETSOO"
 };
 
 const longitudeDelayScale = scaleLinear().domain(extent(bikeonly,d=>d.lon)).range([1,0]);
@@ -66,23 +66,35 @@ const timeDelayScale = scaleLinear().domain(extent(bikeonly,d=>{
   return date.getTime()/1000;
 })).range([1,0]);
 
+
 class Map extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      viewState: {
-        longitude: 7.615322135118181,
-        latitude: 51.96970534849527,
-        // longitude:-78.8006344148876,
-        // latitude:39.09086893888812,
-        zoom: 12,
-        pitch: 0,
-        bearing: 0
-      },
-      animate:false,
-      interactionState:{},
-      mapBoxToken:'pk.eyJ1IjoiZXRoaWUxMCIsImEiOiJjazQyeXlxNGcwMjk3M2VvYmw2NHU4MDRvIn0.nYOmVGARhLOULQ550LyUYA',
-      accidents:[]
+    constructor(props) {
+        super(props);
+        this.state = {
+            viewState: {
+                longitude: 7.615322135118181,
+                latitude: 51.96970534849527,
+                // longitude:-78.8006344148876,
+                // latitude:39.09086893888812,
+                zoom: 12,
+                pitch: 0,
+                bearing: 0
+            },
+            animate: false,
+            interactionState: {},
+            mapBoxToken: 'pk.eyJ1IjoiZXRoaWUxMCIsImEiOiJjazQyeXlxNGcwMjk3M2VvYmw2NHU4MDRvIn0.nYOmVGARhLOULQ550LyUYA',
+            accidents: [],
+            showAccidentsLayer: true
+        }
+
+        this._toggleAccidents = this._toggleAccidents.bind(this);
+        this._toggleHeatMap = this._toggleHeatMap.bind(this);
+        this._toggleBuildings = this._toggleBuildings.bind(this);
+        this._confirmFilter = this._confirmFilter.bind(this);
+        this._resetFilter = this._resetFilter.bind(this);
+        this._playAnimation = this._playAnimation.bind(this);
+        this._animate = this._animate.bind(this);
+        this._renderLayers = this._renderLayers.bind(this);
     }
 
     this._toggleAccidents = this._toggleAccidents.bind(this);
@@ -245,4 +257,5 @@ class Map extends Component {
     );
   }
 }
+
 export default Map;

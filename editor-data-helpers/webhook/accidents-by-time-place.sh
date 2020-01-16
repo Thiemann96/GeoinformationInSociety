@@ -1,23 +1,20 @@
 #!/bin/bash
 
-DATE_TO=${1:-}
-echo $DATE_TO
-DATE_FROM=${2:-}
-echo $DATE_FROM
+YEARS=${1:-}
+MONTHS=${2:-}
 MIN_LON=${3:-}
-echo $MIN_LON
 MAX_LON=${4:-}
-echo $MAX_LON
 MIN_LAT=${5:-}
-echo $MIN_LAT
 MAX_LAT=${6:-}
-echo $MAX_LAT
+WEEKDAYS=${7:-}
+TIME=${8:-}
 
-if [[ -z "$DATE_TO" ]]; then
+
+if [[ -z "$YEARS" ]]; then
     echo -n '{ "error": "missing latest-time url parameter", "missingParameter": true }'
     exit 0
 fi
-if [[ -z "$DATE_FROM" ]]; then
+if [[ -z "$MONTHS" ]]; then
     echo -n '{ "error": "missing most-recent-time url parameter", "missingParameter": true }'
     exit 0
 fi
@@ -42,7 +39,7 @@ shift
 RND=$(date +%s%N)
 
 RESULT=$(psql -qtAX ${POSTGRES_URL} -c "
-  PREPARE accidentsbytime$RND (text, text) AS
+  PREPARE accidentsbytime$RND (int[], int[], int[], numeric, numeric, numeric, numeric) AS
 WITH
     result AS (
       SELECT 
@@ -70,12 +67,16 @@ WITH
       time_of_day #>> '{}' AS dateTime
       FROM bikeAccidents
   )
-    SELECT row_to_json(result) FROM result 
-    WHERE
-         (dateDay::DATE + dateTime::TIME)::TIMESTAMP  < \$1::TIMESTAMP 
-        AND (dateDay::DATE + dateTime::TIME)::TIMESTAMP > \$2::TIMESTAMP
-        AND (lon::numeric > \$3) AND (lon::numeric < \$4) AND (lat::numeric > \$5) AND (lat::numeric < \$6);
-  EXECUTE accidentsbytime$RND('$DATE_TO', '$DATE_FROM', '$MIN_LON','$MAX_LON','$MIN_LAT','$MAX_LAT' );
+  select array_to_json(array_agg(row_to_json(t)))
+    from (
+        SELECT * FROM result
+        WHERE
+            (EXTRACT (YEAR FROM dateDay::DATE))::int = ANY(\$1)
+            AND (EXTRACT(MONTH FROM dateDay::DATE))::int = ANY(\$2)
+            AND (EXTRACT(ISODOW FROM dateDay::DATE))::int = ANY(\$3)
+            AND (lon::numeric > \$4) AND (lon::numeric < \$5) AND (lat::numeric > \$6) AND (lat::numeric < \$7))
+             t;
+  EXECUTE accidentsbytime$RND('$YEARS', '$MONTHS', '$WEEKDAYS', $MIN_LON,$MAX_LON,$MIN_LAT,$MAX_LAT);
 ")
 
 
