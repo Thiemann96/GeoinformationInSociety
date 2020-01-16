@@ -11,7 +11,7 @@ import GL from '@luma.gl/constants';
 import throttle from 'lodash.throttle';
 import bikeonly from '../../data/bike-only.json'
 
-const librariesAnimation = { enterProgress: 0 ,duration:5000};
+const librariesAnimation = { enterProgress: 0 ,duration:20000};
 
 const updateLayers = throttle(function updateLayersRaw(that,bike) {
   const layers = [];
@@ -58,16 +58,6 @@ const DATA_URL = {
   BUILDINGS:
     "https://raw.githubusercontent.com/Thiemann96/GeoinformationInSociety/master/src/muenster_buildings.json?token=AELUZUUORODVEKNMRTORCT26DNCEE"
 };
-
-
-      // 2015-01-04
-      // 20:45:00
-      // d.date +"T"+d.time_of_day+".000Z"
-      let date = new Date("2015-01-04T20:45:00.000Z")
-      let date2 = new Date("2016-01-04T20:45:00.000Z")
-      
-      console.log(date.getTime()/1000);
-      console.log(date2.getTime()/1000);
 
 const longitudeDelayScale = scaleLinear().domain(extent(bikeonly,d=>d.lon)).range([1,0]);
 const latitudeDelayScale = scaleLinear().domain(extent(bikeonly,d=>d.lat)).range([1,0]);
