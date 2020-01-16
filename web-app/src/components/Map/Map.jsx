@@ -96,17 +96,6 @@ class Map extends Component {
         this._animate = this._animate.bind(this);
         this._renderLayers = this._renderLayers.bind(this);
     }
-
-    this._toggleAccidents = this._toggleAccidents.bind(this);
-    this._toggleHeatMap = this._toggleHeatMap.bind(this);
-    this._toggleBuildings = this._toggleBuildings.bind(this);
-    this._confirmFilter = this._confirmFilter.bind(this);
-    this._resetFilter = this._resetFilter.bind(this);
-    this._playAnimation = this._playAnimation.bind(this);
-    this._animate = this._animate.bind(this);
-    this._renderLayers = this._renderLayers.bind(this);
-  }
-
   _animate(){
     let that = this;
     const animation = anime({
@@ -115,10 +104,8 @@ class Map extends Component {
       enterProgress: 1,
       easing: 'linear',
       begin:function(anim){
-        console.log("begin");
       },
       complete:function(anim){
-        console.log("end");
         that.setState({animate:false,layers:[]})
       },
       update() {
@@ -136,9 +123,6 @@ class Map extends Component {
     fetch(url)
       .then(response => response.json())
       .then(accidents => this.setState({ accidents }));
-
-
-
   }
 
   _toggleHeatMap(e) {
@@ -166,7 +150,6 @@ class Map extends Component {
 
   // Uses new filter options and sends new request
   _confirmFilter(filterObject) {
-    console.log(filterObject);
     // localhost:9000/hooks/accidents-by-time/date-from=2016-12-19%2017:50:00&date-to=2017-12-19%2017:52:00&min-lon=7.6305772757&            max-lon=10.7305772757&min-lat=51.9468186&max-lat=54.9468186
     // url needs to be changed to the hook that we provide
 
