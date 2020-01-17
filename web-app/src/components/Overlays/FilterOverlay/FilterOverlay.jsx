@@ -5,7 +5,7 @@ import "./FilterOverlay.css";
 var filterObject = {
     days: ["1", "2", "3", "4", "5", "6", "7"],
     months: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
-    years: [2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018],
+    years: ["2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018"],
     minLon: 0,
     maxLon: 0,
     minLat: 0,
@@ -163,18 +163,18 @@ export default class FilterOverlay extends Component {
                         name="Years"
                         inputtype="checkbox"
                         options={[
-                            {name: 2007, val: 2007},
-                            {name: 2008, val: 2008},
-                            {name: 2009, val: 2009},
-                            {name: 2010, val: 2010},
-                            {name: 2011, val: 2011},
-                            {name: 2012, val: 2012},
-                            {name: 2013, val: 2013},
-                            {name: 2014, val: 2014},
-                            {name: 2015, val: 2015},
-                            {name: 2016, val: 2016},
-                            {name: 2017, val: 2017},
-                            {name: 2018, val: 2018}
+                            {name: "2007", val: "2007"},
+                            {name: "2008", val: "2008"},
+                            {name: "2009", val: "2009"},
+                            {name: "2010", val: "2010"},
+                            {name: "2011", val: "2011"},
+                            {name: "2012", val: "2012"},
+                            {name: "2013", val: "2013"},
+                            {name: "2014", val: "2014"},
+                            {name: "2015", val: "2015"},
+                            {name: "2016", val: "2016"},
+                            {name: "2017", val: "2017"},
+                            {name: "2018", val: "2018"}
                         ]}
                         onChange={this._handleYears}
                     ></Selector>
