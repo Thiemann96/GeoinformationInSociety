@@ -85,8 +85,9 @@ class Map extends Component {
             interactionState: {},
             mapBoxToken: 'pk.eyJ1IjoiZXRoaWUxMCIsImEiOiJjazQyeXlxNGcwMjk3M2VvYmw2NHU4MDRvIn0.nYOmVGARhLOULQ550LyUYA',
             accidents: [],
-            showAccidentsLayer: true
-        }
+            showAccidentsLayer: true,
+            emptyResult: false
+        };
 
         this._toggleAccidents = this._toggleAccidents.bind(this);
         this._toggleHeatMap = this._toggleHeatMap.bind(this);
@@ -226,7 +227,19 @@ class Map extends Component {
 
         fetch(url)
             .then(response => response.json())
-            .then(accidents => this.setState({accidents}))
+            .then(accidents => {
+                if(accidents.length){
+                    this.setState({accidents});
+                    this.setState({
+                        emptyResult: false
+                    })
+                }
+                else{
+                    this.setState({
+                        emptyResult: true
+                    })
+                }
+            })
     }
 
     render() {
@@ -253,11 +266,11 @@ class Map extends Component {
                     _resetFilter={this._resetFilter}
                     filter={this.state.filter}
                     accidents={this.state.accidents}
+                    emptyResult={this.state.emptyResult}
                 />
             </Fragment>
         );
     }
-    chartOverlay
 }
 
 export default Map;

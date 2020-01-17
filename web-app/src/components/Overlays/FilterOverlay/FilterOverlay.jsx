@@ -95,7 +95,7 @@ export default class FilterOverlay extends Component {
                             : checked = false;
                         return (
                             <span
-                            key={"key"+i}>
+                                key={"key" + i}>
                                 <input
                                     type={props.inputtype}
                                     id={`${props.name}${i}`}
@@ -123,11 +123,26 @@ export default class FilterOverlay extends Component {
             );
         }
 
+        function EmptyResultMessage(props) {
+            var pStyle = {
+                color: 'red'
+            };
+            if (props.emptyResult === true) {
+                return <p style={pStyle}>
+                    The filters you set lead to an empty result.
+                    <br/>
+                    Please change your filters.
+                </p>
+            }
+            return <p></p>
+        }
+
         return (
             <Container className="filter-panel">
                 <Row>
                     <h2>Filter options</h2>
                     <p>Filter the visualised dataset</p>
+                    <EmptyResultMessage emptyResult={this.props.emptyResult}/>
                 </Row>
                 <hr/>
                 <Row>

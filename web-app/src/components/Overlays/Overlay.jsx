@@ -18,7 +18,7 @@ export default class Overlay extends Component {
                 <FilterOverlay _animate={this.props._animate} _resetFilter={this.props._resetFilter}
                                _confirmFilter={this.props._confirmFilter} _toggleHeatMap={this.props._toggleHeatMap}
                                _toggleAccidents={this.props._toggleAccidents}
-                               _toggleBuildings={this.props._toggleBuildings} filter={this.props.filter}/>
+                               _toggleBuildings={this.props._toggleBuildings} filter={this.props.filter} emptyResult={this.props.emptyResult}/>
                 <ChartOverlay datalength={this.props.datalength} accidents={this.props.accidents}/>
 
             </Container>
