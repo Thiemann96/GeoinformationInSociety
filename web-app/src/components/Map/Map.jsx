@@ -228,13 +228,12 @@ class Map extends Component {
         fetch(url)
             .then(response => response.json())
             .then(accidents => {
-                if(accidents.length){
+                if (accidents.length) {
                     this.setState({accidents});
                     this.setState({
                         emptyResult: false
                     })
-                }
-                else{
+                } else {
                     this.setState({
                         emptyResult: true
                     })

@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import {Container, Row, Col, InputGroup, Button, Form} from "react-bootstrap";
 import "./FilterOverlay.css";
 
-var filterObject = {
+let filterObject = {
     days: ["1", "2", "3", "4", "5", "6", "7"],
     months: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
     years: ["2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018"],
@@ -124,7 +124,7 @@ export default class FilterOverlay extends Component {
         }
 
         function EmptyResultMessage(props) {
-            var pStyle = {
+            let pStyle = {
                 color: 'red'
             };
             if (props.emptyResult === true) {
@@ -134,7 +134,7 @@ export default class FilterOverlay extends Component {
                     Please change your filters.
                 </p>
             }
-            return <p></p>
+            return <p/>
         }
 
         return (
@@ -150,7 +150,7 @@ export default class FilterOverlay extends Component {
                         <label>
                             <InputGroup.Checkbox
                                 onChange={this.props._toggleBuildings}
-                            ></InputGroup.Checkbox>
+                            />
                             3D Layer
                         </label>
 
@@ -158,7 +158,7 @@ export default class FilterOverlay extends Component {
                             <InputGroup.Checkbox
                                 onChange={this.props._toggleAccidents}
                                 checked
-                            ></InputGroup.Checkbox>
+                            />
                             Accident Layer
                         </label>
 
@@ -166,7 +166,7 @@ export default class FilterOverlay extends Component {
                             {" "}
                             <InputGroup.Checkbox
                                 onChange={this.props._toggleHeatMap}
-                            ></InputGroup.Checkbox>
+                            />
                             Heatmap
                         </label>
                         <Button onClick={this.props._animate}>Play animation</Button>
@@ -192,7 +192,7 @@ export default class FilterOverlay extends Component {
                             {name: "2018", val: "2018"}
                         ]}
                         onChange={this._handleYears}
-                    ></Selector>
+                    />
                 </Row>
                 <Row>
                     <Selector
@@ -213,7 +213,7 @@ export default class FilterOverlay extends Component {
                             {name: "Dec", val: "12"},
                         ]}
                         onChange={this._handleMonths}
-                    ></Selector>
+                    />
                 </Row>
                 <Row>
                     <Selector
@@ -229,7 +229,7 @@ export default class FilterOverlay extends Component {
                             {name: "Sun", val: "7"}
                         ]}
                         onChange={this._handleDays}
-                    ></Selector>
+                    />
                 </Row>
                 <Row>Select time (slider missing here)</Row>
 
@@ -255,7 +255,7 @@ export default class FilterOverlay extends Component {
                             {name: "Hour of day", val: "Hour of day"},
                         ]}
                         onChange={this._handleAggregation}
-                    ></Selector>
+                    />
                 </Row>
             </Container>
         );
