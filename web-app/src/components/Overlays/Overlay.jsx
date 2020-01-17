@@ -13,7 +13,6 @@ export default class Overlay extends Component {
     }
 
     render() {
-        console.log(this.props.accidents)
         return (
             <Container className="control-panel">
                 <FilterOverlay _animate={this.props._animate} _resetFilter={this.props._resetFilter}

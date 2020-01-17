@@ -7,7 +7,7 @@ export default class BarChart extends Component {
 		this.state = {};
 	}
 	componentDidMount() {
-		this.drawChart();
+		// this.drawChart();
 	}
 
 	drawChart() {
@@ -141,6 +141,8 @@ export default class BarChart extends Component {
 	}
 
 	render() {
+		if(this.props.accidents)
+			this.drawChart();
 		return <div id={"#" + this.props.id} />;
 	}
 }

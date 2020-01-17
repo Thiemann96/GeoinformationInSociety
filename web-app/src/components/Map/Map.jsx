@@ -157,8 +157,6 @@ class Map extends Component {
 
     // Uses new filter options and sends new request
     _confirmFilter(filterObject) {
-        console.log(filterObject);
-
         this.setState({
             filter: filterObject
         });
@@ -171,7 +169,6 @@ class Map extends Component {
         fetch(url)
             .then(response => response.json())
             .then(accidents => this.setState({accidents}))
-            .then(() => console.log(this.state.accidents))
     }
 
 
