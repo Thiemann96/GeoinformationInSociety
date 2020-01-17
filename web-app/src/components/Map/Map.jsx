@@ -98,6 +98,22 @@ class Map extends Component {
         this._renderLayers = this._renderLayers.bind(this);
     }
 
+    // fetches all accidents from the server running locally
+    // componentDidMount() {
+    //    let url = "http://0.0.0.0:9000/hooks/bikes";
+    //    fetch(url)
+    //        .then(response => response.json())
+    //        .then(accidents => this.setState({accidents}));
+    // }
+
+    // fetches all accidents from the server running locally
+    componentWillMount() {
+        let url = "http://0.0.0.0:9000/hooks/bikes";
+        fetch(url)
+            .then(response => response.json())
+            .then(accidents => this.setState({accidents}));
+    }
+
     _animate() {
         let that = this;
         const animation = anime({
@@ -196,14 +212,6 @@ class Map extends Component {
                 }) : null
         ]
     };
-
-    // fetches all accidents from the server running locally
-    // componentDidMount() {
-    //    let url = "http://0.0.0.0:9000/hooks/bikes";
-    //    fetch(url)
-    //        .then(response => response.json())
-    //        .then(accidents => this.setState({accidents}));
-    // }
 
     // Uses new filter options and sends new request
     _confirmFilter(filterObject) {
