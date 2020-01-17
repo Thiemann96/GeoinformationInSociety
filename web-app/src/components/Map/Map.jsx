@@ -10,9 +10,7 @@ import anime from 'animejs'
 import GL from '@luma.gl/constants';
 import throttle from 'lodash.throttle';
 import bikeonly from '../../data/bike-only.json'
-
 const librariesAnimation = { enterProgress: 0 ,duration:20000};
-
 const updateLayers = throttle(function updateLayersRaw(that,bike) {
   const layers = [];
   const accidentLayer = new DelayedPointLayer({
@@ -27,20 +25,10 @@ const updateLayers = throttle(function updateLayersRaw(that,bike) {
     animationProgress: librariesAnimation.enterProgress,
 
     // specify the delay factor for each point (value between 0 and 1)
-    getDelayFactor: d => {
-      let date = new Date(d.date+"T"+d.time_of_day+".000Z");
-      // return longitudeDelayScale(d.lon)}
-      return timeDelayScale(date.getTime()/1000)}
-    // parameters: {
-    //   // prevent flicker from z-fighting
-    //   [GL.DEPTH_TEST]: false,
-
-    //   // turn on additive blending to make them look more glowy
-    //   [GL.BLEND]: true,
-    //   [GL.BLEND_SRC_RGB]: GL.ONE,
-    //   [GL.BLEND_DST_RGB]: GL.ONE,
-    //   [GL.BLEND_EQUATION]: GL.FUNC_ADD,
-    // },
+    getDelayFactor: (d,index) => {
+    var x = scaleLinear().domain([0,bike.length]).range([1,0])(index.index);
+    return x
+    }
   });
   layers.push(accidentLayer);
 
@@ -58,13 +46,6 @@ const DATA_URL = {
     BUILDINGS:
         "https://raw.githubusercontent.com/Thiemann96/GeoinformationInSociety/master/web-app/src/muenster_buildings.json?token=AELUZUVPEFLIZT3SXLSPGB26ETSOO"
 };
-
-const longitudeDelayScale = scaleLinear().domain(extent(bikeonly,d=>d.lon)).range([1,0]);
-const latitudeDelayScale = scaleLinear().domain(extent(bikeonly,d=>d.lat)).range([1,0]);
-const timeDelayScale = scaleLinear().domain(extent(bikeonly,d=>{
-  let date = new Date(d.date+"T"+d.time_of_day+".000Z");
-  return date.getTime()/1000;
-})).range([1,0]);
 
 
 class Map extends Component {
@@ -123,9 +104,7 @@ class Map extends Component {
     let url = "http://0.0.0.0:9000/hooks/bikes";
     fetch(url)
       .then(response => response.json())
-      .then(accidents => this.setState({ accidents }));
-
-
+      .then(accidents => this.setState({ accidents }))
 
   }
 
