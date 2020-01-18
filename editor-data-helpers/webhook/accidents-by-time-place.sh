@@ -2,12 +2,9 @@
 
 YEARS=${1:-}
 MONTHS=${2:-}
-MIN_LON=${3:-}
-MAX_LON=${4:-}
-MIN_LAT=${5:-}
-MAX_LAT=${6:-}
-WEEKDAYS=${7:-}
-TIME=${8:-}
+WEEKDAYS=${3:-}
+TIME=${4:-}
+POLYGON=${5:-}
 
 
 if [[ -z "$YEARS" ]]; then
@@ -18,20 +15,12 @@ if [[ -z "$MONTHS" ]]; then
     echo -n '{ "error": "missing most-recent-time url parameter", "missingParameter": true }'
     exit 0
 fi
-if [[ -z "$MIN_LON" ]]; then
+if [[ -z "$WEEKDAYS" ]]; then
     echo -n '{ "error": "missing MIN_LON url parameter", "missingParameter": true }'
     exit 0
 fi
-if [[ -z "$MAX_LON" ]]; then
+if [[ -z "$POLYGON" ]]; then
     echo -n '{ "error": "missing MAX_LON url parameter", "missingParameter": true }'
-    exit 0
-fi
-if [[ -z "$MIN_LAT" ]]; then
-    echo -n '{ "error": "missing MIN_LAT url parameter", "missingParameter": true }'
-    exit 0
-fi
-if [[ -z "$MAX_LAT" ]]; then
-    echo -n '{ "error": "missing MAX_LAT url parameter", "missingParameter": true }'
     exit 0
 fi
 shift
@@ -39,7 +28,7 @@ shift
 RND=$(date +%s%N)
 
 RESULT=$(psql -qtAX ${POSTGRES_URL} -c "
-  PREPARE accidentsbytime$RND (int[], int[], int[], numeric, numeric, numeric, numeric) AS
+  PREPARE accidentsbytime$RND (int[], int[], int[], polygon) AS
 WITH
     result AS (
       SELECT 
@@ -74,9 +63,10 @@ WITH
             (EXTRACT (YEAR FROM dateDay::DATE))::int = ANY(\$1)
             AND (EXTRACT(MONTH FROM dateDay::DATE))::int = ANY(\$2)
             AND (EXTRACT(ISODOW FROM dateDay::DATE))::int = ANY(\$3)
-            AND (lon::numeric > \$4) AND (lon::numeric < \$5) AND (lat::numeric > \$6) AND (lat::numeric < \$7))
+            AND (\$4)::polygon @> POINT(cast (lon as double precision),cast (lat as double precision))
+        ORDER BY dateDay, dateTime ASC)
              t;
-  EXECUTE accidentsbytime$RND('$YEARS', '$MONTHS', '$WEEKDAYS', $MIN_LON,$MAX_LON,$MIN_LAT,$MAX_LAT);
+  EXECUTE accidentsbytime$RND('$YEARS', '$MONTHS', '$WEEKDAYS', '$POLYGON');
 ")
 
 

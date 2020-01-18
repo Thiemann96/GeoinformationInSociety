@@ -60,27 +60,15 @@
       },
       {
         "source": "url",
-        "name": "min-lon"
-      },
-      {
-        "source": "url",
-        "name": "max-lon"
-      },
-      {
-        "source": "url",
-        "name": "min-lat"
-      },
-      {
-        "source": "url",
-        "name": "max-lat"
-      },
-      {
-        "source": "url",
         "name": "weekdays"
       },
       {
         "source": "url",
         "name": "time"
+      },
+      {
+        "source": "url",
+        "name": "polygon"
       }
     ]
   }

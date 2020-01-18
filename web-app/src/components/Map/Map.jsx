@@ -189,14 +189,24 @@ class Map extends Component {
 
     // localhost:9000/hooks/accidents-by-time/date-from=2016-12-19%2017:50:00&date-to=2017-12-19%2017:52:00&min-lon=7.6305772757&            max-lon=10.7305772757&min-lat=51.9468186&max-lat=54.9468186
     // url needs to be changed to the hook that we provide
-    console.log(this.state.myFeatureCollection.features[0]);
+    let coordsArr = this.state.myFeatureCollection.features[0].geometry;
+    let coordsString ="(";
+    console.log(coordsArr)
+    if (coordsArr.type === "Polygon") {
+      console.log('check')
+      coordsArr.coordinates[0].forEach(element => {
+        coordsString = coordsString.concat("("+element[0]+","+ element[1]+"),");
+      });
+      coordsString = coordsString.slice(0, coordsString.length-1);
+      coordsString = coordsString.concat( ")");
+    }
+    console.log(coordsString)
+    let url = 'http://0.0.0.0:9000/hooks/accidents-by-time?years={' + filterObject.years.toString() + '}&months={' + filterObject.months.toString() + '}&weekdays={' + filterObject.days.toString() + '}&polygon='+coordsString;
 
-    // let url = 'http://0.0.0.0:9000/hooks/accidents-by-time?years={' + filterObject.years.toString() + '}&months={' + filterObject.months.toString() + '}&weekdays={' + filterObject.days.toString() + '}&min-lon=' + filterObject.minLon + '&max-lon=' + filterObject.maxLon + '&min-lat=' + filterObject.minLat + '&max-lat=' + filterObject.maxLat;
-
-    // fetch(url)
-    //   .then(response => response.json())
-    //   .then(accidents => this.setState({ accidents }))
-    //   .then(() => console.log(this.state.accidents))
+    fetch(url)
+      .then(response => response.json())
+      .then(accidents => this.setState({ accidents }))
+      .then(() => console.log(this.state.accidents))
   }
 
 
