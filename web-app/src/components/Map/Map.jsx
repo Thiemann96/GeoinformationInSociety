@@ -86,13 +86,15 @@ class Map extends Component {
             mapBoxToken: 'pk.eyJ1IjoiZXRoaWUxMCIsImEiOiJjazQyeXlxNGcwMjk3M2VvYmw2NHU4MDRvIn0.nYOmVGARhLOULQ550LyUYA',
             accidents: [],
             showAccidentsLayer: true,
-            emptyResult: false
+            emptyResult: false,
+            aggregation: "Day of week"
         };
 
         this._toggleAccidents = this._toggleAccidents.bind(this);
         this._toggleHeatMap = this._toggleHeatMap.bind(this);
         this._toggleBuildings = this._toggleBuildings.bind(this);
         this._confirmFilter = this._confirmFilter.bind(this);
+        this._confirmAggregation = this._confirmAggregation.bind(this);
         this._resetFilter = this._resetFilter.bind(this);
         this._playAnimation = this._playAnimation.bind(this);
         this._animate = this._animate.bind(this);
@@ -224,7 +226,6 @@ class Map extends Component {
         // url needs to be changed to the hook that we provide
 
         let url = 'http://0.0.0.0:9000/hooks/accidents-by-time?months={' + filterObject.months.toString() + '}&years={' + filterObject.years.toString() + '}&weekdays={' + filterObject.days.toString() + '}&min-lon=' + filterObject.minLon + '&max-lon=' + filterObject.maxLon + '&min-lat=' + filterObject.minLat + '&max-lat=' + filterObject.maxLat;
-        console.log(url)
         fetch(url)
             .then(response => response.json())
             .then(accidents => {
@@ -239,6 +240,12 @@ class Map extends Component {
                     })
                 }
             })
+    }
+
+    _confirmAggregation(aggrStr) {
+        this.setState({
+            aggregation: aggrStr
+        })
     }
 
     render() {
@@ -262,10 +269,12 @@ class Map extends Component {
                     _toggleAccidents={this._toggleAccidents}
                     datalength={this.state.accidents.length}
                     _confirmFilter={this._confirmFilter}
+                    _confirmAggregation={this._confirmAggregation}
                     _resetFilter={this._resetFilter}
                     filter={this.state.filter}
                     accidents={this.state.accidents}
                     emptyResult={this.state.emptyResult}
+                    aggregation={this.state.aggregation}
                 />
             </Fragment>
         );

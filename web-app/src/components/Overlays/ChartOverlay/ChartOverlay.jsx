@@ -22,6 +22,7 @@ export default class ChartOverlay extends Component {
                     accidents={this.props.accidents}
                     width={this.state.width}
                     height={this.state.height}
+                    aggregation={this.props.aggregation}
                 />
                 <span>
                     Number of displayed bike related accidents:

@@ -12,14 +12,18 @@ export default class BarChart extends Component {
     }
 
     drawChart() {
-        // this should be set dynamically:
-        const aggregateBy = "day_of_week";
+        // this should be set dynamically:#
+        /* TODO:
+            aggregate by this.props.aggregation
+            Getting 'undefined' error at the moment while changing aggregation if filters are set
+         */
+        let aggregateBy = "Day of week";
         // const aggregateBy = "hour_of_day";
         // const aggregateBy = "year";
 
         // prepare data
         switch (aggregateBy) {
-            case "year":
+            case "Year":
                 var data = this.props.accidents
                     .map(d => d.date)
                     .filter(d => d !== null)
@@ -33,7 +37,7 @@ export default class BarChart extends Component {
                     .sort((a, b) => a.bin > b.bin);
                 console.log(data, nested);
                 break;
-            case "day_of_week":
+            case "Day of week":
                 var data = this.props.accidents
                     .map(d => d.date)
                     .filter(d => d !== null)
@@ -46,7 +50,7 @@ export default class BarChart extends Component {
                     .map(d => ({bin: d.key, count: d.values.length}))
                     .sort((a, b) => sortByWeekday(a.bin, b.bin));
                 break;
-            case "hour_of_day":
+            case "Hour of day":
                 var data = this.props.accidents
                     .map(d => d.time_of_day)
                     .filter(d => d !== null)
@@ -140,7 +144,7 @@ export default class BarChart extends Component {
     }
 
     render() {
-        if (this.props.accidents)
+        if (this.props.accidents && this.props.aggregation)
             this.drawChart();
         return <div id={"#" + this.props.id}/>;
     }

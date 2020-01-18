@@ -12,6 +12,8 @@ let filterObject = {
     maxLat: 0
 };
 
+let chartAggregation = "Day of week";
+
 export default class FilterOverlay extends Component {
     constructor(props) {
         super(props);
@@ -80,7 +82,8 @@ export default class FilterOverlay extends Component {
     }
 
     _handleAggregation(e) {
-        // TO DO
+        chartAggregation = e.target.value;
+        this.props._confirmAggregation(chartAggregation);
     }
 
     render() {
@@ -89,10 +92,15 @@ export default class FilterOverlay extends Component {
                 <div id={`select${props.name}`} className="switchContainer">
                     Select {props.name} <br/>
                     {props.options.map((opt, i, arr) => {
-                        let checked;
-                        filterObject.years.includes(opt.val) || filterObject.months.includes(opt.val) || filterObject.days.includes(opt.val)
-                            ? checked = true
-                            : checked = false;
+                        let checked = false;
+                        if (filterObject.years.includes(opt.val) || filterObject.months.includes(opt.val) || filterObject.days.includes(opt.val)) {
+                            checked = true;
+                        }
+
+                        if (props.name === "Aggregation" && chartAggregation === opt.val) {
+                            checked = true;
+                        }
+
                         return (
                             <span
                                 key={"key" + i}>
