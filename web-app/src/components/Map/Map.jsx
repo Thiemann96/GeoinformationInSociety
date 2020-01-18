@@ -223,8 +223,8 @@ class Map extends Component {
         // localhost:9000/hooks/accidents-by-time/date-from=2016-12-19%2017:50:00&date-to=2017-12-19%2017:52:00&min-lon=7.6305772757&            max-lon=10.7305772757&min-lat=51.9468186&max-lat=54.9468186
         // url needs to be changed to the hook that we provide
 
-        let url = 'http://0.0.0.0:9000/hooks/accidents-by-time?years={' + filterObject.years.toString() + '}&months={' + filterObject.months.toString() + '}&weekdays={' + filterObject.days.toString() + '}&min-lon=' + filterObject.minLon + '&max-lon=' + filterObject.maxLon + '&min-lat=' + filterObject.minLat + '&max-lat=' + filterObject.maxLat;
-
+        let url = 'http://0.0.0.0:9000/hooks/accidents-by-time?months={' + filterObject.months.toString() + '}&years={' + filterObject.years.toString() + '}&weekdays={' + filterObject.days.toString() + '}&min-lon=' + filterObject.minLon + '&max-lon=' + filterObject.maxLon + '&min-lat=' + filterObject.minLat + '&max-lat=' + filterObject.maxLat;
+        console.log(url)
         fetch(url)
             .then(response => response.json())
             .then(accidents => {
