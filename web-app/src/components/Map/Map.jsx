@@ -11,7 +11,7 @@ import anime from 'animejs'
 import throttle from 'lodash.throttle';
 import bikeonly from '../../data/bike-only.json';
 import { EditableGeoJsonLayer, DrawPolygonMode, ViewMode } from 'nebula.gl';
-
+import buildingPolygon from '../../muenster_buildings.json'
 
 
 const librariesAnimation = { enterProgress: 0, duration: 10000 };
@@ -25,7 +25,7 @@ const updateLayers = throttle(function updateLayersRaw(that, bike) {
     data: bike,
     getPosition: d => [d.lon, d.lat],
     getFillColor: [250, 100, 200],
-    getRadius: 50,
+    getRadius: 10,
     radiusMinPixels: 1,
 
     // specify how far we are through the animation (value between 0 and 1)
@@ -35,16 +35,6 @@ const updateLayers = throttle(function updateLayersRaw(that, bike) {
     getDelayFactor: (d,index) => {
         var x = scaleLinear().domain([0,bike.length]).range([1,0])(index.index);
         return x    }
-    // parameters: {
-    //   // prevent flicker from z-fighting
-    //   [GL.DEPTH_TEST]: false,
-
-    //   // turn on additive blending to make them look more glowy
-    //   [GL.BLEND]: true,
-    //   [GL.BLEND_SRC_RGB]: GL.ONE,
-    //   [GL.BLEND_DST_RGB]: GL.ONE,
-    //   [GL.BLEND_EQUATION]: GL.FUNC_ADD,
-    // },
   });
   layers.push(accidentLayer);
 
@@ -56,12 +46,6 @@ const updateLayers = throttle(function updateLayersRaw(that, bike) {
 
 }, 8);
 
-const DATA_URL = {
-  ACCIDENTS:
-    "https://raw.githubusercontent.com/Thiemann96/GeoinformationInSociety/dump_database/web-app/src/data/bike-only.json?token=AELUZUW7LX5SDNQESOHRBX26DNIFM",
-  BUILDINGS:
-    "https://raw.githubusercontent.com/Thiemann96/GeoinformationInSociety/master/web-app/src/muenster_buildings.json?token=AELUZUVPEFLIZT3SXLSPGB26ETSOO"
-};
 
 class Map extends Component {
   constructor(props) {
@@ -80,7 +64,6 @@ class Map extends Component {
       interactionState: {},
       mapBoxToken: 'pk.eyJ1IjoiZXRoaWUxMCIsImEiOiJjazQyeXlxNGcwMjk3M2VvYmw2NHU4MDRvIn0.nYOmVGARhLOULQ550LyUYA',
       accidents: [],
-      showAccidentsLayer: true,
       myFeatureCollection: {
         type: 'FeatureCollection',
         features: [{
@@ -242,11 +225,8 @@ class Map extends Component {
 
   _renderLayers() {
     const {
-      // accidents = DATA_URL.ACCIDENTS,
-      buildings = DATA_URL.BUILDINGS,
-      selectedFeatureIndexes = []
+        selectedFeatureIndexes = []
     } = this.props;
-
 
     return [
       // This is only needed when using shadow effects
@@ -254,13 +234,13 @@ class Map extends Component {
       this.state.showBuildings ?
         new PolygonLayer({
           id: 'buildings',
-          data: buildings,
+          data: buildingPolygon,
           extruded: true,
           wireframe: false,
           opacity: 1,
           getPolygon: f => f.polygon,
           getElevation: f => f.height,
-          getFillColor: [255, 255, 0]
+          getFillColor: [74, 80, 87]
         }) : null,
       this.state.showDrawLayer ?
         new EditableGeoJsonLayer({
