@@ -32,9 +32,9 @@ const updateLayers = throttle(function updateLayersRaw(that, bike) {
     animationProgress: librariesAnimation.enterProgress,
 
     // specify the delay factor for each point (value between 0 and 1)
-    getDelayFactor: d => {
-      return longitudeDelayScale(d.lon)
-    }
+    getDelayFactor: (d,index) => {
+        var x = scaleLinear().domain([0,bike.length]).range([1,0])(index.index);
+        return x    }
     // parameters: {
     //   // prevent flicker from z-fighting
     //   [GL.DEPTH_TEST]: false,
