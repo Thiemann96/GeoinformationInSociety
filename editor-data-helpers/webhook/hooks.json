@@ -64,7 +64,11 @@
       },
       {
         "source": "url",
-        "name": "time"
+        "name": "hours_start"
+      },
+      {
+        "source": "url",
+        "name": "hours_end"
       },
       {
         "source": "url",
