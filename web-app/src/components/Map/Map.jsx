@@ -83,7 +83,22 @@ class Map extends Component {
       showAccidentsLayer: true,
       myFeatureCollection: {
         type: 'FeatureCollection',
-        features: [
+        features: [{
+          type: "Feature",
+          properties: {},
+          geometry: {
+            type: "Polygon",
+            coordinates: [
+              [
+                [7.464649690877192, 52.03822413785396],
+                [7.764719004628301, 52.03948550952567],
+                [7.772921354890182, 51.85241511574681],
+                [7.468067336819732, 51.85325952504977],
+                [7.464649690877192, 52.03822413785396]
+              ]
+            ]
+          }
+        }
           /* insert features here */
         ]
       },
@@ -99,6 +114,7 @@ class Map extends Component {
     this._playAnimation = this._playAnimation.bind(this);
     this._animate = this._animate.bind(this);
     this._renderLayers = this._renderLayers.bind(this);
+    this._getCoordinates = this._getCoordinates.bind(this);
   }
 
   _animate() {
@@ -179,6 +195,21 @@ class Map extends Component {
     this._animate();
   }
 
+  _getCoordinates() {
+    let coordsArr = this.state.myFeatureCollection.features[0].geometry;
+    let coordsString = "(";
+    console.log(coordsArr)
+    if (coordsArr.type === "Polygon") {
+      console.log('check')
+      coordsArr.coordinates[0].forEach(element => {
+        coordsString = coordsString.concat("(" + element[0] + "," + element[1] + "),");
+      });
+      coordsString = coordsString.slice(0, coordsString.length - 1);
+      coordsString = coordsString.concat(")");
+    }
+    console.log(coordsString)
+    return coordsString;
+  }
   // Uses new filter options and sends new request
   _confirmFilter(filterObject) {
     console.log(filterObject);
@@ -187,21 +218,12 @@ class Map extends Component {
       filter: filterObject,
     });
 
+    let timeStart = '{00:00:01}';
+    let timeEnd = '{23:59:59}';
     // localhost:9000/hooks/accidents-by-time/date-from=2016-12-19%2017:50:00&date-to=2017-12-19%2017:52:00&min-lon=7.6305772757&            max-lon=10.7305772757&min-lat=51.9468186&max-lat=54.9468186
     // url needs to be changed to the hook that we provide
-    let coordsArr = this.state.myFeatureCollection.features[0].geometry;
-    let coordsString ="(";
-    console.log(coordsArr)
-    if (coordsArr.type === "Polygon") {
-      console.log('check')
-      coordsArr.coordinates[0].forEach(element => {
-        coordsString = coordsString.concat("("+element[0]+","+ element[1]+"),");
-      });
-      coordsString = coordsString.slice(0, coordsString.length-1);
-      coordsString = coordsString.concat( ")");
-    }
-    console.log(coordsString)
-    let url = 'http://0.0.0.0:9000/hooks/accidents-by-time?years={' + filterObject.years.toString() + '}&months={' + filterObject.months.toString() + '}&weekdays={' + filterObject.days.toString() + '}&polygon='+coordsString;
+
+    let url = 'http://0.0.0.0:9000/hooks/accidents-by-time?years={' + filterObject.years.toString() + '}&months={' + filterObject.months.toString() + '}&weekdays={' + filterObject.days.toString() + '}&polygon=' + this._getCoordinates() + '&hours_start=' + timeStart + '&hours_end=' + timeEnd;
 
     fetch(url)
       .then(response => response.json())
@@ -258,6 +280,7 @@ class Map extends Component {
           data: this.state.myFeatureCollection,
           mode: ViewMode,
           selectedFeatureIndexes,
+          getFillColor: [0,0,0,0],
           onEdit: ({ updatedData }) => {
             console.log(updatedData)
             this.setState({
@@ -317,6 +340,7 @@ class Map extends Component {
           _confirmFilter={this._confirmFilter}
           _resetFilter={this._resetFilter}
           filter={this.state.filter}
+          _getCoordinates={this._getCoordinates}
 
 
         />
