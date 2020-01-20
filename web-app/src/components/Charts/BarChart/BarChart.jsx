@@ -76,6 +76,12 @@ export default class BarChart extends Component {
             width: this.props.width - margin.left - margin.right
         };
 
+        // Delete old charts if existing
+        let chartDiv  = document.getElementById('nAccidents');
+        if(chartDiv){
+            chartDiv.innerHTML = '';
+        }
+
         // create svg
         const svg = d3
             .select("#nAccidents")
