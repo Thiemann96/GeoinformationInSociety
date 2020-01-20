@@ -116,7 +116,7 @@ export default class FilterOverlay extends Component {
                     <p>Filter the visualised dataset</p>
                     <select onChange={this.props._handleMapStyle}>
                         {this.state.options.map((option)=>{
-                            return <option value={option.value}>
+                            return <option key={option.value} value={option.value}>
                                 {option.label}
                             </option>
                         })}
