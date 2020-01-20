@@ -14,7 +14,6 @@ import { EditableGeoJsonLayer, DrawPolygonMode, ViewMode } from 'nebula.gl';
 import buildingPolygon from '../../muenster_buildings.json'
 
 
-;
 
 class Map extends Component {
   constructor(props) {
@@ -30,7 +29,7 @@ class Map extends Component {
         pitch: 0,
         bearing: 0
       },
-      librariesAnimation : { enterProgress: 0, duration: 10000 },
+      animationProgress : { enterProgress: 0, duration: 10000 },
       animate: false,
       interactionState: {},
       mapBoxToken: 'pk.eyJ1IjoiZXRoaWUxMCIsImEiOiJjazQyeXlxNGcwMjk3M2VvYmw2NHU4MDRvIn0.nYOmVGARhLOULQ550LyUYA',
@@ -77,8 +76,8 @@ class Map extends Component {
     let that = this;
     // const animation = anime({
     anime({
-      duration: this.state.librariesAnimation.duration,
-      targets: this.state.librariesAnimation,
+      duration: that.state.animationProgress.duration,
+      targets: that.state.animationProgress,
       enterProgress: 1,
       easing: 'linear',
       begin: function (anim) {
@@ -86,7 +85,7 @@ class Map extends Component {
       },
       complete: function (anim) {
         console.log("end");
-        that.setState({ animate: false, layers: [],      librariesAnimation : { enterProgress: 0, duration: 10000 }})
+        that.setState({ animate: false, layers: [], animationProgress : { enterProgress: 0, duration: 10000 }})
       },
       update() {
         // each tick, update the DeckGL layers with new values
@@ -108,7 +107,7 @@ class Map extends Component {
           radiusMinPixels: 1,
       
           // specify how far we are through the animation (value between 0 and 1)
-          animationProgress: this.state.librariesAnimation.enterProgress,
+          animationProgress: this.state.animationProgress.enterProgress,
       
           // specify the delay factor for each point (value between 0 and 1)
           getDelayFactor: (d,index) => {
@@ -293,7 +292,6 @@ class Map extends Component {
       })
   }
   render() {
-      console.log(this.state.librariesAnimation)
     return (
       <Fragment>
         <DeckGL
