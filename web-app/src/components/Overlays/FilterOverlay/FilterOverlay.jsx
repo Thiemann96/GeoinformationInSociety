@@ -2,30 +2,30 @@ import React, { Component } from "react";
 import { Container, Row, Col, InputGroup, Button, Form } from "react-bootstrap";
 import "./FilterOverlay.css";
 
-
 var filterObject = {
     days: ["1", "2", "3", "4", "5", "6", "7"],
     months: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
     years: [2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018]
 };
 
+
 export default class FilterOverlay extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            vehicles: [
-                "pedestrian",
-                "bicycle",
-                "small-moped",
-                "moped",
-                "motorcycle",
-                "car",
-                "lorry",
-                "omnibus",
-                "other"
-            ],
-            weatherconditions: ["rainy", "sunny", "foggy", "snow"]
-        };
+            options :[
+                { value: 'mapbox://styles/mapbox/streets-v11', label: 'Streets' },
+                { value: 'mapbox://styles/mapbox/outdoors-v11', label: 'Outdoors' },
+                { value: 'mapbox://styles/mapbox/light-v10', label: 'Light' },
+                { value: 'mapbox://styles/mapbox/dark-v10', label: 'Dark' },
+                { value: 'mapbox://styles/mapbox/satellite-v9', label: 'Satellite' },
+                { value: 'mapbox://styles/mapbox/satellite-streets-v11', label: 'Satellite Streets' },
+                { value: 'mapbox://styles/mapbox/navigation-preview-day-v4', label: 'Navigation night' },
+                { value: 'mapbox://styles/mapbox/navigation-preview-night-v4', label: 'Navigation day' },
+                { value: 'mapbox://styles/mapbox/navigation-guidance-day-v4', label: 'Navigation Guidance Day' },
+                { value: 'mapbox://styles/mapbox/navigation-guidance-night-v4', label: 'Navigation Guidance Night' },
+            ]
+        }
         this.props.filter ? filterObject = this.props.filter : console.log("No filters set");
         this._handleDays = this._handleDays.bind(this);
         this._handleMonths = this._handleMonths.bind(this);
@@ -69,7 +69,6 @@ export default class FilterOverlay extends Component {
     _handleAggregation(e) {
         // TO DO
     }
-
     render() {
         function Selector(props) {
             return (
@@ -115,6 +114,13 @@ export default class FilterOverlay extends Component {
                 <Row>
                     <h2>Filter options</h2>
                     <p>Filter the visualised dataset</p>
+                    <select onChange={this.props._handleMapStyle}>
+                        {this.state.options.map((option)=>{
+                            return <option key={option.value} value={option.value}>
+                                {option.label}
+                            </option>
+                        })}
+                    </select>
                 </Row>
                 <hr />
                 <Row>

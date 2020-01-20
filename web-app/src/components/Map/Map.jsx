@@ -11,62 +11,15 @@ import anime from 'animejs'
 import throttle from 'lodash.throttle';
 import bikeonly from '../../data/bike-only.json';
 import { EditableGeoJsonLayer, DrawPolygonMode, ViewMode } from 'nebula.gl';
+import buildingPolygon from '../../muenster_buildings.json'
 
 
-
-const librariesAnimation = { enterProgress: 0, duration: 10000 };
-const longitudeDelayScale = scaleLinear().domain(extent(bikeonly, d => d.lon)).range([1, 0]);
-
-const updateLayers = throttle(function updateLayersRaw(that, bike) {
-
-  const layers = [];
-  const accidentLayer = new DelayedPointLayer({
-    id: 'points-layer',
-    data: bike,
-    getPosition: d => [d.lon, d.lat],
-    getFillColor: [250, 100, 200],
-    getRadius: 50,
-    radiusMinPixels: 1,
-
-    // specify how far we are through the animation (value between 0 and 1)
-    animationProgress: librariesAnimation.enterProgress,
-
-    // specify the delay factor for each point (value between 0 and 1)
-    getDelayFactor: d => {
-      return longitudeDelayScale(d.lon)
-    }
-    // parameters: {
-    //   // prevent flicker from z-fighting
-    //   [GL.DEPTH_TEST]: false,
-
-    //   // turn on additive blending to make them look more glowy
-    //   [GL.BLEND]: true,
-    //   [GL.BLEND_SRC_RGB]: GL.ONE,
-    //   [GL.BLEND_DST_RGB]: GL.ONE,
-    //   [GL.BLEND_EQUATION]: GL.FUNC_ADD,
-    // },
-  });
-  layers.push(accidentLayer);
-
-  that.setState({
-    layers,
-    // TODO: may be a bug, but this is required to prevent transitions from restarting
-    viewState: that.state.viewState,
-  });
-
-}, 8);
-
-const DATA_URL = {
-  ACCIDENTS:
-    "https://raw.githubusercontent.com/Thiemann96/GeoinformationInSociety/dump_database/web-app/src/data/bike-only.json?token=AELUZUW7LX5SDNQESOHRBX26DNIFM",
-  BUILDINGS:
-    "https://raw.githubusercontent.com/Thiemann96/GeoinformationInSociety/master/web-app/src/muenster_buildings.json?token=AELUZUVPEFLIZT3SXLSPGB26ETSOO"
-};
 
 class Map extends Component {
   constructor(props) {
     super(props);
     this.state = {
+        mapstyle:"mapbox://styles/mapbox/satellite-v9",
       viewState: {
         longitude: 7.615322135118181,
         latitude: 51.96970534849527,
@@ -76,11 +29,11 @@ class Map extends Component {
         pitch: 0,
         bearing: 0
       },
+      animationProgress : { enterProgress: 0, duration: 10000 },
       animate: false,
       interactionState: {},
       mapBoxToken: 'pk.eyJ1IjoiZXRoaWUxMCIsImEiOiJjazQyeXlxNGcwMjk3M2VvYmw2NHU4MDRvIn0.nYOmVGARhLOULQ550LyUYA',
       accidents: [],
-      showAccidentsLayer: true,
       myFeatureCollection: {
         type: 'FeatureCollection',
         features: [{
@@ -115,14 +68,16 @@ class Map extends Component {
     this._animate = this._animate.bind(this);
     this._renderLayers = this._renderLayers.bind(this);
     this._getCoordinates = this._getCoordinates.bind(this);
+    this._handleMapStyle = this._handleMapStyle.bind(this);
+    //this._updateLayers = this._updateLayers.bind(this);
   }
 
   _animate() {
     let that = this;
     // const animation = anime({
     anime({
-      duration: librariesAnimation.duration,
-      targets: librariesAnimation,
+      duration: that.state.animationProgress.duration,
+      targets: that.state.animationProgress,
       enterProgress: 1,
       easing: 'linear',
       begin: function (anim) {
@@ -130,15 +85,39 @@ class Map extends Component {
       },
       complete: function (anim) {
         console.log("end");
-        that.setState({ animate: false, layers: [] })
+        that.setState({ animate: false, layers: [], animationProgress : { enterProgress: 0, duration: 10000 }})
       },
       update() {
         // each tick, update the DeckGL layers with new values
-        updateLayers(that, that.state.accidents);
+        that._updateLayers();
       }
     });
-    updateLayers(that, that.state.accidents);
+    that._updateLayers();
 
+  }
+
+  _updateLayers(){
+        const layers = [];
+        const accidentLayer = new DelayedPointLayer({
+          id: 'points-layer',
+          data: this.state.accidents,
+          getPosition: d => [d.lon, d.lat],
+          getFillColor: [250, 100, 200],
+          getRadius: 10,
+          radiusMinPixels: 1,
+      
+          // specify how far we are through the animation (value between 0 and 1)
+          animationProgress: this.state.animationProgress.enterProgress,
+      
+          // specify the delay factor for each point (value between 0 and 1)
+          getDelayFactor: (d,index) => {
+              var x = scaleLinear().domain([0,this.state.accidents.length]).range([1,0])(index.index);
+              return x    }
+        });
+        layers.push(accidentLayer);
+        this.setState({
+            layers : layers
+        })
   }
 
   // fetches all accidents from the server running locally
@@ -242,11 +221,8 @@ class Map extends Component {
 
   _renderLayers() {
     const {
-      // accidents = DATA_URL.ACCIDENTS,
-      buildings = DATA_URL.BUILDINGS,
-      selectedFeatureIndexes = []
+        selectedFeatureIndexes = []
     } = this.props;
-
 
     return [
       // This is only needed when using shadow effects
@@ -254,13 +230,13 @@ class Map extends Component {
       this.state.showBuildings ?
         new PolygonLayer({
           id: 'buildings',
-          data: buildings,
+          data: buildingPolygon,
           extruded: true,
           wireframe: false,
           opacity: 1,
           getPolygon: f => f.polygon,
           getElevation: f => f.height,
-          getFillColor: [255, 255, 0]
+          getFillColor: [74, 80, 87]
         }) : null,
       this.state.showDrawLayer ?
         new EditableGeoJsonLayer({
@@ -310,7 +286,11 @@ class Map extends Component {
         }) : null
     ]
   };
-
+  _handleMapStyle(e){
+      this.setState({
+          mapstyle:e.target.value
+      })
+  }
   render() {
     return (
       <Fragment>
@@ -327,7 +307,7 @@ class Map extends Component {
               : this._renderLayers()}
         >
           <StaticMap
-            mapStyle="mapbox://styles/mapbox/dark-v9"
+            mapStyle={this.state.mapstyle}
             mapboxApiAccessToken={this.state.mapBoxToken} />
         </DeckGL>
         <Overlay
@@ -341,7 +321,7 @@ class Map extends Component {
           _resetFilter={this._resetFilter}
           filter={this.state.filter}
           _getCoordinates={this._getCoordinates}
-
+            _handleMapStyle = {this._handleMapStyle}
 
         />
       </Fragment>
