@@ -51,6 +51,7 @@ class Map extends Component {
   constructor(props) {
     super(props);
     this.state = {
+        mapstyle:"mapbox://styles/mapbox/satellite-v9",
       viewState: {
         longitude: 7.615322135118181,
         latitude: 51.96970534849527,
@@ -98,6 +99,7 @@ class Map extends Component {
     this._animate = this._animate.bind(this);
     this._renderLayers = this._renderLayers.bind(this);
     this._getCoordinates = this._getCoordinates.bind(this);
+    this._handleMapStyle = this._handleMapStyle.bind(this);
   }
 
   _animate() {
@@ -290,8 +292,14 @@ class Map extends Component {
         }) : null
     ]
   };
-
+  _handleMapStyle(e){
+      console.log(e.target.value)
+      this.setState({
+          mapstyle:e.target.value
+      })
+  }
   render() {
+      console.log(this.state.mapstyle)
     return (
       <Fragment>
         <DeckGL
@@ -307,7 +315,7 @@ class Map extends Component {
               : this._renderLayers()}
         >
           <StaticMap
-            mapStyle="mapbox://styles/mapbox/dark-v9"
+            mapStyle={this.state.mapstyle}
             mapboxApiAccessToken={this.state.mapBoxToken} />
         </DeckGL>
         <Overlay
@@ -321,7 +329,7 @@ class Map extends Component {
           _resetFilter={this._resetFilter}
           filter={this.state.filter}
           _getCoordinates={this._getCoordinates}
-
+            _handleMapStyle = {this._handleMapStyle}
 
         />
       </Fragment>
