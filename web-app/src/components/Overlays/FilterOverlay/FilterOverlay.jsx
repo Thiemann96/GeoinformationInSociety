@@ -135,13 +135,6 @@ export default class FilterOverlay extends Component {
                 <Row>
                     <h2>Filter options</h2>
                     <p>Filter the visualised dataset</p>
-                    <select onChange={this.props._handleMapStyle}>
-                        {this.state.options.map((option) => {
-                            return <option key={option.value} value={option.value}>
-                                {option.label}
-                            </option>
-                        })}
-                    </select>
                     <EmptyResultMessage emptyResult={this.props.emptyResult} />
                 </Row>
                 <hr />

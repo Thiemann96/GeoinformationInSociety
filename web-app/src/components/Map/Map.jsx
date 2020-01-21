@@ -23,7 +23,7 @@ class Map extends Component {
                 pitch: 0,
                 bearing: 0
             },
-            animationProgress: { enterProgress: 0, duration: 10000 },
+            animationProgress: { enterProgress: 0, duration: 60000 },
             animate: false,
             interactionState: {},
             mapBoxToken: 'pk.eyJ1IjoiZXRoaWUxMCIsImEiOiJjazQyeXlxNGcwMjk3M2VvYmw2NHU4MDRvIn0.nYOmVGARhLOULQ550LyUYA',
