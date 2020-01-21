@@ -93,7 +93,7 @@ WITH
             AND (EXTRACT(ISODOW FROM date::DATE))::int = ANY(\$3)
             AND time_of_day::TIME between a and b
              AND (\$4)::polygon @> POINT(cast (lon as double precision),cast (lat as double precision))
-        ORDER BY date, time_of_day ASC)
+        ORDER BY time_of_day ASC)
              t;
   EXECUTE accidentsbytime$RND('$YEARS', '$MONTHS', '$WEEKDAYS', '$POLYGON', '$HOURS_START','$HOURS_END' );
 ")

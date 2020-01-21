@@ -60,19 +60,34 @@
       },
       {
         "source": "url",
-        "name": "min-lon"
+        "name": "weekdays"
       },
       {
         "source": "url",
-        "name": "max-lon"
+        "name": "hours_start"
       },
       {
         "source": "url",
-        "name": "min-lat"
+        "name": "hours_end"
       },
       {
         "source": "url",
-        "name": "max-lat"
+        "name": "polygon"
+      }
+    ]
+  },
+  {
+    "id": "accidents-by-year",
+    "execute-command": "/webhook/accidents-by-year.sh",
+    "include-command-output-in-response": true,
+    "pass-arguments-to-command": [
+      {
+        "source": "url",
+        "name": "years"
+      },
+      {
+        "source": "url",
+        "name": "months"
       },
       {
         "source": "url",
@@ -80,7 +95,108 @@
       },
       {
         "source": "url",
-        "name": "time"
+        "name": "hours_start"
+      },
+      {
+        "source": "url",
+        "name": "hours_end"
+      },
+      {
+        "source": "url",
+        "name": "polygon"
+      }
+    ]
+  },
+  {
+    "id": "accidents-by-month",
+    "execute-command": "/webhook/accidents-by-month.sh",
+    "include-command-output-in-response": true,
+    "pass-arguments-to-command": [
+      {
+        "source": "url",
+        "name": "years"
+      },
+      {
+        "source": "url",
+        "name": "months"
+      },
+      {
+        "source": "url",
+        "name": "weekdays"
+      },
+      {
+        "source": "url",
+        "name": "hours_start"
+      },
+      {
+        "source": "url",
+        "name": "hours_end"
+      },
+      {
+        "source": "url",
+        "name": "polygon"
+      }
+    ]
+  },
+  {
+    "id": "accidents-by-dow",
+    "execute-command": "/webhook/accidents-by-dow.sh",
+    "include-command-output-in-response": true,
+    "pass-arguments-to-command": [
+      {
+        "source": "url",
+        "name": "years"
+      },
+      {
+        "source": "url",
+        "name": "months"
+      },
+      {
+        "source": "url",
+        "name": "weekdays"
+      },
+      {
+        "source": "url",
+        "name": "hours_start"
+      },
+      {
+        "source": "url",
+        "name": "hours_end"
+      },
+      {
+        "source": "url",
+        "name": "polygon"
+      }
+    ]
+  },
+  {
+    "id": "accidents-by-interval",
+    "execute-command": "/webhook/accidents-by-interval.sh",
+    "include-command-output-in-response": true,
+    "pass-arguments-to-command": [
+      {
+        "source": "url",
+        "name": "years"
+      },
+      {
+        "source": "url",
+        "name": "months"
+      },
+      {
+        "source": "url",
+        "name": "weekdays"
+      },
+      {
+        "source": "url",
+        "name": "hours_start"
+      },
+      {
+        "source": "url",
+        "name": "hours_end"
+      },
+      {
+        "source": "url",
+        "name": "polygon"
       }
     ]
   }
