@@ -11,7 +11,15 @@ export default class BarChart extends Component {
         // this.drawChart();
     }
 
-
+    drawChart() {
+        // this should be set dynamically:#
+        /* TODO:
+            aggregate by this.props.aggregation
+            Getting 'undefined' error at the moment while changing aggregation if filters are set
+         */
+        let aggregateBy = "Day of week";
+        // const aggregateBy = "hour_of_day";
+        // const aggregateBy = "year";
 
         // prepare data
         switch (aggregateBy) {
@@ -61,6 +69,12 @@ export default class BarChart extends Component {
             // code block
         }
 
+        // set chart margins + dimensions
+        const margin = {left: 40, right: 0, top: 0, bottom: 20};
+        const dim = {
+            height: this.props.height - margin.top - margin.bottom,
+            width: this.props.width - margin.left - margin.right
+        };
 
         // Delete old charts if existing
         let chartDiv  = document.getElementById('nAccidents');
