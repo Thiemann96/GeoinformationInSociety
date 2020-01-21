@@ -1,71 +1,15 @@
-import React, {Component, Fragment} from 'react';
-import {StaticMap} from 'react-map-gl';
+import React, { Component, Fragment } from 'react';
+import { StaticMap } from 'react-map-gl';
 import DeckGL from '@deck.gl/react';
-import {ScatterplotLayer, PolygonLayer} from '@deck.gl/layers';
+import { ScatterplotLayer, PolygonLayer } from '@deck.gl/layers';
 import Overlay from '../Overlays/Overlay'
-import {HeatmapLayer} from '@deck.gl/aggregation-layers'
-import {extent, scaleLinear} from 'd3';
+import { HeatmapLayer } from '@deck.gl/aggregation-layers'
+import { extent, scaleLinear } from 'd3';
 import DelayedPointLayer from './DelayedPointLayer';
 import anime from 'animejs'
 import GL from '@luma.gl/constants';
-import throttle from 'lodash.throttle';
-import bikeonly from '../../data/bike-only.json'
-
-const librariesAnimation = {enterProgress: 0, duration: 20000};
-
-const updateLayers = throttle(function updateLayersRaw(that, bike) {
-    const layers = [];
-    const accidentLayer = new DelayedPointLayer({
-        id: 'points-layer',
-        data: bike,
-        getPosition: d => [d.lon, d.lat],
-        getFillColor: [250, 100, 200],
-        getRadius: 50,
-        radiusMinPixels: 1,
-
-        // specify how far we are through the animation (value between 0 and 1)
-        animationProgress: librariesAnimation.enterProgress,
-
-        // specify the delay factor for each point (value between 0 and 1)
-        getDelayFactor: d => {
-            let date = new Date(d.date + "T" + d.time_of_day + ".000Z");
-            // return longitudeDelayScale(d.lon)}
-            return timeDelayScale(date.getTime() / 1000)
-        }
-        // parameters: {
-        //   // prevent flicker from z-fighting
-        //   [GL.DEPTH_TEST]: false,
-
-        //   // turn on additive blending to make them look more glowy
-        //   [GL.BLEND]: true,
-        //   [GL.BLEND_SRC_RGB]: GL.ONE,
-        //   [GL.BLEND_DST_RGB]: GL.ONE,
-        //   [GL.BLEND_EQUATION]: GL.FUNC_ADD,
-        // },
-    });
-    layers.push(accidentLayer);
-
-    that.setState({
-        layers,
-        // TODO: may be a bug, but this is required to prevent transitions from restarting
-        viewState: that.state.viewState,
-    });
-
-}, 8);
-
-const DATA_URL = {
-    ACCIDENTS:
-        "https://raw.githubusercontent.com/Thiemann96/GeoinformationInSociety/dump_database/web-app/src/data/bike-only.json?token=AELUZUW7LX5SDNQESOHRBX26DNIFM",
-    BUILDINGS:
-        "https://raw.githubusercontent.com/Thiemann96/GeoinformationInSociety/master/web-app/src/muenster_buildings.json?token=AELUZUVPEFLIZT3SXLSPGB26ETSOO"
-};
-
-const longitudeDelayScale = scaleLinear().domain(extent(bikeonly, d => d.lon)).range([1, 0]);
-const latitudeDelayScale = scaleLinear().domain(extent(bikeonly, d => d.lat)).range([1, 0]);
-const timeDelayScale = scaleLinear().domain(extent(bikeonly, d => {
-    let date = new Date(d.date + "T" + d.time_of_day + ".000Z");
-    return date.getTime() / 1000;
-})).range([1, 0]);
+import buildingPolygon from '../../muenster_buildings.json'
+import { EditableGeoJsonLayer, DrawPolygonMode, ViewMode } from 'nebula.gl';
 
 
 class Map extends Component {
@@ -75,19 +19,39 @@ class Map extends Component {
             viewState: {
                 longitude: 7.615322135118181,
                 latitude: 51.96970534849527,
-                // longitude:-78.8006344148876,
-                // latitude:39.09086893888812,
                 zoom: 12,
                 pitch: 0,
                 bearing: 0
             },
+            animationProgress: { enterProgress: 0, duration: 10000 },
             animate: false,
             interactionState: {},
             mapBoxToken: 'pk.eyJ1IjoiZXRoaWUxMCIsImEiOiJjazQyeXlxNGcwMjk3M2VvYmw2NHU4MDRvIn0.nYOmVGARhLOULQ550LyUYA',
             accidents: [],
-            showAccidentsLayer: true,
             emptyResult: false,
-            aggregation: "Day of week"
+            aggregation: "Day of week",
+            myFeatureCollection: {
+                type: 'FeatureCollection',
+                features: [{
+                    type: "Feature",
+                    properties: {},
+                    geometry: {
+                        type: "Polygon",
+                        coordinates: [
+                            [
+                                [7.464649690877192, 52.03822413785396],
+                                [7.764719004628301, 52.03948550952567],
+                                [7.772921354890182, 51.85241511574681],
+                                [7.468067336819732, 51.85325952504977],
+                                [7.464649690877192, 52.03822413785396]
+                            ]
+                        ]
+                    }
+                }
+                    /* insert features here */
+                ]
+            },
+            showDrawLayer: false
         };
 
         this._toggleAccidents = this._toggleAccidents.bind(this);
@@ -99,43 +63,79 @@ class Map extends Component {
         this._playAnimation = this._playAnimation.bind(this);
         this._animate = this._animate.bind(this);
         this._renderLayers = this._renderLayers.bind(this);
+        this._handleMapStyle = this._handleMapStyle.bind(this);
+        this._toggleDrawPolygon = this._toggleDrawPolygon.bind(this);
+        this._getCoordinates = this._getCoordinates.bind(this);
     }
-
-    // fetches all accidents from the server running locally
-    // componentDidMount() {
-    //    let url = "http://0.0.0.0:9000/hooks/bikes";
-    //    fetch(url)
-    //        .then(response => response.json())
-    //        .then(accidents => this.setState({accidents}));
-    // }
 
     // fetches all accidents from the server running locally
     componentWillMount() {
         let url = "http://0.0.0.0:9000/hooks/bikes";
         fetch(url)
             .then(response => response.json())
-            .then(accidents => this.setState({accidents}));
+            .then(accidents => this.setState({ accidents }));
     }
 
     _animate() {
         let that = this;
-        const animation = anime({
-            duration: librariesAnimation.duration,
-            targets: librariesAnimation,
+        // const animation = anime({
+        anime({
+            duration: that.state.animationProgress.duration,
+            targets: that.state.animationProgress,
             enterProgress: 1,
             easing: 'linear',
             begin: function (anim) {
+                console.log("begin");
             },
             complete: function (anim) {
-                that.setState({animate: false, layers: []})
+                console.log("end");
+                that.setState({ animate: false, layers: [], animationProgress: { enterProgress: 0, duration: 10000 } })
             },
             update() {
                 // each tick, update the DeckGL layers with new values
-                updateLayers(that, that.state.accidents);
-            },
+                that._updateLayers();
+            }
         });
-        updateLayers(that, that.state.accidents);
+        that._updateLayers();
+    }
 
+    _updateLayers() {
+        const layers = [];
+        const accidentLayer = new DelayedPointLayer({
+            id: 'points-layer',
+            data: this.state.accidents,
+            getPosition: d => [d.lon, d.lat],
+            getFillColor: [250, 100, 200],
+            getRadius: 10,
+            radiusMinPixels: 1,
+
+            // specify how far we are through the animation (value between 0 and 1)
+            animationProgress: this.state.animationProgress.enterProgress,
+
+            // specify the delay factor for each point (value between 0 and 1)
+            getDelayFactor: (d, index) => {
+                var x = scaleLinear().domain([0, this.state.accidents.length]).range([1, 0])(index.index);
+                return x
+            }
+        });
+        layers.push(accidentLayer);
+        this.setState({
+            layers: layers
+        })
+    }
+
+
+    _toggleDrawPolygon() {
+        this.setState({
+            showDrawLayer: !(this.state.showDrawLayer),
+            myFeatureCollection: {
+                type: 'FeatureCollection',
+                features: [
+                    /* insert features here */
+                ]
+            }
+        });
+        this._renderLayers();
     }
 
     _toggleHeatMap(e) {
@@ -165,18 +165,30 @@ class Map extends Component {
         this._animate();
     }
 
+    _getCoordinates() {
+        let coordsArr = this.state.myFeatureCollection.features[0].geometry;
+        let coordsString = "(";
+        if (coordsArr.type === "Polygon") {
+            coordsArr.coordinates[0].forEach(element => {
+                coordsString = coordsString.concat("(" + element[0] + "," + element[1] + "),");
+            });
+            coordsString = coordsString.slice(0, coordsString.length - 1);
+            coordsString = coordsString.concat(")");
+        }
+        return coordsString;
+    }
+
     _resetFilter() {
         let url = 'http://0.0.0.0:9000/hooks/bikes';
 
         fetch(url)
             .then(response => response.json())
-            .then(accidents => this.setState({accidents}));
+            .then(accidents => this.setState({ accidents }));
     }
 
     _renderLayers() {
         const {
-            accidents = DATA_URL.ACCIDENTS,
-            buildings = DATA_URL.BUILDINGS
+            selectedFeatureIndexes = []
         } = this.props;
 
         return [
@@ -185,14 +197,40 @@ class Map extends Component {
             this.state.showBuildings ?
                 new PolygonLayer({
                     id: 'buildings',
-                    data: buildings,
+                    data: buildingPolygon,
                     extruded: true,
                     wireframe: false,
                     opacity: 1,
                     getPolygon: f => f.polygon,
                     getElevation: f => f.height,
-                    getFillColor: [255, 255, 0]
+                    getFillColor: [74, 80, 87]
                 }) : null,
+            this.state.showDrawLayer ?
+                new EditableGeoJsonLayer({
+                    id: 'geojson-layer',
+                    data: this.state.myFeatureCollection,
+                    mode: DrawPolygonMode,
+                    selectedFeatureIndexes,
+                    onEdit: ({ updatedData }) => {
+                        console.log(updatedData)
+                        this.setState({
+                            myFeatureCollection: updatedData,
+                            showDrawLayer: false
+                        });
+                    }
+                }) : new EditableGeoJsonLayer({
+                    id: 'geojson-layer',
+                    data: this.state.myFeatureCollection,
+                    mode: ViewMode,
+                    selectedFeatureIndexes,
+                    getFillColor: [0, 0, 0, 0],
+                    onEdit: ({ updatedData }) => {
+                        console.log(updatedData)
+                        this.setState({
+                            myFeatureCollection: updatedData,
+                        });
+                    }
+                }),
             this.state.showAccidentsLayer ?
                 new ScatterplotLayer({
                     data: this.state.accidents,
@@ -216,24 +254,32 @@ class Map extends Component {
         ]
     };
 
+    _handleMapStyle(e) {
+        this.setState({
+            mapstyle: e.target.value
+        })
+    }
+
     // Uses new filter options and sends new request
     _confirmFilter(filterObject) {
+
         this.setState({
-            filter: filterObject
+            filter: filterObject,
         });
 
-        // localhost:9000/hooks/accidents-by-time/date-from=2016-12-19%2017:50:00&date-to=2017-12-19%2017:52:00&min-lon=7.6305772757&            max-lon=10.7305772757&min-lat=51.9468186&max-lat=54.9468186
-        // url needs to be changed to the hook that we provide
+        let timeStart = '{00:00:01}';
+        let timeEnd = '{23:59:59}';
 
-        let url = 'http://0.0.0.0:9000/hooks/accidents-by-time?months={' + filterObject.months.toString() + '}&years={' + filterObject.years.toString() + '}&weekdays={' + filterObject.days.toString() + '}&min-lon=' + filterObject.minLon + '&max-lon=' + filterObject.maxLon + '&min-lat=' + filterObject.minLat + '&max-lat=' + filterObject.maxLat;
+        let url = 'http://0.0.0.0:9000/hooks/accidents-by-time?years={' + filterObject.years.toString() + '}&months={' + filterObject.months.toString() + '}&weekdays={' + filterObject.days.toString() + '}&polygon=' + this._getCoordinates() + '&hours_start=' + timeStart + '&hours_end=' + timeEnd;
+
         fetch(url)
             .then(response => response.json())
             .then(accidents => {
                 if (accidents.length) {
-                    this.setState({accidents});
                     this.setState({
+                        accidents: accidents,
                         emptyResult: false
-                    })
+                    });
                 } else {
                     this.setState({
                         emptyResult: true
@@ -253,19 +299,23 @@ class Map extends Component {
             <Fragment>
                 <DeckGL
                     initialViewState={this.state.viewState}
-                    controller={true}
-                    layers={
+                    controller={
+                        this.state.showDrawLayer ?
+                            { doubleClickZoom: false }
+                            : { doubleClickZoom: true }
+                    } layers={
                         this.state.animate ?
                             this.state.layers
                             : this._renderLayers()}
                 >
                     <StaticMap
-                        mapStyle="mapbox://styles/mapbox/dark-v9"
-                        mapboxApiAccessToken={this.state.mapBoxToken}/>
+                        mapStyle={this.state.mapstyle}
+                        mapboxApiAccessToken={this.state.mapBoxToken} />
                 </DeckGL>
                 <Overlay
                     _animate={this._playAnimation}
-                    _toggleBuildings={this._toggleBuildings} _toggleHeatMap={this._toggleHeatMap}
+                    _toggleBuildings={this._toggleBuildings} 
+                    _toggleHeatMap={this._toggleHeatMap}
                     _toggleAccidents={this._toggleAccidents}
                     datalength={this.state.accidents.length}
                     _confirmFilter={this._confirmFilter}
@@ -275,6 +325,10 @@ class Map extends Component {
                     accidents={this.state.accidents}
                     emptyResult={this.state.emptyResult}
                     aggregation={this.state.aggregation}
+                    _getCoordinates={this._getCoordinates}
+                    _handleMapStyle = {this._handleMapStyle}
+                    _toggleDrawPolygon={this._toggleDrawPolygon}
+
                 />
             </Fragment>
         );

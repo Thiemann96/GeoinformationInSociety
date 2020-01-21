@@ -19,9 +19,14 @@ export default class Overlay extends Component {
                                _confirmFilter={this.props._confirmFilter} _toggleHeatMap={this.props._toggleHeatMap}
                                _toggleAccidents={this.props._toggleAccidents}
                                _toggleBuildings={this.props._toggleBuildings} filter={this.props.filter}
-                               emptyResult={this.props.emptyResult} _confirmAggregation={this.props._confirmAggregation}/>
+                               emptyResult={this.props.emptyResult} _confirmAggregation={this.props._confirmAggregation}
+                               _toggleDrawPolygon = {this.props._toggleDrawPolygon}
+                               _handleMapStyle={this.props._handleMapStyle}
+                               />
+
                 <ChartOverlay datalength={this.props.datalength} accidents={this.props.accidents}
-                              aggregation={this.props.aggregation}/>
+                              aggregation={this.props.aggregation}
+                              />
 
             </Container>
         );
