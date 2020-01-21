@@ -55,8 +55,8 @@ if response != None:
                             "wind_speed_m/s-1": attr[7],
                             "wind_direction_deg": attr[8],
                             "pressure_hPa": attr[12],
-                            "visibility": attr[18],
-                            "precipitation": attr[20]
+                            "visibility_km": attr[18],
+                            "precipitation_mm": attr[20]
                         }
 
                         accident['weather'] = json_weather_object
