@@ -17,7 +17,7 @@ export default class BarChart extends Component {
             aggregate by this.props.aggregation
             Getting 'undefined' error at the moment while changing aggregation if filters are set
          */
-        let aggregateBy = "Day of week";
+        let aggregateBy = this.props.aggregation;
         // const aggregateBy = "hour_of_day";
         // const aggregateBy = "year";
 
