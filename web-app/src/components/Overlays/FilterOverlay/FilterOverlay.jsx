@@ -4,34 +4,8 @@ import "./FilterOverlay.css";
 
 let filterObject = {
     days: ["1", "2", "3", "4", "5", "6", "7"],
-    months: [
-        "01",
-        "02",
-        "03",
-        "04",
-        "05",
-        "06",
-        "07",
-        "08",
-        "09",
-        "10",
-        "11",
-        "12"
-    ],
-    years: [
-        "2007",
-        "2008",
-        "2009",
-        "2010",
-        "2011",
-        "2012",
-        "2013",
-        "2014",
-        "2015",
-        "2016",
-        "2017",
-        "2018"
-    ]
+    months: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
+    years: ["2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018"]
 };
 
 let chartAggregation = "Day of week";
@@ -41,46 +15,19 @@ export default class FilterOverlay extends Component {
         super(props);
         this.state = {
             options: [
-                {
-                    value: "mapbox://styles/mapbox/streets-v11",
-                    label: "Streets"
-                },
-                {
-                    value: "mapbox://styles/mapbox/outdoors-v11",
-                    label: "Outdoors"
-                },
-                { value: "mapbox://styles/mapbox/light-v10", label: "Light" },
-                { value: "mapbox://styles/mapbox/dark-v10", label: "Dark" },
-                {
-                    value: "mapbox://styles/mapbox/satellite-v9",
-                    label: "Satellite"
-                },
-                {
-                    value: "mapbox://styles/mapbox/satellite-streets-v11",
-                    label: "Satellite Streets"
-                },
-                {
-                    value: "mapbox://styles/mapbox/navigation-preview-day-v4",
-                    label: "Navigation night"
-                },
-                {
-                    value: "mapbox://styles/mapbox/navigation-preview-night-v4",
-                    label: "Navigation day"
-                },
-                {
-                    value: "mapbox://styles/mapbox/navigation-guidance-day-v4",
-                    label: "Navigation Guidance Day"
-                },
-                {
-                    value:
-                        "mapbox://styles/mapbox/navigation-guidance-night-v4",
-                    label: "Navigation Guidance Night"
-                }
+                { value: 'mapbox://styles/mapbox/streets-v11', label: 'Streets' },
+                { value: 'mapbox://styles/mapbox/outdoors-v11', label: 'Outdoors' },
+                { value: 'mapbox://styles/mapbox/light-v10', label: 'Light' },
+                { value: 'mapbox://styles/mapbox/dark-v10', label: 'Dark' },
+                { value: 'mapbox://styles/mapbox/satellite-v9', label: 'Satellite' },
+                { value: 'mapbox://styles/mapbox/satellite-streets-v11', label: 'Satellite Streets' },
+                { value: 'mapbox://styles/mapbox/navigation-preview-day-v4', label: 'Navigation night' },
+                { value: 'mapbox://styles/mapbox/navigation-preview-night-v4', label: 'Navigation day' },
+                { value: 'mapbox://styles/mapbox/navigation-guidance-day-v4', label: 'Navigation Guidance Day' },
+                { value: 'mapbox://styles/mapbox/navigation-guidance-night-v4', label: 'Navigation Guidance Night' },
             ]
         };
-        this.props.filter
-            ? (filterObject = this.props.filter)
-            : console.log("No filters set");
+        this.props.filter ? filterObject = this.props.filter : console.log("No filters set");
         this._handleDays = this._handleDays.bind(this);
         this._handleMonths = this._handleMonths.bind(this);
         this._handleYears = this._handleYears.bind(this);
@@ -92,10 +39,10 @@ export default class FilterOverlay extends Component {
         let bool = filterObject.months.includes(e.target.value);
         bool // contains item
             ? (filterObject.months = filterObject.months.filter(
-                  month => month !== e.target.value
-              ))
+                month => month !== e.target.value
+            ))
             : // doesnt contain
-              filterObject.months.push(e.target.value);
+            filterObject.months.push(e.target.value);
     }
 
     _handleDays(e) {
@@ -103,10 +50,10 @@ export default class FilterOverlay extends Component {
         let bool = filterObject.days.includes(e.target.value);
         bool // contains item
             ? (filterObject.days = filterObject.days.filter(
-                  day => day !== e.target.value
-              ))
+                day => day !== e.target.value
+            ))
             : // doesnt contain
-              filterObject.days.push(e.target.value);
+            filterObject.days.push(e.target.value);
     }
 
     _handleYears(e) {
@@ -114,11 +61,12 @@ export default class FilterOverlay extends Component {
         let bool = filterObject.years.includes(e.target.value);
         bool // contains item
             ? (filterObject.years = filterObject.years.filter(
-                  year => year !== e.target.value
-              ))
+                year => year !== e.target.value
+            ))
             : // doesnt contain
-              filterObject.years.push(e.target.value);
+            filterObject.years.push(e.target.value);
     }
+
 
     _handleAggregation(e) {
         chartAggregation = e.target.value;
@@ -132,21 +80,15 @@ export default class FilterOverlay extends Component {
                     Select {props.name} <br />
                     {props.options.map((opt, i, arr) => {
                         let checked = false;
-                        if (
-                            filterObject.years.includes(opt.val) ||
-                            filterObject.months.includes(opt.val) ||
-                            filterObject.days.includes(opt.val)
-                        ) {
+                        if (filterObject.years.includes(opt.val) || filterObject.months.includes(opt.val) || filterObject.days.includes(opt.val)) {
                             checked = true;
                         }
-                        if (
-                            props.name === "Aggregation" &&
-                            chartAggregation === opt.val
-                        ) {
+                        if (props.name === "Aggregation" && chartAggregation === opt.val) {
                             checked = true;
                         }
                         return (
-                            <span key={"key" + i}>
+                            <span
+                                key={"key" + i}>
                                 <input
                                     type={props.inputtype}
                                     id={`${props.name}${i}`}
@@ -161,8 +103,8 @@ export default class FilterOverlay extends Component {
                                         i === 0
                                             ? "left"
                                             : i === arr.length - 1
-                                            ? "right"
-                                            : ""
+                                                ? "right"
+                                                : ""
                                     }
                                 >
                                     {opt.name}
@@ -176,18 +118,16 @@ export default class FilterOverlay extends Component {
 
         function EmptyResultMessage(props) {
             let pStyle = {
-                color: "red"
+                color: 'red'
             };
             if (props.emptyResult === true) {
-                return (
-                    <p style={pStyle}>
-                        The filters you set lead to an empty result.
-                        <br />
-                        Please change your filters.
-                    </p>
-                );
+                return <p style={pStyle}>
+                    The filters you set lead to an empty result.
+                    <br />
+                    Please change your filters.
+                </p>
             }
-            return <p />;
+            return <p />
         }
 
         return (
@@ -220,15 +160,12 @@ export default class FilterOverlay extends Component {
                             Heatmap
                         </label>
                     </InputGroup>
+
                 </Row>
                 <Row>
                     <InputGroup>
-                        <Button onClick={this.props._toggleDrawPolygon}>
-                            Set BBox
-                        </Button>
-                        <Button onClick={this.props._animate}>
-                            Play animation
-                        </Button>
+                        <Button onClick={this.props._toggleDrawPolygon}>Set BBox</Button>
+                        <Button onClick={this.props._animate}>Play animation</Button>
                     </InputGroup>
                 </Row>
                 <hr />
@@ -269,7 +206,7 @@ export default class FilterOverlay extends Component {
                             { name: "Sep", val: "09" },
                             { name: "Oct", val: "10" },
                             { name: "Nov", val: "11" },
-                            { name: "Dec", val: "12" }
+                            { name: "Dec", val: "12" },
                         ]}
                         onChange={this._handleMonths}
                     />
@@ -293,7 +230,7 @@ export default class FilterOverlay extends Component {
                 <Row>Select time (slider missing here)</Row>
 
                 <Row>
-                    <Button
+                <Button
                         onClick={() => this.props._confirmFilter(filterObject)}
                     >
                         Confirm Filter
@@ -311,7 +248,7 @@ export default class FilterOverlay extends Component {
                             { name: "Year", val: "Year" },
                             { name: "Month", val: "Month" },
                             { name: "Day of week", val: "Day of week" },
-                            { name: "Hour of day", val: "Hour of day" }
+                            { name: "Hour of day", val: "Hour of day" },
                         ]}
                         onChange={this._handleAggregation}
                     />
