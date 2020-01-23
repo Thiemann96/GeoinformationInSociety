@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Container, Row, Col, InputGroup, Button, Form } from "react-bootstrap";
 import "./FilterOverlay.css";
-import TimeSlider from "../../TimeSlider/TimeSlider";
 
 let filterObject = {
     days: ["1", "2", "3", "4", "5", "6", "7"],
@@ -291,10 +290,7 @@ export default class FilterOverlay extends Component {
                         onChange={this._handleDays}
                     />
                 </Row>
-                <Row>
-                    Select time <div id="timeslider"></div>
-                    <TimeSlider min="0" max="1440" />
-                </Row>
+                <Row>Select time (slider missing here)</Row>
 
                 <Row>
                     <Button
