@@ -33,28 +33,29 @@ RESULT=$(psql -qtAX ${POSTGRES_URL} -c "
 WITH
     result AS (
       SELECT 
-      geometry_id,
-      accident_id,
-      lat #>> '{}' AS lat,
-      lon #>> '{}' AS lon,
-      place,
-      place_near,
-      source_file,
-      source_row_number,
-      accident_category,
-      accident_type,
-      cause_1_4,
-      cause_2,
-      cause_3,
-      cause_other,
-      cause_02,
-      participants_01,
-      participants_02,
-      deaths,
-      seriously_injured,
-      participants,
-      date #>> '{}' AS date,
-      time_of_day #>> '{}' AS time_of_day
+        geometry_id,
+        accident_id,
+        lat #>> '{}' AS lat,
+        lon #>> '{}' AS lon,
+        place,
+        place_near,
+        source_file,
+        source_row_number,
+        accident_category,
+        accident_type,
+        cause_1_4,
+        cause_2,
+        cause_3,
+        cause_other,
+        cause_02,
+        participants_01,
+        participants_02,
+        deaths,
+        seriously_injured,
+        participants,
+        date #>> '{}' AS date,
+        time_of_day #>> '{}' AS time_of_day,
+        weather
       FROM bikeAccidents
   ),
   hours AS (
@@ -85,7 +86,8 @@ WITH
             seriously_injured,
             participants,
             date,
-            time_of_day   
+            time_of_day,
+            weather   
         FROM result, hours
         WHERE
             (EXTRACT (YEAR FROM date::DATE))::int = ANY(\$1)
