@@ -51,6 +51,37 @@
     ]
   },
   {
+    "id": "accidents-as-geojson",
+    "execute-command": "/webhook/accidents-as-geojson.sh",
+    "include-command-output-in-response": true,
+    "pass-arguments-to-command": [
+      {
+        "source": "url",
+        "name": "years"
+      },
+      {
+        "source": "url",
+        "name": "months"
+      },
+      {
+        "source": "url",
+        "name": "weekdays"
+      },
+      {
+        "source": "url",
+        "name": "hours_start"
+      },
+      {
+        "source": "url",
+        "name": "hours_end"
+      },
+      {
+        "source": "url",
+        "name": "polygon"
+      }
+    ]
+  },
+  {
     "id": "accidents-by-time",
     "execute-command": "/webhook/accidents-by-time-place.sh",
     "include-command-output-in-response": true,
