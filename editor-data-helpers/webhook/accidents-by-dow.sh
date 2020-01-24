@@ -67,8 +67,8 @@ WITH
         SELECT 
             geometry_id,
             accident_id,
-            CAST(lat AS numeric) AS lat, 
-            CAST(lon AS numeric) AS lon, 
+            CAST(lat AS double precision) AS lat, 
+            CAST(lon AS double precision) AS lon, 
             place,
             place_near,
             source_file,
