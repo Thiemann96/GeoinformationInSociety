@@ -12,6 +12,11 @@ export default class TimeSlider extends Component {
     }
 
     drawSlider() {
+        const sliderDiv = d3.select(this.props.id);
+
+        // empty div
+        sliderDiv.html("");
+
         var range = [this.props.min, this.props.max];
 
         // set width and height of svg
@@ -30,8 +35,7 @@ export default class TimeSlider extends Component {
             .range([0, width]); // display space
 
         // create svg and translated g
-        const svg = d3
-            .select("#timeslider")
+        const svg = sliderDiv
             .append("svg")
             .attr("width", w)
             .attr("height", h);

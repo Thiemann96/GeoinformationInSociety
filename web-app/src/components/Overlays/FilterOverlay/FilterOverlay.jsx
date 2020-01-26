@@ -244,7 +244,7 @@ export default class FilterOverlay extends Component {
                 </Row>
                 <Row>
                     Select time <div id="timeslider"></div>
-                    <TimeSlider min="0" max="1440" />
+                    <TimeSlider min="0" max="1440" id="#timeslider" />
                 </Row>
 
                 <Row>
