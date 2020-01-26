@@ -1,0 +1,26 @@
+.disclaimer-panel {
+    position: fixed;
+    bottom: 0;
+    left: 20%;
+    right: 20%;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    font-size: 10px;
+    line-height: 2;
+    color: #6b6b76;
+    outline: none;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    display: block;
+}
+
+.short {
+    cursor: pointer;
+}
+
+.collapse {
+    display: none
+}
+
+.collapse.in {
+    display: block
+}

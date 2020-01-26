@@ -1,15 +1,24 @@
-import React, { Component, Fragment } from 'react';
-import { StaticMap } from 'react-map-gl';
+import React, {Component, Fragment} from 'react';
+import {StaticMap} from 'react-map-gl';
 import DeckGL from '@deck.gl/react';
-import { ScatterplotLayer, PolygonLayer } from '@deck.gl/layers';
+import {ScatterplotLayer, PolygonLayer} from '@deck.gl/layers';
 import Overlay from '../Overlays/Overlay'
-import { HeatmapLayer } from '@deck.gl/aggregation-layers'
-import { extent, scaleLinear } from 'd3';
+import {HeatmapLayer, ScreenGridLayer} from '@deck.gl/aggregation-layers'
+import {extent, scaleLinear} from 'd3';
 import DelayedPointLayer from './DelayedPointLayer';
 import anime from 'animejs'
 import GL from '@luma.gl/constants';
 import buildingPolygon from '../../muenster_buildings.json'
-import { EditableGeoJsonLayer, DrawPolygonMode, ViewMode } from 'nebula.gl';
+import {EditableGeoJsonLayer, DrawPolygonMode, ViewMode} from 'nebula.gl';
+
+const colorRange = [
+    [255, 255, 178, 25],
+    [254, 217, 118, 85],
+    [254, 178, 76, 127],
+    [253, 141, 60, 170],
+    [240, 59, 32, 212],
+    [189, 0, 38, 255]
+];
 
 
 class Map extends Component {
@@ -23,13 +32,16 @@ class Map extends Component {
                 pitch: 0,
                 bearing: 0
             },
-            animationProgress: { enterProgress: 0, duration: 60000 },
+            animationProgress: {enterProgress: 0, duration: 60000},
             animate: false,
             interactionState: {},
             mapBoxToken: 'pk.eyJ1IjoiZXRoaWUxMCIsImEiOiJjazQyeXlxNGcwMjk3M2VvYmw2NHU4MDRvIn0.nYOmVGARhLOULQ550LyUYA',
+            mapstyle: 'mapbox://styles/mapbox/dark-v10',
             accidents: [],
+            accidentsNoCoords: 0,
             emptyResult: false,
             aggregation: "Day of week",
+            drawing: false,
             myFeatureCollection: {
                 type: 'FeatureCollection',
                 features: [{
@@ -73,7 +85,20 @@ class Map extends Component {
         let url = "http://0.0.0.0:9000/hooks/bikes";
         fetch(url)
             .then(response => response.json())
-            .then(accidents => this.setState({ accidents }));
+            .then(accidents => {
+                if (accidents.length) {
+                    let noCoords = accidents.filter(value => value.lat === null || value.lon === null).length;
+                    this.setState({
+                        accidents: accidents,
+                        emptyResult: false,
+                        accidentsNoCoords: noCoords
+                    });
+                } else {
+                    this.setState({
+                        emptyResult: true
+                    })
+                }
+            })
     }
 
     _animate() {
@@ -89,7 +114,7 @@ class Map extends Component {
             },
             complete: function (anim) {
                 console.log("end");
-                that.setState({ animate: false, layers: [], animationProgress: { enterProgress: 0, duration: 10000 } })
+                that.setState({animate: false, layers: [], animationProgress: {enterProgress: 0, duration: 10000}})
             },
             update() {
                 // each tick, update the DeckGL layers with new values
@@ -127,6 +152,7 @@ class Map extends Component {
 
     _toggleDrawPolygon() {
         this.setState({
+            drawing: true,
             showDrawLayer: !(this.state.showDrawLayer),
             myFeatureCollection: {
                 type: 'FeatureCollection',
@@ -183,14 +209,26 @@ class Map extends Component {
 
         fetch(url)
             .then(response => response.json())
-            .then(accidents => this.setState({ accidents }));
+            .then(accidents => {
+                if (accidents.length) {
+                    let noCoords = accidents.filter(value => value.lat === null || value.lon === null).length;
+                    this.setState({
+                        accidents: accidents,
+                        emptyResult: false,
+                        accidentsNoCoords: noCoords
+                    });
+                } else {
+                    this.setState({
+                        emptyResult: true
+                    })
+                }
+            })
     }
 
     _renderLayers() {
         const {
-            selectedFeatureIndexes = []
+            selectedFeatureIndexes = [], cellSize = 20, gpuAggregation = true, aggregation = 'SUM'
         } = this.props;
-
         return [
             // This is only needed when using shadow effects
             // returns the 3dbuildings layer
@@ -204,14 +242,15 @@ class Map extends Component {
                     getPolygon: f => f.polygon,
                     getElevation: f => f.height,
                     getFillColor: [74, 80, 87]
-                }) : null,
+                })
+                : null,
             this.state.showDrawLayer ?
                 new EditableGeoJsonLayer({
                     id: 'geojson-layer',
                     data: this.state.myFeatureCollection,
                     mode: DrawPolygonMode,
                     selectedFeatureIndexes,
-                    onEdit: ({ updatedData }) => {
+                    onEdit: ({updatedData}) => {
                         console.log(updatedData)
                         this.setState({
                             myFeatureCollection: updatedData,
@@ -224,7 +263,7 @@ class Map extends Component {
                     mode: ViewMode,
                     selectedFeatureIndexes,
                     getFillColor: [0, 0, 0, 0],
-                    onEdit: ({ updatedData }) => {
+                    onEdit: ({updatedData}) => {
                         console.log(updatedData)
                         this.setState({
                             myFeatureCollection: updatedData,
@@ -276,6 +315,8 @@ class Map extends Component {
             .then(response => response.json())
             .then(accidents => {
                 if (accidents.length) {
+                    let noCoords = accidents.filter(value => value.lat === null).length;
+                    console.log(noCoords);
                     this.setState({
                         accidents: accidents,
                         emptyResult: false
@@ -295,26 +336,27 @@ class Map extends Component {
     }
 
     render() {
+
         return (
             <Fragment>
                 <DeckGL
                     initialViewState={this.state.viewState}
                     controller={
                         this.state.showDrawLayer ?
-                            { doubleClickZoom: false }
-                            : { doubleClickZoom: true }
+                            {doubleClickZoom: false}
+                            : {doubleClickZoom: true}
                     } layers={
-                        this.state.animate ?
-                            this.state.layers
-                            : this._renderLayers()}
+                    this.state.animate ?
+                        this.state.layers
+                        : this._renderLayers()}
                 >
                     <StaticMap
                         mapStyle={this.state.mapstyle}
-                        mapboxApiAccessToken={this.state.mapBoxToken} />
+                        mapboxApiAccessToken={this.state.mapBoxToken}/>
                 </DeckGL>
                 <Overlay
                     _animate={this._playAnimation}
-                    _toggleBuildings={this._toggleBuildings} 
+                    _toggleBuildings={this._toggleBuildings}
                     _toggleHeatMap={this._toggleHeatMap}
                     _toggleAccidents={this._toggleAccidents}
                     datalength={this.state.accidents.length}
@@ -326,9 +368,9 @@ class Map extends Component {
                     emptyResult={this.state.emptyResult}
                     aggregation={this.state.aggregation}
                     _getCoordinates={this._getCoordinates}
-                    _handleMapStyle = {this._handleMapStyle}
+                    _handleMapStyle={this._handleMapStyle}
                     _toggleDrawPolygon={this._toggleDrawPolygon}
-
+                    accidentsNoCoords={this.state.accidentsNoCoords}
                 />
             </Fragment>
         );

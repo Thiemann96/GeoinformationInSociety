@@ -12,6 +12,11 @@ export default class ChartOverlay extends Component {
             height: 200
         };
     }
+    componentDidMount(){
+        console.log("Component mounted")
+    }
+
+
 
     render() {
         return (
@@ -29,13 +34,10 @@ export default class ChartOverlay extends Component {
                     {this.props.datalength}
                 </span>
                 <hr/>
-                <h2>Additional graphs can be shown here</h2>
-                <div id="linechart"/>
-                <LineChart
-                    accidents={this.props.accidents}
-                    width={this.state.width}
-                    height={this.state.height}
-                />
+                <div>
+                <h2>Accidents summary</h2>
+                
+                </div>
             </Container>
         );
     }
