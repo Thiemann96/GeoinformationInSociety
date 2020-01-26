@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import { Container, Row, Col, InputGroup, Button, Form } from "react-bootstrap";
+import React, {Component} from "react";
+import {Container, Row, Col, InputGroup, Button, Form} from "react-bootstrap";
 import "./FilterOverlay.css";
 import TimeSlider from "../../TimeSlider/TimeSlider";
 
@@ -17,17 +17,18 @@ export default class FilterOverlay extends Component {
         super(props);
         //prettier-ignore
         this.state = {
+            activeTimeLayer:false,
             options: [
-                { value: 'mapbox://styles/mapbox/dark-v10', label: 'Dark' },
-                { value: 'mapbox://styles/mapbox/streets-v11', label: 'Streets' },
-                { value: 'mapbox://styles/mapbox/outdoors-v11', label: 'Outdoors' },
-                { value: 'mapbox://styles/mapbox/light-v10', label: 'Light' },
-                { value: 'mapbox://styles/mapbox/satellite-v9', label: 'Satellite' },
-                { value: 'mapbox://styles/mapbox/satellite-streets-v11', label: 'Satellite Streets' },
-                { value: 'mapbox://styles/mapbox/navigation-preview-day-v4', label: 'Navigation night' },
-                { value: 'mapbox://styles/mapbox/navigation-preview-night-v4', label: 'Navigation day' },
-                { value: 'mapbox://styles/mapbox/navigation-guidance-day-v4', label: 'Navigation Guidance Day' },
-                { value: 'mapbox://styles/mapbox/navigation-guidance-night-v4', label: 'Navigation Guidance Night' },
+                {value: 'mapbox://styles/mapbox/dark-v10', label: 'Dark'},
+                {value: 'mapbox://styles/mapbox/streets-v11', label: 'Streets'},
+                {value: 'mapbox://styles/mapbox/outdoors-v11', label: 'Outdoors'},
+                {value: 'mapbox://styles/mapbox/light-v10', label: 'Light'},
+                {value: 'mapbox://styles/mapbox/satellite-v9', label: 'Satellite'},
+                {value: 'mapbox://styles/mapbox/satellite-streets-v11', label: 'Satellite Streets'},
+                {value: 'mapbox://styles/mapbox/navigation-preview-day-v4', label: 'Navigation night'},
+                {value: 'mapbox://styles/mapbox/navigation-preview-night-v4', label: 'Navigation day'},
+                {value: 'mapbox://styles/mapbox/navigation-guidance-day-v4', label: 'Navigation Guidance Day'},
+                {value: 'mapbox://styles/mapbox/navigation-guidance-night-v4', label: 'Navigation Guidance Night'},
             ]
         };
         this.props.filter
@@ -37,6 +38,8 @@ export default class FilterOverlay extends Component {
         this._handleMonths = this._handleMonths.bind(this);
         this._handleYears = this._handleYears.bind(this);
         this._handleAggregation = this._handleAggregation.bind(this);
+        this._handleCheckbox = this._handleCheckbox.bind(this);
+
     }
 
     _handleMonths(e) {
@@ -46,6 +49,8 @@ export default class FilterOverlay extends Component {
             ? (filterObject.months = filterObject.months.filter(
                   month => month !== e.target.value
               ))
+
+
             : // doesnt contain
               filterObject.months.push(e.target.value);
     }
@@ -77,11 +82,26 @@ export default class FilterOverlay extends Component {
         this.props._confirmAggregation(chartAggregation);
     }
 
+    _resetFilter() {
+        filterObject = {
+            days: ["1", "2", "3", "4", "5", "6", "7"],
+            months: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
+            years: ["2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018"]
+        };
+    }
+    _handleCheckbox(e){
+        this.props._toggleTimeFilter(e);
+        console.log(e.target.checked)
+        this.setState({
+            activeTimeLayer:e.target.checked
+        })
+    }
+
     render() {
         function Selector(props) {
             return (
                 <div id={`select${props.name}`} className="switchContainer">
-                    Select {props.name} <br />
+                    Select {props.name} <br/>
                     {props.options.map((opt, i, arr) => {
                         let checked = false;
                         if (
@@ -147,9 +167,9 @@ export default class FilterOverlay extends Component {
                 <Row>
                     <h2>Filter options</h2>
                     <p>Filter the visualised dataset</p>
-                    <EmptyResultMessage emptyResult={this.props.emptyResult} />
+                    <EmptyResultMessage emptyResult={this.props.emptyResult}/>
                 </Row>
-                <hr />
+                <hr/>
                 <Row>
                     <InputGroup>
                         <label>
@@ -171,6 +191,13 @@ export default class FilterOverlay extends Component {
                             />
                             Heatmap
                         </label>
+                        <br/>
+                        <label>
+                            <InputGroup.Checkbox
+                                onChange={this.props._showOnlyInjury}
+                            />
+                            Show only accidents with personal injuries
+                        </label>
                     </InputGroup>
                 </Row>
                 <Row>
@@ -183,24 +210,24 @@ export default class FilterOverlay extends Component {
                         </Button>
                     </InputGroup>
                 </Row>
-                <hr />
+                <hr/>
                 <Row>
                     <Selector
                         name="Years"
                         inputtype="checkbox"
                         options={[
-                            { name: "2007", val: "2007" },
-                            { name: "2008", val: "2008" },
-                            { name: "2009", val: "2009" },
-                            { name: "2010", val: "2010" },
-                            { name: "2011", val: "2011" },
-                            { name: "2012", val: "2012" },
-                            { name: "2013", val: "2013" },
-                            { name: "2014", val: "2014" },
-                            { name: "2015", val: "2015" },
-                            { name: "2016", val: "2016" },
-                            { name: "2017", val: "2017" },
-                            { name: "2018", val: "2018" }
+                            {name: "2007", val: "2007"},
+                            {name: "2008", val: "2008"},
+                            {name: "2009", val: "2009"},
+                            {name: "2010", val: "2010"},
+                            {name: "2011", val: "2011"},
+                            {name: "2012", val: "2012"},
+                            {name: "2013", val: "2013"},
+                            {name: "2014", val: "2014"},
+                            {name: "2015", val: "2015"},
+                            {name: "2016", val: "2016"},
+                            {name: "2017", val: "2017"},
+                            {name: "2018", val: "2018"}
                         ]}
                         onChange={this._handleYears}
                     />
@@ -231,13 +258,13 @@ export default class FilterOverlay extends Component {
                         name="Days"
                         inputtype="checkbox"
                         options={[
-                            { name: "Mon", val: "1" },
-                            { name: "Tue", val: "2" },
-                            { name: "Wed", val: "3" },
-                            { name: "Thu", val: "4" },
-                            { name: "Fri", val: "5" },
-                            { name: "Sat", val: "6" },
-                            { name: "Sun", val: "7" }
+                            {name: "Mon", val: "1"},
+                            {name: "Tue", val: "2"},
+                            {name: "Wed", val: "3"},
+                            {name: "Thu", val: "4"},
+                            {name: "Fri", val: "5"},
+                            {name: "Sat", val: "6"},
+                            {name: "Sun", val: "7"}
                         ]}
                         onChange={this._handleDays}
                     />
@@ -245,6 +272,7 @@ export default class FilterOverlay extends Component {
                 <Row>
                     Select time <div id="timeslider"></div>
                     <TimeSlider min="0" max="1440" id="#timeslider" />
+                   
                 </Row>
 
                 <Row>
@@ -253,20 +281,23 @@ export default class FilterOverlay extends Component {
                     >
                         Confirm Filter
                     </Button>
-                    <Button onClick={this.props._resetFilter}>
+                    <Button onClick={() => {
+                        this.props._resetFilter();
+                        this._resetFilter();
+                    }}>
                         Reset Filter
                     </Button>
                 </Row>
-                <hr />
+                <hr/>
                 <Row>
                     <Selector
                         name="Aggregation"
                         inputtype="radio"
                         options={[
-                            { name: "Year", val: "Year" },
-                            { name: "Month", val: "Month" },
-                            { name: "Day of week", val: "Day of week" },
-                            { name: "Hour of day", val: "Hour of day" }
+                            {name: "Year", val: "Year"},
+                            {name: "Month", val: "Month"},
+                            {name: "Day of week", val: "Day of week"},
+                            {name: "Hour of day", val: "Hour of day"},
                         ]}
                         onChange={this._handleAggregation}
                     />

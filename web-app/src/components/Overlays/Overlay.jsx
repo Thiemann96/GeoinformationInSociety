@@ -4,6 +4,7 @@ import FilterOverlay from "./FilterOverlay/FilterOverlay";
 import ChartOverlay from "./ChartOverlay/ChartOverlay";
 import TileSelect from "./TileSelect/TileSelect";
 import DrawingTool from "./DrawingTool/DrawingTool"
+import Disclaimer from "./Disclaimer/Disclaimer";
 
 export default class Overlay extends Component {
     constructor(props) {
@@ -22,7 +23,10 @@ export default class Overlay extends Component {
                     _toggleAccidents={this.props._toggleAccidents}
                     _toggleBuildings={this.props._toggleBuildings} filter={this.props.filter}
                     emptyResult={this.props.emptyResult} _confirmAggregation={this.props._confirmAggregation}
-                    _toggleDrawPolygon={this.props._toggleDrawPolygon}
+                    _toggleDrawPolygon={this.props._toggleDrawPolygon} _showOnlyInjury={this.props._showOnlyInjury}
+                    _onChangeTimeFrom = {this.props._onChangeTimeFrom}
+                    _onChangeTimeTo= {this.props._onChangeTimeTo}
+                    _toggleTimeFilter = {this.props._toggleTimeFilter}
                 />
 
                 <ChartOverlay datalength={this.props.datalength} accidents={this.props.accidents}
@@ -31,6 +35,7 @@ export default class Overlay extends Component {
                 <DrawingTool _toggleDrawPolygon={this.props._toggleDrawPolygon}/>
                 <TileSelect _handleMapStyle={this.props._handleMapStyle}
                 />
+                <Disclaimer accidentsNoCoords={this.props.accidentsNoCoords}/>
             </Container>
         );
     }
