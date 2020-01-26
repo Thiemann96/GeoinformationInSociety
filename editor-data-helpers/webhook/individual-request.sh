@@ -68,6 +68,7 @@ psql -qtAX ${POSTGRES_URL} -c "
         participants_02,
         deaths,
         seriously_injured,
+        slightly_injured,
         json_build_object(
           'pedestrian', pedestrian,
           'bicycle', bicycle,
