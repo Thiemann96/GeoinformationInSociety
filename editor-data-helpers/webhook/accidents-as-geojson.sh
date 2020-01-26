@@ -52,6 +52,7 @@ WITH
         participants_02,
         deaths,
         seriously_injured,
+        slightly_injured,
         participants,
         date #>> '{}' AS date,
         time_of_day #>> '{}' AS time_of_day,
@@ -83,6 +84,7 @@ WITH
             participants_02,
             deaths,
             seriously_injured,
+            slightly_injured,
             participants,
             date,
             time_of_day,
@@ -121,9 +123,11 @@ WITH
             'participants_02', p.participants_02,
             'deaths', p.deaths,
             'seriously_injured', p.seriously_injured,
+            'slightly_injured', p.slightly_injured,
             'participants', p.participants,
             'date', p.date, 
-            'time_of_day', p.time_of_day 
+            'time_of_day', p.time_of_day,
+            'weather', p.weather 
         )
     )
 ))
