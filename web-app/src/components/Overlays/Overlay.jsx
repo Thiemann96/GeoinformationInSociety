@@ -6,7 +6,7 @@ import TileSelect from "./TileSelect/TileSelect";
 import DrawingTool from "./DrawingTool/DrawingTool"
 import Disclaimer from "./Disclaimer/Disclaimer";
 import PlayButton from "./PlayButton/PlayButton";
-
+import "./Overlay.css"
 export default class Overlay extends Component {
     constructor(props) {
         super(props);
