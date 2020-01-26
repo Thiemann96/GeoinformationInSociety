@@ -3,14 +3,22 @@ import { StaticMap } from 'react-map-gl';
 import DeckGL from '@deck.gl/react';
 import { ScatterplotLayer, PolygonLayer } from '@deck.gl/layers';
 import Overlay from '../Overlays/Overlay'
-import { HeatmapLayer } from '@deck.gl/aggregation-layers'
+import { HeatmapLayer,ScreenGridLayer } from '@deck.gl/aggregation-layers'
 import { extent, scaleLinear } from 'd3';
 import DelayedPointLayer from './DelayedPointLayer';
 import anime from 'animejs'
 import GL from '@luma.gl/constants';
 import buildingPolygon from '../../muenster_buildings.json'
 import { EditableGeoJsonLayer, DrawPolygonMode, ViewMode } from 'nebula.gl';
-
+const colorRange = [
+    [255, 255, 178, 25],
+    [254, 217, 118, 85],
+    [254, 178, 76, 127],
+    [253, 141, 60, 170],
+    [240, 59, 32, 212],
+    [189, 0, 38, 255]
+  ];
+  
 
 class Map extends Component {
     constructor(props) {
@@ -27,9 +35,11 @@ class Map extends Component {
             animate: false,
             interactionState: {},
             mapBoxToken: 'pk.eyJ1IjoiZXRoaWUxMCIsImEiOiJjazQyeXlxNGcwMjk3M2VvYmw2NHU4MDRvIn0.nYOmVGARhLOULQ550LyUYA',
+            mapstyle:'mapbox://styles/mapbox/dark-v10',
             accidents: [],
             emptyResult: false,
             aggregation: "Day of week",
+            drawing:false,
             myFeatureCollection: {
                 type: 'FeatureCollection',
                 features: [{
@@ -127,6 +137,7 @@ class Map extends Component {
 
     _toggleDrawPolygon() {
         this.setState({
+            drawing:true,
             showDrawLayer: !(this.state.showDrawLayer),
             myFeatureCollection: {
                 type: 'FeatureCollection',
@@ -188,9 +199,8 @@ class Map extends Component {
 
     _renderLayers() {
         const {
-            selectedFeatureIndexes = []
+            selectedFeatureIndexes = [],cellSize = 20, gpuAggregation = true, aggregation = 'SUM'
         } = this.props;
-
         return [
             // This is only needed when using shadow effects
             // returns the 3dbuildings layer
@@ -204,7 +214,8 @@ class Map extends Component {
                     getPolygon: f => f.polygon,
                     getElevation: f => f.height,
                     getFillColor: [74, 80, 87]
-                }) : null,
+                })
+                 : null,
             this.state.showDrawLayer ?
                 new EditableGeoJsonLayer({
                     id: 'geojson-layer',
@@ -295,6 +306,7 @@ class Map extends Component {
     }
 
     render() {
+
         return (
             <Fragment>
                 <DeckGL

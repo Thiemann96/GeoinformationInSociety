@@ -3,6 +3,7 @@ import { Container, Row, Col } from "react-bootstrap";
 import FilterOverlay from "./FilterOverlay/FilterOverlay";
 import ChartOverlay from "./ChartOverlay/ChartOverlay";
 import TileSelect from "./TileSelect/TileSelect";
+import DrawingTool from "./DrawingTool/DrawingTool"
 
 export default class Overlay extends Component {
     constructor(props) {
@@ -27,6 +28,7 @@ export default class Overlay extends Component {
                 <ChartOverlay datalength={this.props.datalength} accidents={this.props.accidents}
                     aggregation={this.props.aggregation}
                 />
+                <DrawingTool _toggleDrawPolygon={this.props._toggleDrawPolygon}/>
                 <TileSelect _handleMapStyle={this.props._handleMapStyle}
                 />
             </Container>

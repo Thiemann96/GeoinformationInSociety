@@ -2,12 +2,13 @@ version: "2.4"
 
 services:
     postgres:
-        image: quay.io/bkari/giis_bike_accidents
+        image: postgres:12-alpine
         environment:
             POSTGRES_USER: postgres
             POSTGRES_DB: postgres
             POSTGRES_PASSWORD: PASSWORD
         volumes:
+            - ./data:/docker-entrypoint-initdb.d
             - ./postgres_data:/var/lib/postgresql/data
         healthcheck:
             test: ["CMD-SHELL", "pg_isready -U postgres"]
