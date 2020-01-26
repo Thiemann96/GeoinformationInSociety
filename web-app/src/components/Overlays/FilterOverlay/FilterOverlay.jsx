@@ -32,6 +32,8 @@ export default class FilterOverlay extends Component {
         this._handleMonths = this._handleMonths.bind(this);
         this._handleYears = this._handleYears.bind(this);
         this._handleAggregation = this._handleAggregation.bind(this);
+        this._onChangeTimeFrom = this.onChangeTimeFrom.bind(this);
+        this._onChangeTimeTo = this.onChangeTimeTo.bind(this);
     }
 
     _handleMonths(e) {
@@ -80,7 +82,12 @@ export default class FilterOverlay extends Component {
             years: ["2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018"]
         };
     }
-
+    onChangeTimeFrom(e){
+        this.setState({from:e.target.value})
+    }
+    onChangeTimeTo(e){
+        this.setState({to:e.target.value})
+    }
     render() {
         function Selector(props) {
             return (
@@ -242,7 +249,10 @@ export default class FilterOverlay extends Component {
                         onChange={this._handleDays}
                     />
                 </Row>
-                <Row>Select time (slider missing here)</Row>
+                <Row style={{"paddingBottom":"5px","paddingTop":"5px"}}>
+                   <label>From</label> <input onChange={this.onChangeTimeFrom} value={this.state.from} type="time" placeholder="From"/>
+                   <label>To</label><input onChange={this.onChangeTimeTo} value ={this.state.to} type="time" placeholder="To"/>
+                </Row>
 
                 <Row>
                     <Button
