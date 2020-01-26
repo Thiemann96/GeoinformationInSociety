@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import * as d3 from "d3";
+import categories from "../../../data/accident_category.json";
 
 export default class AccTypesChart extends Component {
     constructor(props) {
@@ -12,62 +13,22 @@ export default class AccTypesChart extends Component {
     }
 
     drawChart() {
-        // this should be set dynamically:#
-        /* TODO:
-            aggregate by this.props.aggregation
-            Getting 'undefined' error at the moment while changing aggregation if filters are set
-         */
-        let aggregateBy = this.props.aggregation;
-        // const aggregateBy = "hour_of_day";
-        // const aggregateBy = "year";
+        // console.log(categories.data);
 
         // prepare data
-        switch (aggregateBy) {
-            case "Year":
-                var data = this.props.accidents
-                    .map(d => d.date)
-                    .filter(d => d !== null)
-                    .map(d => d.slice(0, 4));
-                // nest by year
-                var nested = d3
-                    .nest()
-                    .key(d => d)
-                    .entries(data)
-                    .map(d => ({ bin: +d.key, count: d.values.length }))
-                    .sort((a, b) => a.bin > b.bin);
-                console.log(data, nested);
-                break;
-            case "Day of week":
-                var data = this.props.accidents
-                    .map(d => d.date)
-                    .filter(d => d !== null)
-                    .map(getDay);
-                // nest by day
-                var nested = d3
-                    .nest()
-                    .key(d => d)
-                    .entries(data)
-                    .map(d => ({ bin: d.key, count: d.values.length }))
-                    .sort((a, b) => sortByWeekday(a.bin, b.bin));
-                break;
-            case "Hour of day":
-                var data = this.props.accidents
-                    .map(d => d.time_of_day)
-                    .filter(d => d !== null)
-                    .map(d => d.slice(0, 2));
-                // nest by hour
-                var nested = d3
-                    .nest()
-                    .key(d => d)
-                    .entries(data)
-                    .map(d => ({ bin: +d.key, count: d.values.length }))
-                    .sort((a, b) => a.bin > b.bin);
-                console.log(data, nested);
-                break;
-            default:
-                console.log("invalid option");
-            // code block
-        }
+        // reduce to array of categories + filter NAs
+        var data = this.props.accidents
+            .map(d => d.accident_category)
+            .filter(d => d !== null);
+
+        // nest by category
+        var nested = d3
+            .nest()
+            .key(d => d)
+            .entries(data)
+            .map(d => ({ bin: +d.key, count: d.values.length }))
+            .sort((a, b) => a.bin > b.bin);
+        console.log(nested);
 
         // set chart margins + dimensions
         const margin = { left: 40, right: 0, top: 0, bottom: 20 };
@@ -129,6 +90,15 @@ export default class AccTypesChart extends Component {
             .attr("height", (d, i) => y(0) - y(d.count))
             .attr("fill", "steelblue");
 
+        chartDiv.append("div").html(
+            "<b>Unfalltypen:</b><br>" +
+                nested
+                    .map(function(d) {
+                        return d.bin + ": " + getCategory(d.bin) + "<br>";
+                    })
+                    .join("")
+        );
+
         function getDay(str) {
             // takes string of format "2017-12-19" and returns day of the week
             let parser = d3.timeParse("%Y-%m-%d");
@@ -143,6 +113,12 @@ export default class AccTypesChart extends Component {
                 ordering[sortOrder[i]] = i;
 
             return ordering[a] - ordering[b];
+        }
+
+        function getCategory(key) {
+            // translate number key into written category name
+            var i = categories.data.findIndex(d => d.key == key);
+            return categories.data[i].title;
         }
     }
 
