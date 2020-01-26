@@ -35,7 +35,7 @@ export default class AccTypesChart extends Component {
         };
 
         // Delete old charts if existing
-        let chartDiv = d3.select(this.props.id);
+        let chartDiv = d3.select("#" + this.props.id);
         chartDiv.html("");
 
         // create svg

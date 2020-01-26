@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import * as d3 from "d3";
+import "./BarChart.css";
 
 export default class BarChart extends Component {
     constructor(props) {
@@ -7,35 +8,19 @@ export default class BarChart extends Component {
         this.state = {};
     }
 
-    componentDidMount() {
-        // this.drawChart();
-    }
+    componentDidMount() {}
 
     drawChart() {
-        console.log(this.props.accidents);
+        // console.log(this.props.accidents);
 
         const accidents = this.props.accidents;
-        // this should be set dynamically:#
-        /* TODO:
-            aggregate by this.props.aggregation
-            Getting 'undefined' error at the moment while changing aggregation if filters are set
-         */
-        let aggregateBy = this.props.aggregation;
-        // const aggregateBy = "hour_of_day";
-        // const aggregateBy = "Year";
 
-        // prepare data
+        let aggregateBy = this.props.aggregation;
+        let splitBy = this.props.split;
+
+        // aggregation
         switch (aggregateBy) {
-            case "Year":
-                var data = this.props.accidents.filter(d => d.date !== null);
-                // nest by year
-                var nested = d3
-                    .nest()
-                    .key(d => d.date.slice(0, 4))
-                    .entries(data)
-                    .sort((a, b) => +a.key > +b.key);
-                console.log(data, nested);
-                break;
+            // case "Year": default, see below
             case "Month":
                 var data = this.props.accidents.filter(d => d.date !== null);
                 // nest by month
@@ -44,7 +29,6 @@ export default class BarChart extends Component {
                     .key(d => d.date.slice(5, 7))
                     .entries(data)
                     .sort((a, b) => +a.key > +b.key);
-                console.log(data, nested);
                 break;
             case "Day of week":
                 var data = this.props.accidents.filter(d => d.date !== null);
@@ -65,58 +49,64 @@ export default class BarChart extends Component {
                     .key(d => d.time_of_day.slice(0, 2))
                     .entries(data)
                     .sort((a, b) => +a.key > +b.key);
-                console.log(data, nested);
                 break;
             default:
-                console.log("invalid option");
+                // year
+                var data = this.props.accidents.filter(d => d.date !== null);
+                // nest by year
+                var nested = d3
+                    .nest()
+                    .key(d => d.date.slice(0, 4))
+                    .entries(data)
+                    .sort((a, b) => +a.key > +b.key);
+                break;
         }
 
-        // Delete old charts if existing
-        let chartDiv = d3.select(this.props.id);
-        chartDiv.html("");
+        const splitKeys = {
+            // colours: grey, blue, orange
+            precipitation_mm: ["unknown", "precipitation", "no precipitation"],
+            temperature_c: ["unknown", "not freezing", "freezing"],
+            no: ["all"]
+        };
 
-        // create dropdown
-        const splitOptions = [
-            { value: "no", name: "No Split" },
-            { value: "temperature_c", name: "Temperature (°C)" },
-            { value: "precipitation_mm", name: "Precipitation (mm)" }
-        ];
+        const splitKeyGenerator = {
+            precipitation_mm: d =>
+                d.weather
+                    ? d.weather.precipitation_mm > 0
+                        ? "precipitation"
+                        : "no precipitation"
+                    : "unknown",
+            temperature_c: d =>
+                d.weather
+                    ? d.weather.temperature_c > 0
+                        ? "not freezing"
+                        : "freezing"
+                    : "unknown",
+            no: d => "all"
+        };
 
-        const dropdownDiv = chartDiv.append("div");
-        dropdownDiv.append("span").html("Split by: ");
-        const dropdown = dropdownDiv.append("select");
-        dropdown
-            .selectAll(".splitOption")
-            .data(splitOptions)
-            .enter()
-            .append("option")
-            .classed("splitOption", true)
-            .attr("value", d => d.value)
-            .text(d => d.name);
-        dropdown.on("change", function() {
-            console.log(this.value);
-
-            if (this.value == "precipitation_mm") {
-                var data2 = accidents.filter(d => d.date !== null);
-                var data2 = d3
+        var barStack = d3.stack().keys(splitKeys[splitBy])(
+            nested.map(function(dat) {
+                var n = d3
                     .nest()
-                    .key(d => getDay(d.date))
-                    .key(d =>
-                        d.weather
-                            ? d.weather.precipitation_mm > 0
-                                ? "rain"
-                                : "no rain"
-                            : "unknown"
-                    )
-                    .entries(data2);
-                // .nest()
-                // .key(d => getDay(d.date))
-                // .key(d => d.values.weather.precipitation_mm > 0)
-                // .entries(data2);
+                    .key(splitKeyGenerator[splitBy])
+                    .entries(dat.values)
+                    .sort((a, b) => a.key > b.key);
+                var obj = { key: dat.key };
+                for (var i = 0; i < splitKeys[splitBy].length; i++) {
+                    obj[n[i].key] = n[i].values.length;
+                }
+                return obj;
+            })
+        );
 
-                console.log(data2);
-            }
-        });
+        // end of data preprocessing
+        // barStack is the data we are going to use to draw the chart
+        /////////////////////////////////////////////////////////////
+
+        // Delete old charts if existing
+        let chartDiv = d3.select("#" + this.props.id);
+        chartDiv.html("");
 
         // set chart margins + dimensions
         const margin = { left: 40, right: 0, top: 0, bottom: 20 };
@@ -164,15 +154,22 @@ export default class BarChart extends Component {
                     .tickSizeOuter(0)
             );
 
-        g.selectAll("rect")
-            .data(nested)
+        var bar = g
+            .selectAll(".bargroup")
+            .data(barStack)
+            .enter()
+            .append("g")
+            .classed("bargroup", true)
+            .attr("id", (d, i) => "bargroup" + i);
+
+        bar.selectAll("rect")
+            .data(d => d)
             .enter()
             .append("rect")
             .attr("x", (d, i) => i * (barWidth + barDist))
-            .attr("y", (d, i) => y(d.values.length))
+            .attr("y", (d, i) => y(d[1]))
             .attr("width", barWidth)
-            .attr("height", (d, i) => y(0) - y(d.values.length))
-            .attr("fill", "steelblue");
+            .attr("height", (d, i) => y(d[0]) - y(d[1]));
 
         function getDay(str) {
             // takes string of format "2017-12-19" and returns day of the week
