@@ -35,7 +35,7 @@ export default class ChartOverlay extends Component {
                 <h2>Bike accidents</h2>
 
                 <span>Split by:</span>
-                <select onChange={this.onChange} autocomplete="off">
+                <select onChange={this.onChange} autoComplete="off">
                     {splitOptions.map((option, index) => {
                         return (
                             <option key={"id" + index} value={option.value}>
