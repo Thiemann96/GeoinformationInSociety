@@ -39,6 +39,7 @@ class Map extends Component {
             accidents: [],
             emptyResult: false,
             aggregation: "Day of week",
+            drawing:false,
             myFeatureCollection: {
                 type: 'FeatureCollection',
                 features: [{
@@ -136,6 +137,7 @@ class Map extends Component {
 
     _toggleDrawPolygon() {
         this.setState({
+            drawing:true,
             showDrawLayer: !(this.state.showDrawLayer),
             myFeatureCollection: {
                 type: 'FeatureCollection',
