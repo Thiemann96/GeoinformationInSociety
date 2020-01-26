@@ -38,7 +38,7 @@ export default class Disclaimer extends Component {
                 <p>
                     The data used for this application comes from <a href="https://codeformuenster.org/">Code for Muenster</a>.
                     <br/>
-                    Link to the data: <a href="https://github.com/codeformuenster/open-data">GitHub</a>
+                    Link to the data: <a href="https://github.com/codeformuenster/verkehrsunfaelle">GitHub</a>
                 </p>
             </div>
         }

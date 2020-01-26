@@ -78,6 +78,7 @@ class Map extends Component {
         this._handleMapStyle = this._handleMapStyle.bind(this);
         this._toggleDrawPolygon = this._toggleDrawPolygon.bind(this);
         this._getCoordinates = this._getCoordinates.bind(this);
+        this._showOnlyInjury = this._showOnlyInjury.bind(this);
     }
 
     // fetches all accidents from the server running locally
@@ -182,12 +183,30 @@ class Map extends Component {
         });
     }
 
+    _showOnlyInjury(e) {
+        this.setState({
+            onlyInjuries: e.target.checked
+        });
+        if (e.target.checked) {
+            let accidents = this.state.accidents.filter(value => value.accident_category <= 3);
+            this.setState({
+                accidents: accidents
+            });
+        } else {
+            if (this.state.filter) {
+                this._confirmFilter(this.state.filter)
+            } else {
+                this._resetFilter()
+            }
+        }
+    }
+
     _playAnimation() {
         this.setState(() => {
             return {
                 animate: true
             }
-        })
+        });
         this._animate();
     }
 
@@ -210,8 +229,14 @@ class Map extends Component {
         fetch(url)
             .then(response => response.json())
             .then(accidents => {
+                this.setState({
+                    filter: null
+                });
                 if (accidents.length) {
                     let noCoords = accidents.filter(value => value.lat === null || value.lon === null).length;
+                    if (this.state.onlyInjuries) {
+                        accidents = accidents.filter(value => value.accident_category <= 3);
+                    }
                     this.setState({
                         accidents: accidents,
                         emptyResult: false,
@@ -315,8 +340,9 @@ class Map extends Component {
             .then(response => response.json())
             .then(accidents => {
                 if (accidents.length) {
-                    let noCoords = accidents.filter(value => value.lat === null).length;
-                    console.log(noCoords);
+                    if (this.state.onlyInjuries) {
+                        accidents = accidents.filter(value => value.accident_category <= 3);
+                    }
                     this.setState({
                         accidents: accidents,
                         emptyResult: false
@@ -371,6 +397,7 @@ class Map extends Component {
                     _handleMapStyle={this._handleMapStyle}
                     _toggleDrawPolygon={this._toggleDrawPolygon}
                     accidentsNoCoords={this.state.accidentsNoCoords}
+                    _showOnlyInjury={this._showOnlyInjury}
                 />
             </Fragment>
         );
