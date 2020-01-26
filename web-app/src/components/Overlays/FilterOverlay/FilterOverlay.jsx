@@ -40,43 +40,19 @@ let chartAggregation = "Day of week";
 export default class FilterOverlay extends Component {
     constructor(props) {
         super(props);
+        //prettier-ignore
         this.state = {
             options: [
-                {
-                    value: "mapbox://styles/mapbox/streets-v11",
-                    label: "Streets"
-                },
-                {
-                    value: "mapbox://styles/mapbox/outdoors-v11",
-                    label: "Outdoors"
-                },
-                { value: "mapbox://styles/mapbox/light-v10", label: "Light" },
-                { value: "mapbox://styles/mapbox/dark-v10", label: "Dark" },
-                {
-                    value: "mapbox://styles/mapbox/satellite-v9",
-                    label: "Satellite"
-                },
-                {
-                    value: "mapbox://styles/mapbox/satellite-streets-v11",
-                    label: "Satellite Streets"
-                },
-                {
-                    value: "mapbox://styles/mapbox/navigation-preview-day-v4",
-                    label: "Navigation night"
-                },
-                {
-                    value: "mapbox://styles/mapbox/navigation-preview-night-v4",
-                    label: "Navigation day"
-                },
-                {
-                    value: "mapbox://styles/mapbox/navigation-guidance-day-v4",
-                    label: "Navigation Guidance Day"
-                },
-                {
-                    value:
-                        "mapbox://styles/mapbox/navigation-guidance-night-v4",
-                    label: "Navigation Guidance Night"
-                }
+                { value: 'mapbox://styles/mapbox/dark-v10', label: 'Dark' },
+                { value: 'mapbox://styles/mapbox/streets-v11', label: 'Streets' },
+                { value: 'mapbox://styles/mapbox/outdoors-v11', label: 'Outdoors' },
+                { value: 'mapbox://styles/mapbox/light-v10', label: 'Light' },
+                { value: 'mapbox://styles/mapbox/satellite-v9', label: 'Satellite' },
+                { value: 'mapbox://styles/mapbox/satellite-streets-v11', label: 'Satellite Streets' },
+                { value: 'mapbox://styles/mapbox/navigation-preview-day-v4', label: 'Navigation night' },
+                { value: 'mapbox://styles/mapbox/navigation-preview-night-v4', label: 'Navigation day' },
+                { value: 'mapbox://styles/mapbox/navigation-guidance-day-v4', label: 'Navigation Guidance Day' },
+                { value: 'mapbox://styles/mapbox/navigation-guidance-night-v4', label: 'Navigation Guidance Night' },
             ]
         };
         this.props.filter
