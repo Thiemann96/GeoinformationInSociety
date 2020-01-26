@@ -196,7 +196,7 @@ class Map extends Component {
             onlyInjuries: e.target.checked
         });
         if (e.target.checked) {
-            let accidents = this.state.accidents.filter(value => value.accident_category <= 3);
+            let accidents = this.state.accidents.filter(value => value.seriously_injured > 0 || value.deaths > 0 || value.slightly_injured > 0);
             this.setState({
                 accidents: accidents
             });
@@ -242,7 +242,7 @@ class Map extends Component {
                 if (accidents.length) {
                     let noCoords = accidents.filter(value => value.lat === null || value.lon === null).length;
                     if (this.state.onlyInjuries) {
-                        accidents = accidents.filter(value => value.accident_category <= 3);
+                        accidents = accidents.filter(value => value.seriously_injured > 0 || value.deaths > 0 || value.slightly_injured > 0);
                     }
                     this.setState({
                         accidents: accidents,
@@ -397,7 +397,7 @@ class Map extends Component {
             .then(accidents => {
                 if (accidents.length) {
                     if (this.state.onlyInjuries) {
-                        accidents = accidents.filter(value => value.accident_category <= 3);
+                        accidents = accidents.filter(value => value.seriously_injured > 0 || value.deaths > 0 || value.slightly_injured > 0);
                     }
                     this.setState({
                         accidents: accidents,
