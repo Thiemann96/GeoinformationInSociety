@@ -281,13 +281,13 @@ export default class FilterOverlay extends Component {
                         onChange={this._handleDays}
                     />
                 </Row>
-                <Row>
+                {/* <Row>
                     Select time <div id="timeslider"></div>
                     <TimeSlider _onChangeTimeFrom={this.props._onChangeTimeFrom}
                         _onChangeTimeTo={this.props._onChangeTimeTo}
                         _toggleTimeFilter={this.props._toggleTimeFilter} min="0" max="1440" id="#timeslider" />
 
-                </Row>
+                </Row> */}
                 <Row style={{ "paddingBottom": "5px", "paddingTop": "5px" }}>
                     <label>Activate time filter</label><input type="checkbox" onChange={this._handleCheckbox} />
                     <button type="button" onClick={this.props._addInterval} disabled={this.state.activeTimeLayer ? false : true}>+</button>

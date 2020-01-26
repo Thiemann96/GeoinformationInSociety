@@ -379,9 +379,16 @@ class Map extends Component {
 
         let timeStart = '{'+this.state.from+':01}';
         let timeEnd = '{'+this.state.to+':59}';
+        let timesStart = []
+        let timesEnd = []
         let url; 
         if(this.state.timefilterActive){
-         url = 'http://0.0.0.0:9000/hooks/accidents-by-interval?years={' + filterObject.years.toString() + '}&months={' + filterObject.months.toString() + '}&weekdays={' + filterObject.days.toString() + '}&polygon=' + this._getCoordinates() + '&hours_start=' + timeStart + '&hours_end=' + timeEnd;
+            this.state.intervals.map((interval)=>{
+                timesStart.push(interval.from+':00');
+                timesEnd.push(interval.to+':00')
+            })
+            
+         url = 'http://0.0.0.0:9000/hooks/accidents-by-interval?years={' + filterObject.years.toString() + '}&months={' + filterObject.months.toString() + '}&weekdays={' + filterObject.days.toString() + '}&polygon=' + this._getCoordinates() + '&hours_start={' + timesStart.toString() + '}&hours_end={' +   timesEnd.toString() +'}';
         }
         else url = 'http://0.0.0.0:9000/hooks/accidents-by-time?years={' + filterObject.years.toString() + '}&months={' + filterObject.months.toString() + '}&weekdays={' + filterObject.days.toString() + '}&polygon=' + this._getCoordinates() + '&hours_start={08:00:00}&hours_end={09:59:59}';
         console.log(url)
