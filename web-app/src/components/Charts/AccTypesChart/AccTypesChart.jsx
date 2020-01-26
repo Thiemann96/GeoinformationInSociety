@@ -13,8 +13,6 @@ export default class AccTypesChart extends Component {
     }
 
     drawChart() {
-        // console.log(categories.data);
-
         // prepare data
         // reduce to array of categories + filter NAs
         var data = this.props.accidents
@@ -28,7 +26,6 @@ export default class AccTypesChart extends Component {
             .entries(data)
             .map(d => ({ bin: +d.key, count: d.values.length }))
             .sort((a, b) => a.bin > b.bin);
-        console.log(nested);
 
         // set chart margins + dimensions
         const margin = { left: 40, right: 0, top: 0, bottom: 20 };
