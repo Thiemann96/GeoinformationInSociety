@@ -32,6 +32,8 @@ class Map extends Component {
                 pitch: 0,
                 bearing: 0
             },
+            from:"00:00",
+            to:"23:59",
             animationProgress: {enterProgress: 0, duration: 60000},
             animate: false,
             interactionState: {},
@@ -79,6 +81,9 @@ class Map extends Component {
         this._toggleDrawPolygon = this._toggleDrawPolygon.bind(this);
         this._getCoordinates = this._getCoordinates.bind(this);
         this._showOnlyInjury = this._showOnlyInjury.bind(this);
+        this._onChangeTimeFrom = this._onChangeTimeFrom.bind(this);
+        this._onChangeTimeTo = this._onChangeTimeTo.bind(this);
+        this._toggleTimeFilter = this._toggleTimeFilter.bind(this)
     }
 
     // fetches all accidents from the server running locally
@@ -318,9 +323,21 @@ class Map extends Component {
         ]
     };
 
+    _onChangeTimeFrom(e){
+        this.setState({from:e.target.value})
+    }
+    _onChangeTimeTo(e){
+        this.setState({to:e.target.value})
+    }
+
     _handleMapStyle(e) {
         this.setState({
             mapstyle: e.target.value
+        })
+    }
+    _toggleTimeFilter(e){
+        this.setState({
+            timefilterActive:e.target.checked
         })
     }
 
@@ -331,10 +348,13 @@ class Map extends Component {
             filter: filterObject,
         });
 
-        let timeStart = '{00:00:01}';
-        let timeEnd = '{23:59:59}';
-
-        let url = 'http://0.0.0.0:9000/hooks/accidents-by-time?years={' + filterObject.years.toString() + '}&months={' + filterObject.months.toString() + '}&weekdays={' + filterObject.days.toString() + '}&polygon=' + this._getCoordinates() + '&hours_start=' + timeStart + '&hours_end=' + timeEnd;
+        let timeStart = '{'+this.state.from+':01}';
+        let timeEnd = '{'+this.state.to+':59}';
+        let url; 
+        if(this.state.timefilterActive){
+            let url = 'http://0.0.0.0:9000/hooks/accidents-by-interval?years={' + filterObject.years.toString() + '}&months={' + filterObject.months.toString() + '}&weekdays={' + filterObject.days.toString() + '}&polygon=' + this._getCoordinates() + '&hours_start=' + timeStart + '&hours_end=' + timeEnd;
+        }
+        else url = 'http://0.0.0.0:9000/hooks/accidents-by-time?years={' + filterObject.years.toString() + '}&months={' + filterObject.months.toString() + '}&weekdays={' + filterObject.days.toString() + '}&polygon=' + this._getCoordinates() + '&hours_start=' + timeStart + '&hours_end=' + timeEnd;
 
         fetch(url)
             .then(response => response.json())
@@ -353,6 +373,7 @@ class Map extends Component {
                     })
                 }
             })
+            .then(()=>{console.log(this.state.accidents)})
     }
 
     _confirmAggregation(aggrStr) {
@@ -398,6 +419,9 @@ class Map extends Component {
                     _toggleDrawPolygon={this._toggleDrawPolygon}
                     accidentsNoCoords={this.state.accidentsNoCoords}
                     _showOnlyInjury={this._showOnlyInjury}
+                    _onChangeTimeFrom = {this._onChangeTimeFrom}
+                    _onChangeTimeTo= {this._onChangeTimeTo}
+                    _toggleTimeFilter = {this._toggleTimeFilter}
                 />
             </Fragment>
         );

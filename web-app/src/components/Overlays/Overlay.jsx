@@ -24,6 +24,9 @@ export default class Overlay extends Component {
                     _toggleBuildings={this.props._toggleBuildings} filter={this.props.filter}
                     emptyResult={this.props.emptyResult} _confirmAggregation={this.props._confirmAggregation}
                     _toggleDrawPolygon={this.props._toggleDrawPolygon} _showOnlyInjury={this.props._showOnlyInjury}
+                    _onChangeTimeFrom = {this.props._onChangeTimeFrom}
+                    _onChangeTimeTo= {this.props._onChangeTimeTo}
+                    _toggleTimeFilter = {this.props._toggleTimeFilter}
                 />
 
                 <ChartOverlay datalength={this.props.datalength} accidents={this.props.accidents}
