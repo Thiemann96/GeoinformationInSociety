@@ -1,8 +1,8 @@
-import React, {Component} from "react";
-import {Container, Row, Col} from "react-bootstrap";
+import React, { Component } from "react";
+import { Container, Row, Col } from "react-bootstrap";
 import "./ChartOverlay.css";
 import BarChart from "../../Charts/BarChart/BarChart";
-import LineChart from "../../Charts/LineChart/LineChart";
+import AccTypesChart from "../../Charts/AccTypesChart/AccTypesChart";
 
 export default class ChartOverlay extends Component {
     constructor(props) {
@@ -12,32 +12,37 @@ export default class ChartOverlay extends Component {
             height: 200
         };
     }
-    componentDidMount(){
-        console.log("Component mounted")
+    componentDidMount() {
+        console.log("Component mounted");
     }
-
-
 
     render() {
         return (
             <Container className="chart-panel">
                 <h2>Bike accidents</h2>
-                <div id="nAccidents"/>
+                <div id="nAccidents" />
                 <BarChart
                     accidents={this.props.accidents}
                     width={this.state.width}
                     height={this.state.height}
                     aggregation={this.props.aggregation}
+                    id="#nAccidents"
                 />
                 <span>
                     Number of displayed bike related accidents:
                     {this.props.datalength}
                 </span>
-                <hr/>
-                <div>
+                <hr />
+
                 <h2>Accidents summary</h2>
-                
-                </div>
+                <div id="accTypes"></div>
+                <AccTypesChart
+                    accidents={this.props.accidents}
+                    width={this.state.width}
+                    height={this.state.height}
+                    aggregation={this.props.aggregation}
+                    id="#accTypes"
+                />
             </Container>
         );
     }
