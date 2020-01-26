@@ -1,5 +1,6 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import * as d3 from "d3";
+import "./BarChart.css";
 
 export default class BarChart extends Component {
     constructor(props) {
@@ -7,84 +8,115 @@ export default class BarChart extends Component {
         this.state = {};
     }
 
-    componentDidMount() {
-        // this.drawChart();
-    }
+    componentDidMount() {}
 
     drawChart() {
-        // this should be set dynamically:#
-        /* TODO:
-            aggregate by this.props.aggregation
-            Getting 'undefined' error at the moment while changing aggregation if filters are set
-         */
-        let aggregateBy = this.props.aggregation;
-        // const aggregateBy = "hour_of_day";
-        // const aggregateBy = "year";
+        // console.log(this.props.accidents);
 
-        // prepare data
+        const accidents = this.props.accidents;
+
+        let aggregateBy = this.props.aggregation;
+        let splitBy = this.props.split;
+
+        // aggregation
         switch (aggregateBy) {
-            case "Year":
-                var data = this.props.accidents
-                    .map(d => d.date)
-                    .filter(d => d !== null)
-                    .map(d => d.slice(0, 4));
-                // nest by year
+            // case "Year": default, see below
+            case "Month":
+                var data = this.props.accidents.filter(d => d.date !== null);
+                // nest by month
                 var nested = d3
                     .nest()
-                    .key(d => d)
+                    .key(d => d.date.slice(5, 7))
                     .entries(data)
-                    .map(d => ({bin: +d.key, count: d.values.length}))
-                    .sort((a, b) => a.bin > b.bin);
-                console.log(data, nested);
+                    .sort((a, b) => +a.key > +b.key);
                 break;
             case "Day of week":
-                var data = this.props.accidents
-                    .map(d => d.date)
-                    .filter(d => d !== null)
-                    .map(getDay);
+                var data = this.props.accidents.filter(d => d.date !== null);
                 // nest by day
                 var nested = d3
                     .nest()
-                    .key(d => d)
+                    .key(d => getDay(d.date))
                     .entries(data)
-                    .map(d => ({bin: d.key, count: d.values.length}))
-                    .sort((a, b) => sortByWeekday(a.bin, b.bin));
+                    .sort((a, b) => sortByWeekday(a.key, b.key));
                 break;
             case "Hour of day":
-                var data = this.props.accidents
-                    .map(d => d.time_of_day)
-                    .filter(d => d !== null)
-                    .map(d => d.slice(0, 2));
+                var data = this.props.accidents.filter(
+                    d => d.time_of_day !== null
+                );
                 // nest by hour
                 var nested = d3
                     .nest()
-                    .key(d => d)
+                    .key(d => d.time_of_day.slice(0, 2))
                     .entries(data)
-                    .map(d => ({bin: +d.key, count: d.values.length}))
-                    .sort((a, b) => a.bin > b.bin);
-                console.log(data, nested);
+                    .sort((a, b) => +a.key > +b.key);
                 break;
             default:
-                console.log("invalid option");
-            // code block
+                // year
+                var data = this.props.accidents.filter(d => d.date !== null);
+                // nest by year
+                var nested = d3
+                    .nest()
+                    .key(d => d.date.slice(0, 4))
+                    .entries(data)
+                    .sort((a, b) => +a.key > +b.key);
+                break;
         }
 
+        const splitKeys = {
+            // colours: grey, blue, orange
+            precipitation_mm: ["unknown", "precipitation", "no precipitation"],
+            temperature_c: ["unknown", "not freezing", "freezing"],
+            no: ["all"]
+        };
+
+        const splitKeyGenerator = {
+            precipitation_mm: d =>
+                d.weather
+                    ? d.weather.precipitation_mm > 0
+                        ? "precipitation"
+                        : "no precipitation"
+                    : "unknown",
+            temperature_c: d =>
+                d.weather
+                    ? d.weather.temperature_c > 0
+                        ? "not freezing"
+                        : "freezing"
+                    : "unknown",
+            no: d => "all"
+        };
+
+        var barStack = d3.stack().keys(splitKeys[splitBy])(
+            nested.map(function(dat) {
+                var n = d3
+                    .nest()
+                    .key(splitKeyGenerator[splitBy])
+                    .entries(dat.values)
+                    .sort((a, b) => a.key > b.key);
+                var obj = { key: dat.key };
+                for (var i = 0; i < splitKeys[splitBy].length; i++) {
+                    obj[n[i].key] = n[i].values.length;
+                }
+                return obj;
+            })
+        );
+
+        // end of data preprocessing
+        // barStack is the data we are going to use to draw the chart
+        /////////////////////////////////////////////////////////////
+
+        // Delete old charts if existing
+        let chartDiv = d3.select("#" + this.props.id);
+        chartDiv.html("");
+
         // set chart margins + dimensions
-        const margin = {left: 40, right: 0, top: 0, bottom: 20};
+        const margin = { left: 40, right: 0, top: 0, bottom: 20 };
         const dim = {
             height: this.props.height - margin.top - margin.bottom,
             width: this.props.width - margin.left - margin.right
         };
 
-        // Delete old charts if existing
-        let chartDiv  = document.getElementById('nAccidents');
-        if(chartDiv){
-            chartDiv.innerHTML = '';
-        }
-
         // create svg
-        const svg = d3
-            .select("#nAccidents")
+        const svg = chartDiv
             .append("svg")
             .attr("width", this.props.width)
             .attr("height", this.props.height);
@@ -108,7 +140,7 @@ export default class BarChart extends Component {
             .padding(0.1);
         let y = d3
             .scaleLinear()
-            .domain([0, d3.max(nested, d => d.count)])
+            .domain([0, d3.max(nested, d => d.values.length)])
             .range([dim.height, 0]);
 
         // axes
@@ -118,19 +150,26 @@ export default class BarChart extends Component {
             .call(
                 d3
                     .axisBottom(x)
-                    .tickFormat(i => nested[i].bin)
+                    .tickFormat(i => nested[i].key)
                     .tickSizeOuter(0)
             );
 
-        g.selectAll("rect")
-            .data(nested)
+        var bar = g
+            .selectAll(".bargroup")
+            .data(barStack)
+            .enter()
+            .append("g")
+            .classed("bargroup", true)
+            .attr("id", (d, i) => "bargroup" + i);
+
+        bar.selectAll("rect")
+            .data(d => d)
             .enter()
             .append("rect")
             .attr("x", (d, i) => i * (barWidth + barDist))
-            .attr("y", (d, i) => y(d.count))
+            .attr("y", (d, i) => y(d[1]))
             .attr("width", barWidth)
-            .attr("height", (d, i) => y(0) - y(d.count))
-            .attr("fill", "steelblue");
+            .attr("height", (d, i) => y(d[0]) - y(d[1]));
 
         function getDay(str) {
             // takes string of format "2017-12-19" and returns day of the week
@@ -150,8 +189,7 @@ export default class BarChart extends Component {
     }
 
     render() {
-        if (this.props.accidents && this.props.aggregation)
-            this.drawChart();
-        return <div id={"#" + this.props.id}/>;
+        if (this.props.accidents && this.props.aggregation) this.drawChart();
+        return <div id={"#" + this.props.id} />;
     }
 }
