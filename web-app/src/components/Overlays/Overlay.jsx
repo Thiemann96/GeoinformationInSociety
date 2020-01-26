@@ -5,6 +5,7 @@ import ChartOverlay from "./ChartOverlay/ChartOverlay";
 import TileSelect from "./TileSelect/TileSelect";
 import DrawingTool from "./DrawingTool/DrawingTool"
 import Disclaimer from "./Disclaimer/Disclaimer";
+import PlayButton from "./PlayButton/PlayButton";
 
 export default class Overlay extends Component {
     constructor(props) {
@@ -37,6 +38,7 @@ export default class Overlay extends Component {
                 />
                 <DrawingTool _toggleDrawPolygon={this.props._toggleDrawPolygon}/>
                 <TileSelect _handleMapStyle={this.props._handleMapStyle}/>
+                <PlayButton _playAnimation={this.props._playAnimation}/>
                 <Disclaimer accidentsNoCoords={this.props.accidentsNoCoords}/>
             </Container>
         );
