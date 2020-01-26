@@ -3,7 +3,7 @@ import { Container, Row, Col } from "react-bootstrap";
 import "./ChartOverlay.css";
 import BarChart from "../../Charts/BarChart/BarChart";
 import AccTypesChart from "../../Charts/AccTypesChart/AccTypesChart";
-
+import Collapsible from "react-collapsible"
 export default class ChartOverlay extends Component {
     constructor(props) {
         super(props);
@@ -32,6 +32,7 @@ export default class ChartOverlay extends Component {
 
         return (
             <Container className="chart-panel">
+                <Collapsible trigger="Acciden statistics">
                 <h2>Bike accidents</h2>
 
                 <span>Split by:</span>
@@ -69,6 +70,7 @@ export default class ChartOverlay extends Component {
                     aggregation={this.props.aggregation}
                     id="accTypes"
                 />
+                </Collapsible>
             </Container>
         );
     }

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Container, Row, Col, InputGroup, Button, Form } from "react-bootstrap";
 import "./FilterOverlay.css";
 import TimeSlider from "../../TimeSlider/TimeSlider";
+import Collapsible from "react-collapsible";
 
 //prettier-ignore
 let filterObject = {
@@ -176,147 +177,151 @@ export default class FilterOverlay extends Component {
 
         return (
             <Container className="filter-panel">
-                <Row>
-                    <h2>Filter options</h2>
-                    <p>Filter the visualised dataset</p>
-                    <EmptyResultMessage emptyResult={this.props.emptyResult} />
-                </Row>
-                <hr />
-                <Row>
-                    <InputGroup>
-                        <label>
-                            <InputGroup.Checkbox
-                                onChange={this.props._toggleBuildings}
-                            />
-                            3D Layer
+                <Collapsible trigger="Here filter-panel">
+
+                    <Row>
+                        <h2>Filter options</h2>
+                        <p>Filter the visualised dataset</p>
+                        <EmptyResultMessage emptyResult={this.props.emptyResult} />
+                    </Row>
+                    <hr />
+                    <Row>
+                        <InputGroup>
+                            <label>
+                                <InputGroup.Checkbox
+                                    onChange={this.props._toggleBuildings}
+                                />
+                                3D Layer
                         </label>
-                        <label>
-                            <InputGroup.Checkbox
-                                onChange={this.props._toggleAccidents}
-                            />
-                            Accident Layer
+                            <label>
+                                <InputGroup.Checkbox
+                                    onChange={this.props._toggleAccidents}
+                                />
+                                Accident Layer
                         </label>
-                        <label>
-                            {" "}
-                            <InputGroup.Checkbox
-                                onChange={this.props._toggleHeatMap}
-                            />
-                            Heatmap
+                            <label>
+                                {" "}
+                                <InputGroup.Checkbox
+                                    onChange={this.props._toggleHeatMap}
+                                />
+                                Heatmap
                         </label>
-                        <br />
-                        <label>
-                            <InputGroup.Checkbox
-                                onChange={this.props._showOnlyInjury}
-                            />
-                            Show only accidents with personal injuries
+                            <br />
+                            <label>
+                                <InputGroup.Checkbox
+                                    onChange={this.props._showOnlyInjury}
+                                />
+                                Show only accidents with personal injuries
                         </label>
-                    </InputGroup>
-                </Row>
-                <hr />
-                <Row>
-                    <Selector
-                        name="Years"
-                        inputtype="checkbox"
-                        options={[
-                            { name: "2007", val: "2007" },
-                            { name: "2008", val: "2008" },
-                            { name: "2009", val: "2009" },
-                            { name: "2010", val: "2010" },
-                            { name: "2011", val: "2011" },
-                            { name: "2012", val: "2012" },
-                            { name: "2013", val: "2013" },
-                            { name: "2014", val: "2014" },
-                            { name: "2015", val: "2015" },
-                            { name: "2016", val: "2016" },
-                            { name: "2017", val: "2017" },
-                            { name: "2018", val: "2018" }
-                        ]}
-                        onChange={this._handleYears}
-                    />
-                </Row>
-                <Row>
-                    <Selector
-                        name="Months"
-                        inputtype="checkbox"
-                        options={[
-                            { name: "Jan", val: "01" },
-                            { name: "Feb", val: "02" },
-                            { name: "Mar", val: "03" },
-                            { name: "Apr", val: "04" },
-                            { name: "May", val: "05" },
-                            { name: "Jun", val: "06" },
-                            { name: "Jul", val: "07" },
-                            { name: "Aug", val: "08" },
-                            { name: "Sep", val: "09" },
-                            { name: "Oct", val: "10" },
-                            { name: "Nov", val: "11" },
-                            { name: "Dec", val: "12" }
-                        ]}
-                        onChange={this._handleMonths}
-                    />
-                </Row>
-                <Row>
-                    <Selector
-                        name="Days"
-                        inputtype="checkbox"
-                        options={[
-                            { name: "Mon", val: "1" },
-                            { name: "Tue", val: "2" },
-                            { name: "Wed", val: "3" },
-                            { name: "Thu", val: "4" },
-                            { name: "Fri", val: "5" },
-                            { name: "Sat", val: "6" },
-                            { name: "Sun", val: "7" }
-                        ]}
-                        onChange={this._handleDays}
-                    />
-                </Row>
-                {/* <Row>
+                        </InputGroup>
+                    </Row>
+                    <hr />
+                    <Row>
+                        <Selector
+                            name="Years"
+                            inputtype="checkbox"
+                            options={[
+                                { name: "2007", val: "2007" },
+                                { name: "2008", val: "2008" },
+                                { name: "2009", val: "2009" },
+                                { name: "2010", val: "2010" },
+                                { name: "2011", val: "2011" },
+                                { name: "2012", val: "2012" },
+                                { name: "2013", val: "2013" },
+                                { name: "2014", val: "2014" },
+                                { name: "2015", val: "2015" },
+                                { name: "2016", val: "2016" },
+                                { name: "2017", val: "2017" },
+                                { name: "2018", val: "2018" }
+                            ]}
+                            onChange={this._handleYears}
+                        />
+                    </Row>
+                    <Row>
+                        <Selector
+                            name="Months"
+                            inputtype="checkbox"
+                            options={[
+                                { name: "Jan", val: "01" },
+                                { name: "Feb", val: "02" },
+                                { name: "Mar", val: "03" },
+                                { name: "Apr", val: "04" },
+                                { name: "May", val: "05" },
+                                { name: "Jun", val: "06" },
+                                { name: "Jul", val: "07" },
+                                { name: "Aug", val: "08" },
+                                { name: "Sep", val: "09" },
+                                { name: "Oct", val: "10" },
+                                { name: "Nov", val: "11" },
+                                { name: "Dec", val: "12" }
+                            ]}
+                            onChange={this._handleMonths}
+                        />
+                    </Row>
+                    <Row>
+                        <Selector
+                            name="Days"
+                            inputtype="checkbox"
+                            options={[
+                                { name: "Mon", val: "1" },
+                                { name: "Tue", val: "2" },
+                                { name: "Wed", val: "3" },
+                                { name: "Thu", val: "4" },
+                                { name: "Fri", val: "5" },
+                                { name: "Sat", val: "6" },
+                                { name: "Sun", val: "7" }
+                            ]}
+                            onChange={this._handleDays}
+                        />
+                    </Row>
+                    {/* <Row>
                     Select time <div id="timeslider"></div>
                     <TimeSlider _onChangeTimeFrom={this.props._onChangeTimeFrom}
                         _onChangeTimeTo={this.props._onChangeTimeTo}
                         _toggleTimeFilter={this.props._toggleTimeFilter} min="0" max="1440" id="#timeslider" />
 
                 </Row> */}
-                <Row style={{ "paddingBottom": "5px", "paddingTop": "5px" }}>
-                    <label>Activate time filter</label><input type="checkbox" onChange={this._handleCheckbox} />
-                    <button type="button" onClick={this.props._addInterval} disabled={this.state.activeTimeLayer ? false : true}>+</button>
-                    <button type="button" onClick={this.props._removeInterval} disabled={this.state.activeTimeLayer ? false : true}>-</button>
+                    <Row style={{ "paddingBottom": "5px", "paddingTop": "5px" }}>
+                        <label>Activate time filter</label><input type="checkbox" onChange={this._handleCheckbox} />
+                        <button type="button" onClick={this.props._addInterval} disabled={this.state.activeTimeLayer ? false : true}>+</button>
+                        <button type="button" onClick={this.props._removeInterval} disabled={this.state.activeTimeLayer ? false : true}>-</button>
 
-                    {this.props.intervals.map((interval, index) => {
-                        return <Row key={"inputID" + index}>
-                            <label>From</label> <input onChange={this.props._onChangeTimeFrom} data-id={"interval"+index} type="time" placeholder="From" disabled={this.state.activeTimeLayer ? false : true} />
-                            <label>To</label><input onChange={this.props._onChangeTimeTo} value={this.state.to} data-id={"interval"+index}type="time" placeholder="To" disabled={this.state.activeTimeLayer ? false : true} />
-                        </Row>
-                    })}
-                </Row>
-                <Row>
-                    <Button
-                        onClick={() => this.props._confirmFilter(filterObject)}
-                    >
-                        Confirm Filter
+                        {this.props.intervals.map((interval, index) => {
+                            return <Row key={"inputID" + index}>
+                                <label>From</label> <input onChange={this.props._onChangeTimeFrom} data-id={"interval" + index} type="time" placeholder="From" disabled={this.state.activeTimeLayer ? false : true} />
+                                <label>To</label><input onChange={this.props._onChangeTimeTo} value={this.state.to} data-id={"interval" + index} type="time" placeholder="To" disabled={this.state.activeTimeLayer ? false : true} />
+                            </Row>
+                        })}
+                    </Row>
+                    <Row>
+                        <Button
+                            onClick={() => this.props._confirmFilter(filterObject)}
+                        >
+                            Confirm Filter
                     </Button>
-                    <Button onClick={() => {
-                        this.props._resetFilter();
-                        this._resetFilter();
-                    }}>
-                        Reset Filter
+                        <Button onClick={() => {
+                            this.props._resetFilter();
+                            this._resetFilter();
+                        }}>
+                            Reset Filter
                     </Button>
-                </Row>
-                <hr />
-                <Row>
-                    <Selector
-                        name="Aggregation"
-                        inputtype="radio"
-                        options={[
-                            { name: "Year", val: "Year" },
-                            { name: "Month", val: "Month" },
-                            { name: "Day of week", val: "Day of week" },
-                            { name: "Hour of day", val: "Hour of day" },
-                        ]}
-                        onChange={this._handleAggregation}
-                    />
-                </Row>
+                    </Row>
+                    <hr />
+                    <Row>
+                        <Selector
+                            name="Aggregation"
+                            inputtype="radio"
+                            options={[
+                                { name: "Year", val: "Year" },
+                                { name: "Month", val: "Month" },
+                                { name: "Day of week", val: "Day of week" },
+                                { name: "Hour of day", val: "Hour of day" },
+                            ]}
+                            onChange={this._handleAggregation}
+                        />
+                    </Row>
+                </Collapsible>
+
             </Container>
         );
     }
