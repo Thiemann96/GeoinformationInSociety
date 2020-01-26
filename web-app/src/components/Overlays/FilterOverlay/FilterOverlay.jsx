@@ -212,16 +212,6 @@ export default class FilterOverlay extends Component {
                         </label>
                     </InputGroup>
                 </Row>
-                <Row>
-                    <InputGroup>
-                        <Button onClick={this.props._toggleDrawPolygon}>
-                            Set BBox
-                        </Button>
-                        <Button onClick={this.props._animate}>
-                            Play animation
-                        </Button>
-                    </InputGroup>
-                </Row>
                 <hr />
                 <Row>
                     <Selector
