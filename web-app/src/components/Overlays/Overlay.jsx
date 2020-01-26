@@ -27,14 +27,16 @@ export default class Overlay extends Component {
                     _onChangeTimeFrom = {this.props._onChangeTimeFrom}
                     _onChangeTimeTo= {this.props._onChangeTimeTo}
                     _toggleTimeFilter = {this.props._toggleTimeFilter}
+                    intervals ={this.props.intervals}
+                    _addInterval = {this.props._addInterval}
+                    _removeInterval = {this.props._removeInterval}
                 />
 
                 <ChartOverlay datalength={this.props.datalength} accidents={this.props.accidents}
                     aggregation={this.props.aggregation}
                 />
                 <DrawingTool _toggleDrawPolygon={this.props._toggleDrawPolygon}/>
-                <TileSelect _handleMapStyle={this.props._handleMapStyle}
-                />
+                <TileSelect _handleMapStyle={this.props._handleMapStyle}/>
                 <Disclaimer accidentsNoCoords={this.props.accidentsNoCoords}/>
             </Container>
         );
