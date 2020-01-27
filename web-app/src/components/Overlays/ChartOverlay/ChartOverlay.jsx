@@ -4,15 +4,19 @@ import "./ChartOverlay.css";
 import BarChart from "../../Charts/BarChart/BarChart";
 import AccTypesChart from "../../Charts/AccTypesChart/AccTypesChart";
 import Collapsible from "react-collapsible"
+import CollapsibleBar from "../CollapsibleBar/CollapsibleBar"
 export default class ChartOverlay extends Component {
     constructor(props) {
         super(props);
         this.state = {
             width: 320,
             height: 200,
-            split: "no"
+            split: "no",
+            open:false
         };
         this.onChange = this.onChange.bind(this);
+        this.onCollapseClose = this.onCollapseClose.bind(this);
+        this.onCollapseOpen = this.onCollapseOpen.bind(this);
     }
     componentDidMount() {
         console.log("Component mounted");
@@ -22,6 +26,16 @@ export default class ChartOverlay extends Component {
         this.setState({ split: e.target.value });
         console.log(e.target.value);
     }
+    onCollapseClose(){
+        this.setState({
+            open:false
+        })
+    }
+    onCollapseOpen(){
+        this.setState({
+            open:true
+        })
+    }
 
     render() {
         const splitOptions = [
@@ -29,47 +43,44 @@ export default class ChartOverlay extends Component {
             { value: "temperature_c", name: "Temperature (°C)" },
             { value: "precipitation_mm", name: "Precipitation (mm)" }
         ];
-
         return (
             <Container className="chart-panel">
-                <Collapsible trigger="Acciden statistics">
-                <h2>Bike accidents</h2>
-
-                <span>Split by:</span>
-                <select onChange={this.onChange} autoComplete="off">
-                    {splitOptions.map((option, index) => {
-                        return (
-                            <option key={"id" + index} value={option.value}>
-                                {option.name}
-                            </option>
-                        );
-                    })}
-                </select>
-                <br />
-                <div id="nAccidents" />
-                <BarChart
-                    accidents={this.props.accidents}
-                    width={this.state.width}
-                    height={this.state.height}
-                    aggregation={this.props.aggregation}
-                    split={this.state.split}
-                    id="nAccidents"
-                />
-                <span>
-                    Number of displayed bike related accidents:
+                <Collapsible onOpen={this.onCollapseOpen} onClose={this.onCollapseClose} trigger={<CollapsibleBar text="Accident statistics" open={this.state.open} />}>
+                    <span>Split by:</span>
+                    <select onChange={this.onChange} autoComplete="off">
+                        {splitOptions.map((option, index) => {
+                            return (
+                                <option key={"id" + index} value={option.value}>
+                                    {option.name}
+                                </option>
+                            );
+                        })}
+                    </select>
+                    <br />
+                    <div id="nAccidents" />
+                    <BarChart
+                        accidents={this.props.accidents}
+                        width={this.state.width}
+                        height={this.state.height}
+                        aggregation={this.props.aggregation}
+                        split={this.state.split}
+                        id="nAccidents"
+                    />
+                    <span>
+                        Number of displayed bike related accidents:
                     {this.props.datalength}
-                </span>
-                <hr />
+                    </span>
+                    <hr />
 
-                <h2>Accidents summary</h2>
-                <div id="accTypes"></div>
-                <AccTypesChart
-                    accidents={this.props.accidents}
-                    width={this.state.width}
-                    height={this.state.height}
-                    aggregation={this.props.aggregation}
-                    id="accTypes"
-                />
+                    <h2>Accidents summary</h2>
+                    <div id="accTypes"></div>
+                    <AccTypesChart
+                        accidents={this.props.accidents}
+                        width={this.state.width}
+                        height={this.state.height}
+                        aggregation={this.props.aggregation}
+                        id="accTypes"
+                    />
                 </Collapsible>
             </Container>
         );

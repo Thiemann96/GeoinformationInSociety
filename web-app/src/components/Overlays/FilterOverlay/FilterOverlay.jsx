@@ -3,14 +3,13 @@ import { Container, Row, Col, InputGroup, Button, Form } from "react-bootstrap";
 import "./FilterOverlay.css";
 import TimeSlider from "../../TimeSlider/TimeSlider";
 import Collapsible from "react-collapsible";
-
+import CollapsibleBar from "../CollapsibleBar/CollapsibleBar";
 //prettier-ignore
 let filterObject = {
     days: ["1", "2", "3", "4", "5", "6", "7"],
     months: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
     years: ["2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018"]
 };
-
 let chartAggregation = "Day of week";
 
 export default class FilterOverlay extends Component {
@@ -31,7 +30,8 @@ export default class FilterOverlay extends Component {
                 { value: 'mapbox://styles/mapbox/navigation-guidance-day-v4', label: 'Navigation Guidance Day' },
                 { value: 'mapbox://styles/mapbox/navigation-guidance-night-v4', label: 'Navigation Guidance Night' },
             ],
-            inputs: ["time"]
+            inputs: ["time"],
+            open:false
         };
         this.props.filter
             ? (filterObject = this.props.filter)
@@ -43,6 +43,8 @@ export default class FilterOverlay extends Component {
         this._handleCheckbox = this._handleCheckbox.bind(this);
         this._addInput = this._addInput.bind(this);
         this._removeInput = this._removeInput.bind(this);
+        this.onCollapseClose = this.onCollapseClose.bind(this);
+        this.onCollapseOpen = this.onCollapseOpen.bind(this);
 
     }
 
@@ -107,6 +109,16 @@ export default class FilterOverlay extends Component {
         console.log(e.target.checked)
         this.setState({
             activeTimeLayer: e.target.checked
+        })
+    }
+    onCollapseClose(){
+        this.setState({
+            open:false
+        })
+    }
+    onCollapseOpen(){
+        this.setState({
+            open:true
         })
     }
 
@@ -175,13 +187,11 @@ export default class FilterOverlay extends Component {
             return <p />;
         }
 
+
         return (
             <Container className="filter-panel">
-                <Collapsible trigger="Here filter-panel">
-
+                <Collapsible onOpen={this.onCollapseOpen} onClose={this.onCollapseClose} trigger={<CollapsibleBar text="Filter options" open={this.state.open} />}>
                     <Row>
-                        <h2>Filter options</h2>
-                        <p>Filter the visualised dataset</p>
                         <EmptyResultMessage emptyResult={this.props.emptyResult} />
                     </Row>
                     <hr />
