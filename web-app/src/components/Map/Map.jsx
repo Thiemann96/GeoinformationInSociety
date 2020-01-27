@@ -368,7 +368,8 @@ class Map extends Component {
                     sizeScale: 2000,
                     sizeMinPixels: 6
                 })
-            ]
+        ]
+
     };
 
     _onChangeTimeFrom(e){
@@ -416,14 +417,22 @@ class Map extends Component {
         })
     }
 
-    _createClusteredPoints(filterObject) {
+    _createClusteredPoints(filterObject, timesStart, timesEnd) {
 
 
         let timeStart = '{00:00:01}';
         let timeEnd = '{23:59:59}';
+        let url; 
+        if(this.state.timefilterActive){
+            this.state.intervals.map((interval)=>{
+                timesStart.push(interval.from+':00');
+                timesEnd.push(interval.to+':00')
+            })
 
-        let url = 'http://0.0.0.0:9000/hooks/accidents-as-geojson?years={' + filterObject.years.toString() + '}&months={' + filterObject.months.toString() + '}&weekdays={' + filterObject.days.toString() + '}&polygon=' + this._getCoordinates() + '&hours_start=' + timeStart + '&hours_end=' + timeEnd;
-        console.log(url)
+            url = 'http://0.0.0.0:9000/hooks/accidents-as-geojson?years={' + filterObject.years.toString() + '}&months={' + filterObject.months.toString() + '}&weekdays={' + filterObject.days.toString() + '}&polygon=' + this._getCoordinates() + '&hours_start={' + timesStart.toString() + '}&hours_end={' + timesEnd.toString() +'}';
+        }
+        else url = 'http://0.0.0.0:9000/hooks/accidents-as-geojson?years={' + filterObject.years.toString() + '}&months={' + filterObject.months.toString() + '}&weekdays={' + filterObject.days.toString() + '}&polygon=' + this._getCoordinates() + '&hours_start={00:00:00}&hours_end={23:59:59}';
+            console.log(url)
         fetch(url)
             .then(response => response.json())
             .then(accidents => {
@@ -477,7 +486,7 @@ class Map extends Component {
                 }
             })
             .then(()=>{console.log(this.state.accidents)})
-        this._createClusteredPoints(filterObject);
+        this._createClusteredPoints(filterObject, timesStart, timesEnd);
 
     }
 
