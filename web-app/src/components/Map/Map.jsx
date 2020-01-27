@@ -34,7 +34,7 @@ class Map extends Component {
             },
             from:"00:00",
             to:"23:59",
-            animationProgress: {enterProgress: 0, duration: 60000},
+            animationProgress: {enterProgress: 0, duration: 10000},
             animate: false,
             interactionState: {},
             mapBoxToken: 'pk.eyJ1IjoiZXRoaWUxMCIsImEiOiJjazQyeXlxNGcwMjk3M2VvYmw2NHU4MDRvIn0.nYOmVGARhLOULQ550LyUYA',

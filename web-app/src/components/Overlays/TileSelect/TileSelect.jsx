@@ -9,12 +9,11 @@ class TileSelect extends React.Component {
         this.state = {
             options: [
                 { value: 'mapbox://styles/mapbox/streets-v11', label: 'Streets' },
-                { value: 'mapbox://styles/mapbox/outdoors-v11', label: 'Outdoors' },
                 { value: 'mapbox://styles/mapbox/light-v10', label: 'Light' },
                 { value: 'mapbox://styles/mapbox/dark-v10', label: 'Dark' },
                 { value: 'mapbox://styles/mapbox/satellite-v9', label: 'Satellite' },
-                { value: 'mapbox://styles/mapbox/navigation-preview-day-v4', label: 'Navigation night' },
-                { value: 'mapbox://styles/mapbox/navigation-preview-night-v4', label: 'Navigation day' },
+                { value: 'mapbox://styles/mapbox/navigation-preview-day-v4', label: 'Navigation dark' },
+                { value: 'mapbox://styles/mapbox/navigation-preview-night-v4', label: 'Navigation light' },
             ],
             activeLayer: "mapbox://styles/mapbox/dark-v10",
             buildings:false,
