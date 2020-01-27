@@ -93,6 +93,9 @@ export default class BarChart extends Component {
                     .entries(dat.values)
                     .sort((a, b) => a.key > b.key);
                 var obj = { key: dat.key };
+                splitKeys[splitBy].forEach(function(key) {
+                    obj[key] = 0
+                })
                 for (var i = 0; i < splitKeys[splitBy].length; i++) {
                     obj[n[i].key] = n[i].values.length;
                 }
