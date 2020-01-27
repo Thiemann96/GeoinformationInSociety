@@ -4,7 +4,7 @@ import DeckGL from '@deck.gl/react';
 import { ScatterplotLayer, PolygonLayer } from '@deck.gl/layers';
 import Overlay from '../Overlays/Overlay'
 import { HeatmapLayer, ScreenGridLayer } from '@deck.gl/aggregation-layers'
-import { extent, scaleLinear } from 'd3';
+import { extent, scaleLinear, interval } from 'd3';
 import DelayedPointLayer from './DelayedPointLayer';
 import anime from 'animejs'
 import GL from '@luma.gl/constants';
@@ -36,7 +36,9 @@ class Map extends Component {
                 pitch: 0,
                 bearing: 0
             },
-            animationProgress: { enterProgress: 0, duration: 60000 },
+            from:"00:00",
+            to:"23:59",
+            animationProgress: {enterProgress: 0, duration: 10000},
             animate: false,
             interactionState: {},
             mapBoxToken: 'pk.eyJ1IjoiZXRoaWUxMCIsImEiOiJjazQyeXlxNGcwMjk3M2VvYmw2NHU4MDRvIn0.nYOmVGARhLOULQ550LyUYA',
@@ -46,6 +48,7 @@ class Map extends Component {
             emptyResult: false,
             aggregation: "Day of week",
             drawing: false,
+            intervals:[{dataid:'interval0'}],
             myFeatureCollection: {
                 type: 'FeatureCollection',
                 features: [{
@@ -82,6 +85,13 @@ class Map extends Component {
         this._handleMapStyle = this._handleMapStyle.bind(this);
         this._toggleDrawPolygon = this._toggleDrawPolygon.bind(this);
         this._getCoordinates = this._getCoordinates.bind(this);
+        this._showOnlyInjury = this._showOnlyInjury.bind(this);
+        this._onChangeTimeFrom = this._onChangeTimeFrom.bind(this);
+        this._onChangeTimeTo = this._onChangeTimeTo.bind(this);
+        this._toggleTimeFilter = this._toggleTimeFilter.bind(this)
+        this._addInterval = this._addInterval.bind(this);
+        this._removeInterval = this._removeInterval.bind(this);
+        this._toggleMarkers = this._toggleMarkers.bind(this);
     }
 
     // fetches all accidents from the server running locally
@@ -187,13 +197,37 @@ class Map extends Component {
         });
     }
 
+    _showOnlyInjury(e) {
+        this.setState({
+            onlyInjuries: e.target.checked
+        });
+        if (e.target.checked) {
+            let accidents = this.state.accidents.filter(value => value.seriously_injured > 0 || value.deaths > 0 || value.slightly_injured > 0);
+            this.setState({
+                accidents: accidents
+            });
+        } else {
+            if (this.state.filter) {
+                this._confirmFilter(this.state.filter)
+            } else {
+                this._resetFilter()
+            }
+        }
+    }
+
     _playAnimation() {
         this.setState(() => {
             return {
                 animate: true
             }
-        })
+        });
         this._animate();
+    }
+
+    _toggleMarkers(e){
+        this.setState({
+            showMarkerLayer : e.target.checked
+        })
     }
 
     _getCoordinates() {
@@ -211,12 +245,17 @@ class Map extends Component {
 
     _resetFilter() {
         let url = 'http://0.0.0.0:9000/hooks/bikes';
-
         fetch(url)
             .then(response => response.json())
             .then(accidents => {
+                this.setState({
+                    filter: null
+                });
                 if (accidents.length) {
                     let noCoords = accidents.filter(value => value.lat === null || value.lon === null).length;
+                    if (this.state.onlyInjuries) {
+                        accidents = accidents.filter(value => value.seriously_injured > 0 || value.deaths > 0 || value.slightly_injured > 0);
+                    }
                     this.setState({
                         accidents: accidents,
                         emptyResult: false,
@@ -288,7 +327,7 @@ class Map extends Component {
                 new ScatterplotLayer({
                     data: this.state.accidents,
                     id: 'accidentsLayer',
-                    getPosition: d => [d.lon, d.lat],
+                    getPosition: d => [d.lon+Math.random()/2000, d.lat+Math.random()/2000],
                     getRadius: 5,
                     getFillColor: [255, 0, 0],
                     opacity: 1
@@ -303,9 +342,8 @@ class Map extends Component {
                     radiusPixels: 30,
                     intensity: 1,
                     threshold: 0.03
-                }) : null
-                ,
-            showCluster ?
+                }) : null,
+            this.state.showMarkerLayer ?
                 new IconClusterLayer({
                     data,
                     pickable: true,
@@ -329,13 +367,51 @@ class Map extends Component {
                     sizeUnits: 'meters',
                     sizeScale: 2000,
                     sizeMinPixels: 6
-                })
-        ];
+        ]
     };
 
+    _onChangeTimeFrom(e){
+        console.log(e.target)
+        let intervals = this.state.intervals
+        intervals.map((interval)=>{
+            if(interval.dataid === e.target.dataset.id){
+                console.log("Intervall found")
+                interval["from"] = e.target.value
+            }
+        })
+        this.setState({from:e.target.value,intervals},console.log(this.state.intervals))
+    }
+    _onChangeTimeTo(e){
+        console.log(e.target)
+        let intervals = this.state.intervals
+        intervals.map((interval)=>{
+            if(interval.dataid === e.target.dataset.id)
+            interval["to"] = e.target.value
+        })
+        this.setState({to:e.target.value,intervals},console.log(this.state.intervals))
+    }
+    _addInterval(e){
+        console.log(e.target)
+        let lastId = this.state.intervals[this.state.intervals.length-1].dataid.charAt(8)
+        lastId = parseInt(lastId)+1
+        this.setState({
+            intervals:[...this.state.intervals,{dataid:"interval"+lastId}]
+        })
+    }
+    _removeInterval(e){
+        if(this.state.intervals.length===1)return
+        this.setState({
+            intervals: this.state.intervals.slice(0, -1)
+        })
+    }
     _handleMapStyle(e) {
         this.setState({
             mapstyle: e.target.value
+        })
+    }
+    _toggleTimeFilter(e){
+        this.setState({
+            timefilterActive:e.target.checked
         })
     }
 
@@ -367,17 +443,28 @@ class Map extends Component {
             filter: filterObject,
         });
 
-        let timeStart = '{00:00:01}';
-        let timeEnd = '{23:59:59}';
-
-        let url = 'http://0.0.0.0:9000/hooks/accidents-by-time?years={' + filterObject.years.toString() + '}&months={' + filterObject.months.toString() + '}&weekdays={' + filterObject.days.toString() + '}&polygon=' + this._getCoordinates() + '&hours_start=' + timeStart + '&hours_end=' + timeEnd;
-
+        let timeStart = '{'+this.state.from+':01}';
+        let timeEnd = '{'+this.state.to+':59}';
+        let timesStart = []
+        let timesEnd = []
+        let url; 
+        if(this.state.timefilterActive){
+            this.state.intervals.map((interval)=>{
+                timesStart.push(interval.from+':00');
+                timesEnd.push(interval.to+':00')
+            })
+            
+         url = 'http://0.0.0.0:9000/hooks/accidents-by-interval?years={' + filterObject.years.toString() + '}&months={' + filterObject.months.toString() + '}&weekdays={' + filterObject.days.toString() + '}&polygon=' + this._getCoordinates() + '&hours_start={' + timesStart.toString() + '}&hours_end={' +   timesEnd.toString() +'}';
+        }
+        else url = 'http://0.0.0.0:9000/hooks/accidents-by-time?years={' + filterObject.years.toString() + '}&months={' + filterObject.months.toString() + '}&weekdays={' + filterObject.days.toString() + '}&polygon=' + this._getCoordinates() + '&hours_start={00:00:00}&hours_end={23:59:59}';
+        console.log(url)
         fetch(url)
             .then(response => response.json())
             .then(accidents => {
                 if (accidents.length) {
-                    let noCoords = accidents.filter(value => value.lat === null).length;
-                    console.log(noCoords);
+                    if (this.state.onlyInjuries) {
+                        accidents = accidents.filter(value => value.seriously_injured > 0 || value.deaths > 0 || value.slightly_injured > 0);
+                    }
                     this.setState({
                         accidents: accidents,
                         emptyResult: false
@@ -388,7 +475,9 @@ class Map extends Component {
                     })
                 }
             })
+            .then(()=>{console.log(this.state.accidents)})
         this._createClusteredPoints(filterObject);
+
     }
 
     _confirmAggregation(aggrStr) {
@@ -398,8 +487,9 @@ class Map extends Component {
     }
 
     render() {
-
+ 
         return (
+            
             <Fragment>
                 <DeckGL
                     initialViewState={this.state.viewState}
@@ -433,6 +523,14 @@ class Map extends Component {
                     _handleMapStyle={this._handleMapStyle}
                     _toggleDrawPolygon={this._toggleDrawPolygon}
                     accidentsNoCoords={this.state.accidentsNoCoords}
+                    _showOnlyInjury={this._showOnlyInjury}
+                    _onChangeTimeFrom = {this._onChangeTimeFrom}
+                    _onChangeTimeTo= {this._onChangeTimeTo}
+                    _toggleTimeFilter = {this._toggleTimeFilter}
+                    intervals = {this.state.intervals}
+                    _addInterval = {this._addInterval}
+                    _removeInterval = {this._removeInterval}
+                    _toggleMarkers = {this._toggleMarkers}
                 />
             </Fragment>
         );

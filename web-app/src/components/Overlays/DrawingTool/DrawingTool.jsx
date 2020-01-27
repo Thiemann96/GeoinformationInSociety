@@ -15,8 +15,8 @@ class DrawingTool extends Component{
     }
     render(){
         return(
-            <Container className="drawingTool" fluid>
-                 <FaPen onClick={this._onClick} style={{ width: '44px', height: '58px' }} />
+            <Container className="menuBar drawingTool" fluid>
+                 <FaPen onClick={this._onClick} style={{ width: '20px', height: '34px' }} />
             </Container>        
         )}
 }
