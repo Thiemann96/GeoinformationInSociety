@@ -29,6 +29,7 @@ class TileSelect extends React.Component {
         this._toggleAccidents = this._toggleAccidents.bind(this);
         this._toggleHeatmap = this._toggleHeatmap.bind(this);
         this._showOnlyInjury = this._showOnlyInjury.bind(this);
+        this._toggleAccidentsMarkers = this._toggleAccidentsMarkers.bind(this);
     }
 
     _onLeave(e) {
