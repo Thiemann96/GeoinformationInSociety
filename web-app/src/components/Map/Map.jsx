@@ -367,7 +367,8 @@ class Map extends Component {
                     sizeUnits: 'meters',
                     sizeScale: 2000,
                     sizeMinPixels: 6
-        ]
+                })
+            ]
     };
 
     _onChangeTimeFrom(e){
