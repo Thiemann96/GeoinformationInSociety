@@ -4,7 +4,7 @@ import DeckGL from '@deck.gl/react';
 import {ScatterplotLayer, PolygonLayer} from '@deck.gl/layers';
 import Overlay from '../Overlays/Overlay'
 import {HeatmapLayer, ScreenGridLayer} from '@deck.gl/aggregation-layers'
-import {extent, scaleLinear} from 'd3';
+import {extent, scaleLinear, interval} from 'd3';
 import DelayedPointLayer from './DelayedPointLayer';
 import anime from 'animejs'
 import GL from '@luma.gl/constants';
@@ -44,6 +44,7 @@ class Map extends Component {
             emptyResult: false,
             aggregation: "Day of week",
             drawing: false,
+            intervals:[{dataid:'interval0'}],
             myFeatureCollection: {
                 type: 'FeatureCollection',
                 features: [{
@@ -84,6 +85,8 @@ class Map extends Component {
         this._onChangeTimeFrom = this._onChangeTimeFrom.bind(this);
         this._onChangeTimeTo = this._onChangeTimeTo.bind(this);
         this._toggleTimeFilter = this._toggleTimeFilter.bind(this)
+        this._addInterval = this._addInterval.bind(this);
+        this._removeInterval = this._removeInterval.bind(this);
     }
 
     // fetches all accidents from the server running locally
@@ -193,7 +196,7 @@ class Map extends Component {
             onlyInjuries: e.target.checked
         });
         if (e.target.checked) {
-            let accidents = this.state.accidents.filter(value => value.accident_category <= 3);
+            let accidents = this.state.accidents.filter(value => value.seriously_injured > 0 || value.deaths > 0 || value.slightly_injured > 0);
             this.setState({
                 accidents: accidents
             });
@@ -230,7 +233,6 @@ class Map extends Component {
 
     _resetFilter() {
         let url = 'http://0.0.0.0:9000/hooks/bikes';
-
         fetch(url)
             .then(response => response.json())
             .then(accidents => {
@@ -240,7 +242,7 @@ class Map extends Component {
                 if (accidents.length) {
                     let noCoords = accidents.filter(value => value.lat === null || value.lon === null).length;
                     if (this.state.onlyInjuries) {
-                        accidents = accidents.filter(value => value.accident_category <= 3);
+                        accidents = accidents.filter(value => value.seriously_injured > 0 || value.deaths > 0 || value.slightly_injured > 0);
                     }
                     this.setState({
                         accidents: accidents,
@@ -324,12 +326,39 @@ class Map extends Component {
     };
 
     _onChangeTimeFrom(e){
-        this.setState({from:e.target.value})
+        console.log(e.target)
+        let intervals = this.state.intervals
+        intervals.map((interval)=>{
+            if(interval.dataid === e.target.dataset.id){
+                console.log("Intervall found")
+                interval["from"] = e.target.value
+            }
+        })
+        this.setState({from:e.target.value,intervals},console.log(this.state.intervals))
     }
     _onChangeTimeTo(e){
-        this.setState({to:e.target.value})
+        console.log(e.target)
+        let intervals = this.state.intervals
+        intervals.map((interval)=>{
+            if(interval.dataid === e.target.dataset.id)
+            interval["to"] = e.target.value
+        })
+        this.setState({to:e.target.value,intervals},console.log(this.state.intervals))
     }
-
+    _addInterval(e){
+        console.log(e.target)
+        let lastId = this.state.intervals[this.state.intervals.length-1].dataid.charAt(8)
+        lastId = parseInt(lastId)+1
+        this.setState({
+            intervals:[...this.state.intervals,{dataid:"interval"+lastId}]
+        })
+    }
+    _removeInterval(e){
+        if(this.state.intervals.length===1)return
+        this.setState({
+            intervals: this.state.intervals.slice(0, -1)
+        })
+    }
     _handleMapStyle(e) {
         this.setState({
             mapstyle: e.target.value
@@ -350,18 +379,25 @@ class Map extends Component {
 
         let timeStart = '{'+this.state.from+':01}';
         let timeEnd = '{'+this.state.to+':59}';
+        let timesStart = []
+        let timesEnd = []
         let url; 
         if(this.state.timefilterActive){
-         url = 'http://0.0.0.0:9000/hooks/accidents-by-interval?years={' + filterObject.years.toString() + '}&months={' + filterObject.months.toString() + '}&weekdays={' + filterObject.days.toString() + '}&polygon=' + this._getCoordinates() + '&hours_start=' + timeStart + '&hours_end=' + timeEnd;
+            this.state.intervals.map((interval)=>{
+                timesStart.push(interval.from+':00');
+                timesEnd.push(interval.to+':00')
+            })
+            
+         url = 'http://0.0.0.0:9000/hooks/accidents-by-interval?years={' + filterObject.years.toString() + '}&months={' + filterObject.months.toString() + '}&weekdays={' + filterObject.days.toString() + '}&polygon=' + this._getCoordinates() + '&hours_start={' + timesStart.toString() + '}&hours_end={' +   timesEnd.toString() +'}';
         }
-        else url = 'http://0.0.0.0:9000/hooks/accidents-by-time?years={' + filterObject.years.toString() + '}&months={' + filterObject.months.toString() + '}&weekdays={' + filterObject.days.toString() + '}&polygon=' + this._getCoordinates() + '&hours_start={08:00:00}&hours_end={09:59:59}';
-
+        else url = 'http://0.0.0.0:9000/hooks/accidents-by-time?years={' + filterObject.years.toString() + '}&months={' + filterObject.months.toString() + '}&weekdays={' + filterObject.days.toString() + '}&polygon=' + this._getCoordinates() + '&hours_start={00:00:00}&hours_end={23:59:59}';
+        console.log(url)
         fetch(url)
             .then(response => response.json())
             .then(accidents => {
                 if (accidents.length) {
                     if (this.state.onlyInjuries) {
-                        accidents = accidents.filter(value => value.accident_category <= 3);
+                        accidents = accidents.filter(value => value.seriously_injured > 0 || value.deaths > 0 || value.slightly_injured > 0);
                     }
                     this.setState({
                         accidents: accidents,
@@ -383,8 +419,9 @@ class Map extends Component {
     }
 
     render() {
-
+ 
         return (
+            
             <Fragment>
                 <DeckGL
                     initialViewState={this.state.viewState}
@@ -422,6 +459,9 @@ class Map extends Component {
                     _onChangeTimeFrom = {this._onChangeTimeFrom}
                     _onChangeTimeTo= {this._onChangeTimeTo}
                     _toggleTimeFilter = {this._toggleTimeFilter}
+                    intervals = {this.state.intervals}
+                    _addInterval = {this._addInterval}
+                    _removeInterval = {this._removeInterval}
                 />
             </Fragment>
         );

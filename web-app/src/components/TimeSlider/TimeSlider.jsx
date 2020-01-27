@@ -13,7 +13,6 @@ export default class TimeSlider extends Component {
 
     drawSlider() {
         const sliderDiv = d3.select(this.props.id);
-
         // empty div
         sliderDiv.html("");
 
@@ -64,31 +63,30 @@ export default class TimeSlider extends Component {
                 [0, 0],
                 [width, height]
             ])
-            .on("brush", function() {
+            .on("brush", function () {
                 var s = d3.event.selection;
-                // update and move labels
+                let s0 = Math.floor(x.invert(s[0]) / 60) +
+                    ":" +
+                    Math.floor(x.invert(s[0]) % 60);
+                let s1 = Math.floor(x.invert(s[1]) / 60) +
+                    ":" +
+                    Math.floor(x.invert(s[1]) % 60)
+                    // update and move labels
                 labelL
                     .attr("x", s[0])
-                    .text(
-                        Math.floor(x.invert(s[0]) / 60) +
-                            ":" +
-                            Math.floor(x.invert(s[0]) % 60)
-                    );
+                    .text(s0);
+
                 labelR
                     .attr("x", s[1])
-                    .text(
-                        Math.floor(x.invert(s[1]) / 60) +
-                            ":" +
-                            Math.floor(x.invert(s[1]) % 60)
-                    );
+                    .text(s1);
                 // move brush handles
-                handle.attr("display", null).attr("transform", function(d, i) {
+                handle.attr("display", null).attr("transform", function (d, i) {
                     return "translate(" + [s[i], -height / 4] + ")";
                 });
                 // update view
                 // if the view should only be updated after brushing is over,
                 // move these two lines into the on('end') part below
-                svg.node().value = s.map(function(d) {
+                svg.node().value = s.map(function (d) {
                     var temp = x.invert(d);
                     return +temp.toFixed(2);
                 });
@@ -102,7 +100,7 @@ export default class TimeSlider extends Component {
             .call(brush);
 
         // add brush handles (from https://bl.ocks.org/Fil/2d43867ba1f36a05459c7113c7f6f98a)
-        var brushResizePath = function(d) {
+        var brushResizePath = function (d) {
             var e = +(d.type == "e"),
                 x = e ? 1 : -1,
                 y = height / 2;
@@ -157,7 +155,7 @@ export default class TimeSlider extends Component {
         // https://bl.ocks.org/mbostock/6498000
         gBrush
             .selectAll(".overlay")
-            .each(function(d) {
+            .each(function (d) {
                 d.type = "selection";
             })
             .on("mousedown touchstart", brushcentered);

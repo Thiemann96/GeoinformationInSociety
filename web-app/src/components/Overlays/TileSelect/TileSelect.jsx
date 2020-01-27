@@ -44,7 +44,7 @@ class TileSelect extends React.Component {
 
     render() {
         return (
-            <Container className="tileSelect" fluid>
+            <Container className="menuBar tileSelect" fluid>
                 {this.state.renderSelection ?
                     <Form onMouseLeave={this._onLeave}>
                         {this.state.options.map((option, index) => {
