@@ -285,10 +285,10 @@ export default class FilterOverlay extends Component {
                         {this.props.intervals.map((interval, index) => {
                             return <Row style={{"padding":"5px"}} key={"inputID" + index}>
                                 <label>From</label> <input onChange={this.props._onChangeTimeFrom} data-id={"interval" + index} type="time" placeholder="From" disabled={this.state.activeTimeLayer ? false : true} />
-                                <label style={{"padding-left":"15px"}}>To</label><input onChange={this.props._onChangeTimeTo} value={this.state.to} data-id={"interval" + index} type="time" placeholder="To" disabled={this.state.activeTimeLayer ? false : true} />
+                                <label style={{"paddingLeft":"15px"}}>To</label><input onChange={this.props._onChangeTimeTo} value={this.state.to} data-id={"interval" + index} type="time" placeholder="To" disabled={this.state.activeTimeLayer ? false : true} />
                             </Row>
                         })}
-                         <button type="button" onClick={this.props._addInterval} disabled={this.state.activeTimeLayer ? false : true}>Add interval</button>
+                         <button type="button" style={{"paddingRight":"5px"}} onClick={this.props._addInterval} disabled={this.state.activeTimeLayer ? false : true}>Add interval</button>
                         <button type="button" onClick={this.props._removeInterval} disabled={this.state.activeTimeLayer ? false : true}>Remove interval</button>
 
                     </Row>
