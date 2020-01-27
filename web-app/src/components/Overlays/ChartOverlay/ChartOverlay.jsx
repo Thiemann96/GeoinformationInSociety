@@ -45,7 +45,7 @@ export default class ChartOverlay extends Component {
         ];
         return (
             <Container className="chart-panel">
-                <Collapsible onOpen={this.onCollapseOpen} onClose={this.onCollapseClose} trigger={<CollapsibleBar text="Accident statistics" open={this.state.open} />}>
+                <Collapsible onOpen={this.onCollapseOpen} onClose={this.onCollapseClose} trigger={<CollapsibleBar text={this.props.datalength + " Accidents are displayed"} open={this.state.open} />}>
                     <span>Split by:</span>
                     <select onChange={this.onChange} autoComplete="off">
                         {splitOptions.map((option, index) => {
@@ -66,10 +66,6 @@ export default class ChartOverlay extends Component {
                         split={this.state.split}
                         id="nAccidents"
                     />
-                    <span>
-                        Number of displayed bike related accidents:
-                    {this.props.datalength}
-                    </span>
                     <hr />
 
                     <h2>Accidents summary</h2>

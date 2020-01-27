@@ -20,11 +20,9 @@ export default class Overlay extends Component {
         return (
             <Container className="control-panel">
                     <FilterOverlay _resetFilter={this.props._resetFilter}
-                        _confirmFilter={this.props._confirmFilter} _toggleHeatMap={this.props._toggleHeatMap}
-                        _toggleAccidents={this.props._toggleAccidents}
-                        _toggleBuildings={this.props._toggleBuildings} filter={this.props.filter}
+                        _confirmFilter={this.props._confirmFilter} 
+                        filter={this.props.filter}
                         emptyResult={this.props.emptyResult} _confirmAggregation={this.props._confirmAggregation}
-                        _showOnlyInjury={this.props._showOnlyInjury}
                         _onChangeTimeFrom={this.props._onChangeTimeFrom}
                         _onChangeTimeTo={this.props._onChangeTimeTo}
                         _toggleTimeFilter={this.props._toggleTimeFilter}
@@ -36,7 +34,13 @@ export default class Overlay extends Component {
                         aggregation={this.props.aggregation}
                     />
                 <DrawingTool _toggleDrawPolygon={this.props._toggleDrawPolygon} />
-                <TileSelect _handleMapStyle={this.props._handleMapStyle} />
+                <TileSelect 
+                _handleMapStyle={this.props._handleMapStyle}
+                             _showOnlyInjury={this.props._showOnlyInjury}
+                             _toggleAccidents={this.props._toggleAccidents}
+                             _toggleBuildings={this.props._toggleBuildings}
+                             _toggleHeatMap={this.props._toggleHeatMap} 
+/>
                 <PlayButton _playAnimation={this.props._animate} />
                 <Disclaimer accidentsNoCoords={this.props.accidentsNoCoords} />
             </Container>

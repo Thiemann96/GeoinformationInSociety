@@ -31,7 +31,7 @@ export default class FilterOverlay extends Component {
                 { value: 'mapbox://styles/mapbox/navigation-guidance-night-v4', label: 'Navigation Guidance Night' },
             ],
             inputs: ["time"],
-            open:false
+            open: false
         };
         this.props.filter
             ? (filterObject = this.props.filter)
@@ -111,14 +111,14 @@ export default class FilterOverlay extends Component {
             activeTimeLayer: e.target.checked
         })
     }
-    onCollapseClose(){
+    onCollapseClose() {
         this.setState({
-            open:false
+            open: false
         })
     }
-    onCollapseOpen(){
+    onCollapseOpen() {
         this.setState({
-            open:true
+            open: true
         })
     }
 
@@ -190,42 +190,10 @@ export default class FilterOverlay extends Component {
 
         return (
             <Container className="filter-panel">
-                <Collapsible onOpen={this.onCollapseOpen} onClose={this.onCollapseClose} trigger={<CollapsibleBar text="Filter options" open={this.state.open} />}>
+                <Collapsible onOpen={this.onCollapseOpen} onClose={this.onCollapseClose} trigger={<CollapsibleBar text="Filter accidents by date & time" open={this.state.open} />}>
                     <Row>
                         <EmptyResultMessage emptyResult={this.props.emptyResult} />
                     </Row>
-                    <hr />
-                    <Row>
-                        <InputGroup>
-                            <label>
-                                <InputGroup.Checkbox
-                                    onChange={this.props._toggleBuildings}
-                                />
-                                3D Layer
-                        </label>
-                            <label>
-                                <InputGroup.Checkbox
-                                    onChange={this.props._toggleAccidents}
-                                />
-                                Accident Layer
-                        </label>
-                            <label>
-                                {" "}
-                                <InputGroup.Checkbox
-                                    onChange={this.props._toggleHeatMap}
-                                />
-                                Heatmap
-                        </label>
-                            <br />
-                            <label>
-                                <InputGroup.Checkbox
-                                    onChange={this.props._showOnlyInjury}
-                                />
-                                Show only accidents with personal injuries
-                        </label>
-                        </InputGroup>
-                    </Row>
-                    <hr />
                     <Row>
                         <Selector
                             name="Years"
@@ -291,31 +259,7 @@ export default class FilterOverlay extends Component {
                         _toggleTimeFilter={this.props._toggleTimeFilter} min="0" max="1440" id="#timeslider" />
 
                 </Row> */}
-                    <Row style={{ "paddingBottom": "5px", "paddingTop": "5px" }}>
-                        <label>Activate time filter</label><input type="checkbox" onChange={this._handleCheckbox} />
-                        <button type="button" onClick={this.props._addInterval} disabled={this.state.activeTimeLayer ? false : true}>+</button>
-                        <button type="button" onClick={this.props._removeInterval} disabled={this.state.activeTimeLayer ? false : true}>-</button>
 
-                        {this.props.intervals.map((interval, index) => {
-                            return <Row key={"inputID" + index}>
-                                <label>From</label> <input onChange={this.props._onChangeTimeFrom} data-id={"interval" + index} type="time" placeholder="From" disabled={this.state.activeTimeLayer ? false : true} />
-                                <label>To</label><input onChange={this.props._onChangeTimeTo} value={this.state.to} data-id={"interval" + index} type="time" placeholder="To" disabled={this.state.activeTimeLayer ? false : true} />
-                            </Row>
-                        })}
-                    </Row>
-                    <Row>
-                        <Button
-                            onClick={() => this.props._confirmFilter(filterObject)}
-                        >
-                            Confirm Filter
-                    </Button>
-                        <Button onClick={() => {
-                            this.props._resetFilter();
-                            this._resetFilter();
-                        }}>
-                            Reset Filter
-                    </Button>
-                    </Row>
                     <hr />
                     <Row>
                         <Selector
@@ -329,6 +273,39 @@ export default class FilterOverlay extends Component {
                             ]}
                             onChange={this._handleAggregation}
                         />
+                    </Row>
+                    <hr/>
+                    <Row style={{ "paddingBottom": "5px", "paddingTop": "5px" }}>
+                        <div>
+                            <label>
+                            <input type="checkbox" onChange={this._handleCheckbox} />
+                            Activate time intervals 
+                            </label>
+                        </div>                       
+                        {this.props.intervals.map((interval, index) => {
+                            return <Row style={{"padding":"5px"}} key={"inputID" + index}>
+                                <label>From</label> <input onChange={this.props._onChangeTimeFrom} data-id={"interval" + index} type="time" placeholder="From" disabled={this.state.activeTimeLayer ? false : true} />
+                                <label style={{"padding-left":"15px"}}>To</label><input onChange={this.props._onChangeTimeTo} value={this.state.to} data-id={"interval" + index} type="time" placeholder="To" disabled={this.state.activeTimeLayer ? false : true} />
+                            </Row>
+                        })}
+                         <button type="button" onClick={this.props._addInterval} disabled={this.state.activeTimeLayer ? false : true}>Add interval</button>
+                        <button type="button" onClick={this.props._removeInterval} disabled={this.state.activeTimeLayer ? false : true}>Remove interval</button>
+
+                    </Row>
+                    <hr/>
+
+                    <Row>
+                        <Button
+                            onClick={() => this.props._confirmFilter(filterObject)}
+                        >
+                            Confirm Filter
+                    </Button>
+                        <Button onClick={() => {
+                            this.props._resetFilter();
+                            this._resetFilter();
+                        }}>
+                            Reset Filter
+                    </Button>
                     </Row>
                 </Collapsible>
 
