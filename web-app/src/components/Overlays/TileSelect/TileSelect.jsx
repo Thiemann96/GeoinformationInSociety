@@ -67,6 +67,10 @@ class TileSelect extends React.Component {
         this.setState({injuries:e.target.checked})
         this.props._showOnlyInjury(e);
     }
+    _toggleAccidentsMarkers(e){
+        this.setState({accidents_markers:e.target.checked})
+        this.props._toggleMarkers(e)
+    }
 
 
     render() {
@@ -75,7 +79,7 @@ class TileSelect extends React.Component {
                 {this.state.renderSelection ?
                     <Form onMouseLeave={this._onLeave}>
                         <div>
-                            <label >
+                            <label>
                                 <input checked={this.state.buildings} type="checkbox" onChange={this._toggleBuildings} />
                                 3D Layer
                                 </label>
@@ -84,6 +88,13 @@ class TileSelect extends React.Component {
                         <div>
                             <label >
                                 <input checked={this.state.accidents} type="checkbox" onChange={this._toggleAccidents}  />
+                                Accidents(as Points)
+                                </label>
+                            <br></br>
+                        </div>
+                        <div>
+                            <label >
+                                <input checked={this.state.accidents_markers} type="checkbox" onChange={this._toggleAccidentsMarkers}  />
                                 Accidents(as Markers)
                                 </label>
                             <br></br>

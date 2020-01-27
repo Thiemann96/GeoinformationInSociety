@@ -34,7 +34,8 @@ export default class Overlay extends Component {
                         aggregation={this.props.aggregation}
                     />
                 <DrawingTool _toggleDrawPolygon={this.props._toggleDrawPolygon} />
-                <TileSelect 
+                <TileSelect
+                _toggleMarkers={this.props._toggleMarkers} 
                 _handleMapStyle={this.props._handleMapStyle}
                              _showOnlyInjury={this.props._showOnlyInjury}
                              _toggleAccidents={this.props._toggleAccidents}

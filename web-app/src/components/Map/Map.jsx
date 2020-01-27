@@ -87,6 +87,7 @@ class Map extends Component {
         this._toggleTimeFilter = this._toggleTimeFilter.bind(this)
         this._addInterval = this._addInterval.bind(this);
         this._removeInterval = this._removeInterval.bind(this);
+        this._toggleMarkers = this._toggleMarkers.bind(this);
     }
 
     // fetches all accidents from the server running locally
@@ -218,6 +219,12 @@ class Map extends Component {
         this._animate();
     }
 
+    _toggleMarkers(e){
+        this.setState({
+            showMarkerLayer : e.target.checked
+        })
+    }
+
     _getCoordinates() {
         let coordsArr = this.state.myFeatureCollection.features[0].geometry;
         let coordsString = "(";
@@ -306,7 +313,7 @@ class Map extends Component {
                 new ScatterplotLayer({
                     data: this.state.accidents,
                     id: 'accidentsLayer',
-                    getPosition: d => [d.lon, d.lat],
+                    getPosition: d => [d.lon+Math.random()/2000, d.lat+Math.random()/2000],
                     getRadius: 5,
                     getFillColor: [255, 0, 0],
                     opacity: 1
@@ -321,7 +328,9 @@ class Map extends Component {
                     radiusPixels: 30,
                     intensity: 1,
                     threshold: 0.03
-                }) : null
+                }) : null,
+            this.state.showMarkerLayer ?
+                null:null
         ]
     };
 
@@ -462,6 +471,7 @@ class Map extends Component {
                     intervals = {this.state.intervals}
                     _addInterval = {this._addInterval}
                     _removeInterval = {this._removeInterval}
+                    _toggleMarkers = {this._toggleMarkers}
                 />
             </Fragment>
         );
