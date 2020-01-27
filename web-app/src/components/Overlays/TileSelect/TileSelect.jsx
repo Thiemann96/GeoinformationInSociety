@@ -19,7 +19,8 @@ class TileSelect extends React.Component {
             buildings:false,
             accidents:false,
             heatmap:false,
-            injuries:false
+            injuries:false,
+            accidents_markers:false
         };
 
         this._onEnter = this._onEnter.bind(this);

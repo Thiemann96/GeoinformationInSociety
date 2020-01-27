@@ -369,6 +369,7 @@ class Map extends Component {
                     sizeMinPixels: 6
                 })
         ]
+
     };
 
     _onChangeTimeFrom(e){
