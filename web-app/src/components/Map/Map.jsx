@@ -30,9 +30,9 @@ class Map extends Component {
         super(props);
         this.state = {
             viewState: {
-                longitude: 7.615322135118181,
-                latitude: 51.96970534849527,
-                zoom: 12,
+                longitude: 7.6233063,
+                latitude: 51.9559454,
+                zoom: 15,
                 pitch: 0,
                 bearing: 0
             },
@@ -113,6 +113,7 @@ class Map extends Component {
                     })
                 }
             })
+            
     }
 
     _animate() {
@@ -143,7 +144,7 @@ class Map extends Component {
         const accidentLayer = new DelayedPointLayer({
             id: 'points-layer',
             data: this.state.accidents,
-            getPosition: d => [d.lon, d.lat],
+            getPosition: d => [d.lon+Math.random()/2000, d.lat+Math.random()/2000],
             getFillColor: [250, 100, 200],
             getRadius: 10,
             radiusMinPixels: 1,
