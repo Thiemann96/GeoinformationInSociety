@@ -153,7 +153,8 @@ export default class BarChart extends Component {
             .call(
                 d3
                     .axisBottom(x)
-                    .tickFormat(i => nested[i].key)
+                    .tickFormat(i => (aggregateBy == "Hour of day" ? 
+                    (i%2 == 0 ? nested[i].key : "") : nested[i].key))
                     .tickSizeOuter(0)
             );
 
