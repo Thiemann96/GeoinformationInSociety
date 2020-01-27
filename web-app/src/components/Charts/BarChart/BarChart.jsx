@@ -112,7 +112,7 @@ export default class BarChart extends Component {
         chartDiv.html("");
 
         // set chart margins + dimensions
-        const margin = { left: 40, right: 0, top: 0, bottom: 20 };
+        const margin = { left: 40, right: 0, top: 10, bottom: 20 };
         const dim = {
             height: this.props.height - margin.top - margin.bottom,
             width: this.props.width - margin.left - margin.right
@@ -147,9 +147,9 @@ export default class BarChart extends Component {
             .range([dim.height, 0]);
 
         // axes
-        g.append("g").call(d3.axisLeft(y));
+        g.append("g").attr("transform", "translate(-3,0)").call(d3.axisLeft(y));
         g.append("g")
-            .attr("transform", "translate(0," + dim.height + ")")
+            .attr("transform", "translate(0," + (dim.height + 2) + ")")
             .call(
                 d3
                     .axisBottom(x)
