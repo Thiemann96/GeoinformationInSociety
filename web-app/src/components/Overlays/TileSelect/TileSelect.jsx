@@ -58,7 +58,7 @@ class TileSelect extends React.Component {
                             )
                         })}
                     </Form> :
-                    <IoLogoBuffer onMouseEnter={this._onEnter} style={{ width: '44px', height: '58px' }} />
+                    <IoLogoBuffer onMouseEnter={this._onEnter} style={{ width: '20px', height: '34px'  }} />
                 }
             </Container>
         )

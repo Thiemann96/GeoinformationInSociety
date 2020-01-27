@@ -16,7 +16,7 @@ class PlayButton extends Component{
     render(){
         return(
             <Container className="menuBar playButton" fluid>
-                    <FaPlay onClick={this.props._playAnimation} style={{ width: '44px', height: '58px' }} />
+                    <FaPlay onClick={this.props._playAnimation} style={{width: '20px', height: '34px' }} />
             </Container>
         )
     }
