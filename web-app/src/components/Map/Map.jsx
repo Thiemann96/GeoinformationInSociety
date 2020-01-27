@@ -1,15 +1,17 @@
-import React, {Component, Fragment} from 'react';
-import {StaticMap} from 'react-map-gl';
+import React, { Component, Fragment } from 'react';
+import { StaticMap } from 'react-map-gl';
 import DeckGL from '@deck.gl/react';
-import {ScatterplotLayer, PolygonLayer} from '@deck.gl/layers';
+import { ScatterplotLayer, PolygonLayer } from '@deck.gl/layers';
 import Overlay from '../Overlays/Overlay'
-import {HeatmapLayer, ScreenGridLayer} from '@deck.gl/aggregation-layers'
-import {extent, scaleLinear} from 'd3';
+import { HeatmapLayer, ScreenGridLayer } from '@deck.gl/aggregation-layers'
+import { extent, scaleLinear } from 'd3';
 import DelayedPointLayer from './DelayedPointLayer';
 import anime from 'animejs'
 import GL from '@luma.gl/constants';
 import buildingPolygon from '../../muenster_buildings.json'
-import {EditableGeoJsonLayer, DrawPolygonMode, ViewMode} from 'nebula.gl';
+import { EditableGeoJsonLayer, DrawPolygonMode, ViewMode } from 'nebula.gl';
+import { IconLayer } from '@deck.gl/layers';
+import IconClusterLayer from './icon-cluster-layer';
 
 const colorRange = [
     [255, 255, 178, 25],
@@ -20,6 +22,8 @@ const colorRange = [
     [189, 0, 38, 255]
 ];
 
+const DATA_URL234 =
+    'https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/icon/meteorites.json';
 
 class Map extends Component {
     constructor(props) {
@@ -32,7 +36,7 @@ class Map extends Component {
                 pitch: 0,
                 bearing: 0
             },
-            animationProgress: {enterProgress: 0, duration: 60000},
+            animationProgress: { enterProgress: 0, duration: 60000 },
             animate: false,
             interactionState: {},
             mapBoxToken: 'pk.eyJ1IjoiZXRoaWUxMCIsImEiOiJjazQyeXlxNGcwMjk3M2VvYmw2NHU4MDRvIn0.nYOmVGARhLOULQ550LyUYA',
@@ -114,7 +118,7 @@ class Map extends Component {
             },
             complete: function (anim) {
                 console.log("end");
-                that.setState({animate: false, layers: [], animationProgress: {enterProgress: 0, duration: 10000}})
+                that.setState({ animate: false, layers: [], animationProgress: { enterProgress: 0, duration: 10000 } })
             },
             update() {
                 // each tick, update the DeckGL layers with new values
@@ -178,6 +182,7 @@ class Map extends Component {
 
     _toggleBuildings(e) {
         this.setState({
+            // showIconLayer: e.target.checked
             showBuildings: e.target.checked
         });
     }
@@ -227,9 +232,18 @@ class Map extends Component {
 
     _renderLayers() {
         const {
-            selectedFeatureIndexes = [], cellSize = 20, gpuAggregation = true, aggregation = 'SUM'
+            data = this.state.clusterData,
+            selectedFeatureIndexes = [],
+            cellSize = 20,
+            gpuAggregation = true,
+            aggregation = 'SUM',
+            iconMapping = 'https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/icon/location-icon-mapping.json',
+            iconAtlas = 'https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/icon/location-icon-atlas.png',
+            showCluster = true
+
         } = this.props;
-        return [
+ console.log(data, iconAtlas, iconMapping, showCluster);
+       return [
             // This is only needed when using shadow effects
             // returns the 3dbuildings layer
             this.state.showBuildings ?
@@ -250,7 +264,7 @@ class Map extends Component {
                     data: this.state.myFeatureCollection,
                     mode: DrawPolygonMode,
                     selectedFeatureIndexes,
-                    onEdit: ({updatedData}) => {
+                    onEdit: ({ updatedData }) => {
                         console.log(updatedData)
                         this.setState({
                             myFeatureCollection: updatedData,
@@ -263,7 +277,7 @@ class Map extends Component {
                     mode: ViewMode,
                     selectedFeatureIndexes,
                     getFillColor: [0, 0, 0, 0],
-                    onEdit: ({updatedData}) => {
+                    onEdit: ({ updatedData }) => {
                         console.log(updatedData)
                         this.setState({
                             myFeatureCollection: updatedData,
@@ -290,13 +304,60 @@ class Map extends Component {
                     intensity: 1,
                     threshold: 0.03
                 }) : null
-        ]
+                ,
+            showCluster ?
+                new IconClusterLayer({
+                    data,
+                    pickable: true,
+                    wrapLongitude: true,
+                    getPosition: d => d.geometry.coordinates,
+                    iconAtlas,
+                    iconMapping,
+                    onHover: this._onHover,
+                    id: 'icon-cluster', sizeScale: 50
+                })
+                : new IconLayer({
+                    data,
+                    pickable: true,
+                    wrapLongitude: true,
+                    getPosition: d => d.coordinates,
+                    iconAtlas,
+                    iconMapping,
+                    onHover: this._onHover,
+                    id: 'icon',
+                    getIcon: d => 'marker',
+                    sizeUnits: 'meters',
+                    sizeScale: 2000,
+                    sizeMinPixels: 6
+                })
+        ];
     };
 
     _handleMapStyle(e) {
         this.setState({
             mapstyle: e.target.value
         })
+    }
+
+    _createClusteredPoints(filterObject) {
+
+
+        let timeStart = '{00:00:01}';
+        let timeEnd = '{23:59:59}';
+
+        let url = 'http://0.0.0.0:9000/hooks/accidents-as-geojson?years={' + filterObject.years.toString() + '}&months={' + filterObject.months.toString() + '}&weekdays={' + filterObject.days.toString() + '}&polygon=' + this._getCoordinates() + '&hours_start=' + timeStart + '&hours_end=' + timeEnd;
+        console.log(url)
+        fetch(url)
+            .then(response => response.json())
+            .then(accidents => {
+                console.log(accidents)
+                this.setState({
+                    clusterData: accidents.features,
+                    emptyResult: false,
+                    showCluster: true
+                });
+            })
+        console.log(this.state.clusterData)
     }
 
     // Uses new filter options and sends new request
@@ -327,6 +388,7 @@ class Map extends Component {
                     })
                 }
             })
+        this._createClusteredPoints(filterObject);
     }
 
     _confirmAggregation(aggrStr) {
@@ -343,16 +405,16 @@ class Map extends Component {
                     initialViewState={this.state.viewState}
                     controller={
                         this.state.showDrawLayer ?
-                            {doubleClickZoom: false}
-                            : {doubleClickZoom: true}
+                            { doubleClickZoom: false }
+                            : { doubleClickZoom: true }
                     } layers={
-                    this.state.animate ?
-                        this.state.layers
-                        : this._renderLayers()}
+                        this.state.animate ?
+                            this.state.layers
+                            : this._renderLayers()}
                 >
                     <StaticMap
                         mapStyle={this.state.mapstyle}
-                        mapboxApiAccessToken={this.state.mapBoxToken}/>
+                        mapboxApiAccessToken={this.state.mapBoxToken} />
                 </DeckGL>
                 <Overlay
                     _animate={this._playAnimation}
